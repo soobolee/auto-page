@@ -4,3 +4,6 @@ out
 .DS_Store
 .env
 *.log*
+
+.prettierignore
+.prettierrc
