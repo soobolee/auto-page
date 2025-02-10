@@ -2,7 +2,6 @@ import globals from "globals";
 import pluginJs from "@eslint/js";
 import pluginReact from "eslint-plugin-react";
 import eslintPluginReactHooks from "eslint-plugin-react-hooks";
-import eslintPluginJsxA11y from "eslint-plugin-jsx-a11y";
 import eslintPluginPrettier from "eslint-plugin-prettier";
 import eslintPluginImport from "eslint-plugin-import";
 
