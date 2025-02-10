@@ -4,6 +4,8 @@
   --color-main: #3B4250;
   --color-sub: #5F5E6E;
   --color-subsub: #897272;
+  --color-green: #3CB371;
+  --color-red: #B82132;
 }
 
 html, body, #root {
