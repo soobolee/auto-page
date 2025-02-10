@@ -9,6 +9,7 @@ function createWindow() {
     height: 670,
     show: false,
     autoHideMenuBar: true,
+    titleBarStyle: "hiddenInset",
     ...(process.platform === "linux" ? {icon} : {}),
     webPreferences: {
       preload: join(__dirname, "../preload/index.js"),
@@ -17,6 +18,7 @@ function createWindow() {
   });
 
   mainWindow.on("ready-to-show", () => {
+    mainWindow.maximize();
     mainWindow.show();
   });
 
@@ -39,7 +41,6 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window);
   });
 
-  // IPC test
   ipcMain.on("ping", () => console.log("pong"));
 
   createWindow();
