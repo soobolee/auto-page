@@ -1,5 +1,13 @@
+import Header from "./components/Header/Header";
+import Navigation from "./components/Navigation/Navigation";
+
 function App() {
-  return <h1 className="text-main">Auto Page</h1>;
+  return (
+    <main className="w-full h-full bg-main">
+      <Header></Header>
+      <Navigation></Navigation>
+    </main>
+  );
 }
 
 export default App;

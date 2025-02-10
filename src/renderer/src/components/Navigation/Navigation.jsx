@@ -1,11 +1,27 @@
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {
+  faHome,
+  faBookmark,
+  faSquarePlus,
+  faKeyboard,
+} from "@fortawesome/free-solid-svg-icons";
+
 function Navigation() {
+  const navIconList = [faHome, faBookmark, faSquarePlus, faKeyboard];
+
   return (
-    <nav className="w-[20%] h-[90%] border p-14">
-      <ul className="flex justify-center items-center flex-col">
-        <li>Home</li>
-        <li>Bookmark</li>
-        <li>Add Macro</li>
-        <li>Short Cut</li>
+    <nav className="w-[10%] h-[90%] bg-sub border">
+      <ul className="my-4 text-white text-5xl">
+        {navIconList.map((icon) => {
+          return (
+            <li
+              className="flex justify-center items-center w-full h-34 hover:bg-subsub"
+              key={icon}
+            >
+              <FontAwesomeIcon className="cursor-pointer" icon={icon} />
+            </li>
+          );
+        })}
       </ul>
     </nav>
   );
