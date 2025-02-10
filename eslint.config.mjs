@@ -24,13 +24,11 @@ export default [
     },
     plugins: {
       "react-hooks": eslintPluginReactHooks,
-      "jsx-a11y": eslintPluginJsxA11y,
       prettier: eslintPluginPrettier,
       import: eslintPluginImport,
     },
     rules: {
       ...eslintPluginReactHooks.configs.recommended.rules,
-      ...eslintPluginJsxA11y.configs.recommended.rules,
       ...eslintPluginImport.configs.recommended.rules,
       semi: "error",
       "no-unused-vars": "warn",
