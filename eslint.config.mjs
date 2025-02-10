@@ -8,6 +8,9 @@ import eslintPluginImport from "eslint-plugin-import";
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
+  pluginJs.configs.recommended,
+  pluginReact.configs.flat.recommended,
+  pluginReact.configs.flat["jsx-runtime"],
   {
     ignores: ["dist/", "node_modules/", "build/"],
     files: ["**/*.{js,mjs,jsx}"],
@@ -33,9 +36,7 @@ export default [
       "no-unused-vars": "warn",
       "import/no-unresolved": "off",
       "prettier/prettier": "error",
+      "react/prop-types": "off",
     },
   },
-  pluginJs.configs.recommended,
-  pluginReact.configs.flat.recommended,
-  pluginReact.configs.flat["jsx-runtime"],
 ];
