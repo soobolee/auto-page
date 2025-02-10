@@ -10,13 +10,13 @@ function Navigation() {
   const navIconList = [faHome, faBookmark, faSquarePlus, faKeyboard];
 
   return (
-    <nav className="w-[10%] h-[90%] bg-sub border">
+    <nav className="w-[10%] h-[100%] bg-sub border">
       <ul className="my-4 text-white text-5xl">
-        {navIconList.map((icon) => {
+        {navIconList.map((icon, index) => {
           return (
             <li
               className="flex justify-center items-center w-full h-34 hover:bg-subsub"
-              key={icon}
+              key={icon + index}
             >
               <FontAwesomeIcon className="cursor-pointer" icon={icon} />
             </li>
