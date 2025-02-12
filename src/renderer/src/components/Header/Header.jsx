@@ -1,4 +1,6 @@
 import {useNavigate} from "react-router";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faArrowLeft, faArrowRight, faRotateRight} from "@fortawesome/free-solid-svg-icons";
 import useTabStore from "../../store/useTabStore";
 import WindowTab from "../Tab/WindowTab";
 
@@ -19,6 +21,15 @@ function Header() {
         </h3>
       </div>
       <div className="h-[40%] w-full flex items-end overflow-scroll">
+        <button className="w-8 h-8 my-1 ml-2 bg-sub rounded-4xl hover:bg-gray-500">
+          <FontAwesomeIcon icon={faArrowLeft} />
+        </button>
+        <button className="w-8 h-8 my-1 mx-1 bg-sub rounded-4xl hover:bg-gray-500">
+          <FontAwesomeIcon icon={faArrowRight} />
+        </button>
+        <button className="w-8 h-8 my-1 mr-2 bg-sub rounded-4xl hover:bg-gray-500">
+          <FontAwesomeIcon className="text-white" icon={faRotateRight} />
+        </button>
         {browserTabList.length > 0 &&
           browserTabList.map((tab, index) => <WindowTab key={tab.tabUrl} title={tab.title} index={index} isHidden={tabFocusedIndex === index} />)}
       </div>
