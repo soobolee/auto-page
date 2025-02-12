@@ -1,8 +1,8 @@
 import {useNavigate} from "react-router";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowLeft, faArrowRight, faRotateRight} from "@fortawesome/free-solid-svg-icons";
 import useTabStore from "../../store/useTabStore";
 import WindowTab from "../Tab/WindowTab";
+import CircleButton from "../Button/CircleButton";
 
 function Header() {
   const navigate = useNavigate();
@@ -25,15 +25,9 @@ function Header() {
       <div className="h-[40%] w-full flex items-end overflow-scroll">
         {browserTabList.length > 0 && (
           <>
-            <button className="w-8 h-8 my-1 ml-2 bg-sub rounded-4xl hover:bg-gray-500" onClick={focusedTabInfo.goBack}>
-              <FontAwesomeIcon className={focusedTabInfo.canGoBack ? "text-white" : "text-black"} icon={faArrowLeft} />
-            </button>
-            <button className="w-8 h-8 my-1 mx-1 bg-sub rounded-4xl hover:bg-gray-500" onClick={focusedTabInfo.goForward}>
-              <FontAwesomeIcon className={focusedTabInfo.canGoForward ? "text-white" : "text-black"} icon={faArrowRight} />
-            </button>
-            <button className="w-8 h-8 my-1 mr-2 bg-sub rounded-4xl hover:bg-gray-500" onClick={focusedTabInfo.goReload}>
-              <FontAwesomeIcon className="text-white" icon={faRotateRight} />
-            </button>
+            <CircleButton icon={faArrowLeft} onClick={focusedTabInfo.goBack} isActive={focusedTabInfo.canGoBack} />
+            <CircleButton icon={faArrowRight} onClick={focusedTabInfo.goForward} isActive={focusedTabInfo.canGoForward} />
+            <CircleButton icon={faRotateRight} onClick={focusedTabInfo.goReload} isActive={true} />
           </>
         )}
         {browserTabList.length > 0 &&
