@@ -1,8 +1,10 @@
 import {useNavigate} from "react-router";
+import useTabStore from "../../store/useTabStore";
 import WindowTab from "../Tab/WindowTab";
 
-function Header({tabInfo: {tabList, setTabList, focusTab, setFocusTab}}) {
+function Header() {
   const navigate = useNavigate();
+  const {browserTabList, tabFocusedIndex} = useTabStore();
 
   const handleLogoClick = () => {
     navigate("/");
@@ -17,10 +19,8 @@ function Header({tabInfo: {tabList, setTabList, focusTab, setFocusTab}}) {
         </h3>
       </div>
       <div className="h-[40%] w-full flex items-end overflow-scroll">
-        {tabList.length > 0 &&
-          tabList.map((tabUrl, index) => (
-            <WindowTab key={tabUrl} index={index} tabList={tabList} setTabList={setTabList} setFocusTab={setFocusTab} hidden={focusTab === index} />
-          ))}
+        {browserTabList.length > 0 &&
+          browserTabList.map((tabUrl, index) => <WindowTab key={tabUrl} index={index} isHidden={tabFocusedIndex === index} />)}
       </div>
     </header>
   );
