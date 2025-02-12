@@ -34,6 +34,7 @@ export default [
       "import/no-unresolved": "off",
       "prettier/prettier": "error",
       "react/prop-types": "off",
+      "react/no-unknown-property": "off",
     },
   },
 ];

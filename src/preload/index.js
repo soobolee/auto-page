@@ -1,16 +1,36 @@
-import {contextBridge} from "electron";
-import {electronAPI} from "@electron-toolkit/preload";
+import {contextBridge, ipcRenderer} from "electron";
 
-const api = {};
+try {
+  contextBridge.exposeInMainWorld("electronAPI", {});
 
-if (process.contextIsolated) {
-  try {
-    contextBridge.exposeInMainWorld("electron", electronAPI);
-    contextBridge.exposeInMainWorld("api", api);
-  } catch (error) {
-    console.error(error);
-  }
-} else {
-  window.electron = electronAPI;
-  window.api = api;
+  window.addEventListener("DOMContentLoaded", () => {
+    if (document.title === "Auto Page") {
+      return;
+    }
+
+    setTimeout(() => {
+      const iframe = document.getElementsByTagName("iframe");
+      Array.from(iframe).forEach((frame) => {
+        frame.remove();
+      });
+    }, 3000);
+
+    document.addEventListener("click", (event) => {
+      const aTag = event.target.closest("a");
+      const buttonTag = event.target.closest("button");
+      const iButtonTag = event.target.closest("input[type='button']");
+
+      if (aTag) {
+        ipcRenderer.sendToHost("new-tab", aTag.href);
+      }
+      if (buttonTag) {
+        ipcRenderer.sendToHost("click-button", buttonTag.toString());
+      }
+      if (iButtonTag) {
+        ipcRenderer.sendToHost("click-i-button", iButtonTag.toString());
+      }
+    });
+  });
+} catch (error) {
+  console.error(error);
 }
