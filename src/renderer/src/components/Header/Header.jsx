@@ -12,6 +12,8 @@ function Header() {
     navigate("/");
   };
 
+  const focusedTabInfo = browserTabList[tabFocusedIndex] || {};
+
   return (
     <header className="h-[10%] flex flex-col justify-around border">
       <div className="h-[15%] w-full" style={{WebkitAppRegion: "drag"}}></div>
@@ -21,15 +23,19 @@ function Header() {
         </h3>
       </div>
       <div className="h-[40%] w-full flex items-end overflow-scroll">
-        <button className="w-8 h-8 my-1 ml-2 bg-sub rounded-4xl hover:bg-gray-500">
-          <FontAwesomeIcon icon={faArrowLeft} />
-        </button>
-        <button className="w-8 h-8 my-1 mx-1 bg-sub rounded-4xl hover:bg-gray-500">
-          <FontAwesomeIcon icon={faArrowRight} />
-        </button>
-        <button className="w-8 h-8 my-1 mr-2 bg-sub rounded-4xl hover:bg-gray-500">
-          <FontAwesomeIcon className="text-white" icon={faRotateRight} />
-        </button>
+        {browserTabList.length > 0 && (
+          <>
+            <button className="w-8 h-8 my-1 ml-2 bg-sub rounded-4xl hover:bg-gray-500" onClick={focusedTabInfo.goBack}>
+              <FontAwesomeIcon className={focusedTabInfo.canGoBack ? "text-white" : "text-black"} icon={faArrowLeft} />
+            </button>
+            <button className="w-8 h-8 my-1 mx-1 bg-sub rounded-4xl hover:bg-gray-500" onClick={focusedTabInfo.goForward}>
+              <FontAwesomeIcon className={focusedTabInfo.canGoForward ? "text-white" : "text-black"} icon={faArrowRight} />
+            </button>
+            <button className="w-8 h-8 my-1 mr-2 bg-sub rounded-4xl hover:bg-gray-500" onClick={focusedTabInfo.goReload}>
+              <FontAwesomeIcon className="text-white" icon={faRotateRight} />
+            </button>
+          </>
+        )}
         {browserTabList.length > 0 &&
           browserTabList.map((tab, index) => <WindowTab key={tab.tabUrl} title={tab.title} index={index} isHidden={tabFocusedIndex === index} />)}
       </div>

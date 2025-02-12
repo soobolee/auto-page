@@ -17,7 +17,21 @@ function WebView({url, isHidden, index}) {
       webViewRef.current.openDevTools();
 
       browserTabList[index].title = webViewRef.current.getTitle();
+      browserTabList[index].canGoBack = webViewRef.current.canGoBack();
+      browserTabList[index].canGoForward = webViewRef.current.canGoForward();
+
+      browserTabList[index].goBack = () => {
+        webViewRef.current.goBack();
+      };
+      browserTabList[index].goForward = () => {
+        webViewRef.current.goForward();
+      };
+      browserTabList[index].goReload = () => {
+        webViewRef.current.reload();
+      };
+
       setBrowserTabList([...browserTabList]);
+      console.log(browserTabList);
     });
     webViewRef.current.addEventListener("did-fail-load", () => {});
     webViewRef.current.addEventListener("ipc-message", addNewTab);
