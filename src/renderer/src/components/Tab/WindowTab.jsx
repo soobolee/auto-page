@@ -12,6 +12,7 @@ function WindowTab({index, tabList, setTabList, setFocusTab, hidden}) {
         onClick={(e) => {
           e.stopPropagation();
           setTabList(tabList.filter((_, filterIndex) => filterIndex !== index));
+          setFocusTab((focusTab) => (tabList.length - 1 === index ? focusTab - 1 : focusTab));
         }}
       >
         X
