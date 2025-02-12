@@ -1,7 +1,7 @@
 import {useNavigate} from "react-router";
 import WindowTab from "../Tab/WindowTab";
 
-function Header({tabList, focusTab, setFocusTab}) {
+function Header({tabInfo: {tabList, setTabList, focusTab, setFocusTab}}) {
   const navigate = useNavigate();
 
   const handleLogoClick = () => {
@@ -18,7 +18,9 @@ function Header({tabList, focusTab, setFocusTab}) {
       </div>
       <div className="h-[40%] w-full flex items-end overflow-scroll">
         {tabList.length > 0 &&
-          tabList.map((tabUrl, index) => <WindowTab key={tabUrl} index={index} setFocusTab={setFocusTab} hidden={focusTab === index} />)}
+          tabList.map((tabUrl, index) => (
+            <WindowTab key={tabUrl} index={index} tabList={tabList} setTabList={setTabList} setFocusTab={setFocusTab} hidden={focusTab === index} />
+          ))}
       </div>
     </header>
   );

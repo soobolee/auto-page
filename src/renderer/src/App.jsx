@@ -8,7 +8,7 @@ function App() {
 
   return (
     <main className="w-full h-full bg-main">
-      <Header tabList={tabList} focusTab={focusTab} setFocusTab={setFocusTab} />
+      <Header tabInfo={{tabList, setTabList, focusTab, setFocusTab}} />
       <Outlet context={{tabList, setTabList, focusTab, setFocusTab}} />
     </main>
   );
