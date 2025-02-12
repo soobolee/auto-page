@@ -1,24 +1,27 @@
 import {useEffect, useRef} from "react";
 import useTabStore from "../../store/useTabStore";
 
-function WebView({url, isHidden}) {
+function WebView({url, isHidden, index}) {
   const {browserTabList, setBrowserTabList, setTabFocusedIndex} = useTabStore();
   const webViewRef = useRef(null);
 
   useEffect(() => {
     const addNewTab = (event) => {
       if (event.channel === "new-tab") {
-        setBrowserTabList([...browserTabList, ...event.args]);
+        setBrowserTabList([...browserTabList, {tabUrl: event.args[0]}]);
         setTabFocusedIndex(browserTabList.length + event.args.length - 1);
       }
     };
 
     webViewRef.current.addEventListener("dom-ready", () => {
       webViewRef.current.openDevTools();
+
+      browserTabList[index].title = webViewRef.current.getTitle();
+      setBrowserTabList([...browserTabList]);
     });
     webViewRef.current.addEventListener("did-fail-load", () => {});
     webViewRef.current.addEventListener("ipc-message", addNewTab);
-  }, [browserTabList, setBrowserTabList, setTabFocusedIndex]);
+  }, [browserTabList, index, setBrowserTabList, setTabFocusedIndex]);
 
   return <webview src={url} ref={webViewRef} className={`${!isHidden && "hidden"} bg-white w-full col-span-7`}></webview>;
 }

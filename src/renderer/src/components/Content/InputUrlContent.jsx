@@ -14,7 +14,7 @@ function InputUrlContent() {
           className="w-[50%] h-14 p-4 rounded-4xl bg-white placeholder:italic overflow-auto"
           onKeyDown={(event) => {
             if (event.key === "Enter") {
-              setBrowserTabList(["https://naver.com"]);
+              setBrowserTabList([{tabUrl: "https://naver.com"}]);
             }
           }}
           placeholder="매크로 기록 URL 입력"

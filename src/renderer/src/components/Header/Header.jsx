@@ -20,7 +20,7 @@ function Header() {
       </div>
       <div className="h-[40%] w-full flex items-end overflow-scroll">
         {browserTabList.length > 0 &&
-          browserTabList.map((tabUrl, index) => <WindowTab key={tabUrl} index={index} isHidden={tabFocusedIndex === index} />)}
+          browserTabList.map((tab, index) => <WindowTab key={tab.tabUrl} title={tab.title} index={index} isHidden={tabFocusedIndex === index} />)}
       </div>
     </header>
   );

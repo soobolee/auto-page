@@ -1,18 +1,19 @@
 import useTabStore from "../../store/useTabStore";
 
-function WindowTab({index, isHidden}) {
+function WindowTab({index, title, isHidden}) {
   const {browserTabList, tabFocusedIndex, setBrowserTabList, setTabFocusedIndex} = useTabStore();
 
   return (
     <div
-      className={`${isHidden ? "bg-amber-400" : "bg-tab"} w-[100px] p-2 mr-0.5 flex justify-between text-white rounded-t-xl`}
+      className={`${isHidden ? "bg-amber-400" : "bg-tab"} w-[8rem] p-2 mr-0.5 flex text-white text-xs justify-between rounded-t-xl`}
       onClick={() => {
         setTabFocusedIndex(index);
       }}
+      title={title}
     >
-      Naver
+      <p className="w-14 text-nowrap overflow-hidden">{title}</p>
       <button
-        className="text-white w-5 hover:rounded-full hover:bg-sub cursor-pointer"
+        className="w-5 text-xs hover:rounded-full hover:bg-sub cursor-pointer"
         onClick={(e) => {
           e.stopPropagation();
           setBrowserTabList(browserTabList.filter((_, filterIndex) => filterIndex !== index));
