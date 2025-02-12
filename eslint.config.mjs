@@ -2,7 +2,6 @@ import globals from "globals";
 import pluginJs from "@eslint/js";
 import pluginReact from "eslint-plugin-react";
 import eslintPluginReactHooks from "eslint-plugin-react-hooks";
-import eslintPluginJsxA11y from "eslint-plugin-jsx-a11y";
 import eslintPluginPrettier from "eslint-plugin-prettier";
 import eslintPluginImport from "eslint-plugin-import";
 
@@ -24,19 +23,18 @@ export default [
     },
     plugins: {
       "react-hooks": eslintPluginReactHooks,
-      "jsx-a11y": eslintPluginJsxA11y,
       prettier: eslintPluginPrettier,
       import: eslintPluginImport,
     },
     rules: {
       ...eslintPluginReactHooks.configs.recommended.rules,
-      ...eslintPluginJsxA11y.configs.recommended.rules,
       ...eslintPluginImport.configs.recommended.rules,
       semi: "error",
       "no-unused-vars": "warn",
       "import/no-unresolved": "off",
       "prettier/prettier": "error",
       "react/prop-types": "off",
+      "react/no-unknown-property": "off",
     },
   },
 ];

@@ -1,7 +1,27 @@
+import {useNavigate} from "react-router";
+import useTabStore from "../../store/useTabStore";
+import WindowTab from "../Tab/WindowTab";
+
 function Header() {
+  const navigate = useNavigate();
+  const {browserTabList, tabFocusedIndex} = useTabStore();
+
+  const handleLogoClick = () => {
+    navigate("/");
+  };
+
   return (
-    <header className="h-[10%] flex justify-center items-center border" style={{WebkitAppRegion: "drag"}}>
-      <h3 className="text-white text-2xl">Auto Pape</h3>
+    <header className="h-[10%] flex flex-col justify-around border">
+      <div className="h-[15%] w-full" style={{WebkitAppRegion: "drag"}}></div>
+      <div className="h-[35%] w-full text-center">
+        <h3 className="text-white text-2xl" onClick={handleLogoClick}>
+          Auto Pape
+        </h3>
+      </div>
+      <div className="h-[40%] w-full flex items-end overflow-scroll">
+        {browserTabList.length > 0 &&
+          browserTabList.map((tabUrl, index) => <WindowTab key={tabUrl} index={index} isHidden={tabFocusedIndex === index} />)}
+      </div>
     </header>
   );
 }
