@@ -2,13 +2,15 @@ import {useNavigate} from "react-router";
 import {faArrowLeft, faArrowRight, faRotateRight} from "@fortawesome/free-solid-svg-icons";
 import useTabStore from "../../store/useTabStore";
 import WindowTab from "../Tab/WindowTab";
+import Button from "../Button/Button";
 import CircleButton from "../Button/CircleButton";
 
 function Header() {
   const navigate = useNavigate();
-  const {browserTabList, tabFocusedIndex} = useTabStore();
+  const {browserTabList, tabFocusedIndex, resetTabInfo} = useTabStore();
 
   const handleLogoClick = () => {
+    resetTabInfo();
     navigate("/");
   };
 
@@ -17,10 +19,9 @@ function Header() {
   return (
     <header className="h-[10%] flex flex-col justify-around border">
       <div className="h-[15%] w-full" style={{WebkitAppRegion: "drag"}}></div>
-      <div className="h-[35%] w-full text-center">
-        <h3 className="text-white text-2xl" onClick={handleLogoClick}>
-          Auto Pape
-        </h3>
+      <div className="h-[35%] w-full flex">
+        <h3 className="text-white text-2xl mx-auto">Auto Pape</h3>
+        <Button buttonText={"메인"} buttonColor={"sub"} onClick={handleLogoClick} />
       </div>
       <div className="h-[40%] w-full flex items-end overflow-scroll">
         {browserTabList.length > 0 && (
