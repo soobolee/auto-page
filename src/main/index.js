@@ -1,5 +1,6 @@
 import {app, BrowserWindow, ipcMain} from "electron";
 import {join} from "path";
+import fs from "fs/promises";
 import {electronApp, optimizer, is} from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
 
@@ -28,10 +29,31 @@ function createWindow() {
     mainWindow.loadFile(join(__dirname, "../renderer/index.html"));
   }
 
-  mainWindow.webContents.on("will-attach-webview", (e, webPreferences) => {
+  mainWindow.webContents.on("will-attach-webview", (_, webPreferences) => {
     webPreferences.preload = join(__dirname, "../preload/index.js");
   });
 }
+
+async function macroFileWrite(fileContent) {
+  try {
+    await fs.writeFile(join(__dirname, "recordedStaged.json"), JSON.stringify(fileContent), {flag: "w+"});
+
+    return true;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+const macroStageList = [];
+
+ipcMain.on("event-occurred", async (event, payload) => {
+  macroStageList.push(JSON.parse(payload));
+  const isSuccess = await macroFileWrite(macroStageList);
+
+  if (isSuccess) {
+    event.reply("down-success", JSON.stringify(macroStageList));
+  }
+});
 
 app.whenReady().then(() => {
   electronApp.setAppUserModelId("com.electron");

@@ -3,6 +3,12 @@ import {contextBridge, ipcRenderer} from "electron";
 try {
   contextBridge.exposeInMainWorld("electronAPI", {});
 
+  ipcRenderer.on("down-success", (_, macroStageList) => {
+    if (macroStageList) {
+      ipcRenderer.sendToHost("process-success", macroStageList);
+    }
+  });
+
   window.addEventListener("DOMContentLoaded", () => {
     if (document.title === "Auto Page") {
       return;
@@ -16,18 +22,68 @@ try {
     }, 3000);
 
     document.addEventListener("click", (event) => {
-      const aTag = event.target.closest("a");
-      const buttonTag = event.target.closest("button");
-      const iButtonTag = event.target.closest("input[type='button']");
+      if (event.isTrusted) {
+        const eventTargetUrl = location.href;
+        const aTag = event.target.closest("a");
+        const buttonTag = event.target.closest("button");
+        const iButtonTag = event.target.closest("input[type='button']");
 
-      if (aTag && aTag.target === "_blank") {
-        ipcRenderer.sendToHost("new-tab", aTag.href);
-      }
-      if (buttonTag) {
-        ipcRenderer.sendToHost("click-button", buttonTag.toString());
-      }
-      if (iButtonTag) {
-        ipcRenderer.sendToHost("click-i-button", iButtonTag.toString());
+        const eventTarget = aTag || buttonTag || iButtonTag;
+        const eventTargetId = eventTarget.getAttribute("id");
+        const eventTargetClassList = Array.from(eventTarget.classList);
+        let eventTargetClassInfo = [];
+
+        if (eventTargetClassList.length) {
+          eventTargetClassInfo = eventTargetClassList.map((className) => {
+            const duplicatedClassList = Array.from(document.getElementsByClassName(className));
+
+            return {
+              className: className,
+              classIndex: duplicatedClassList.indexOf(eventTarget),
+            };
+          });
+        }
+
+        if (aTag) {
+          if (aTag.target === "_blank") {
+            ipcRenderer.sendToHost("new-tab", aTag.href);
+          }
+
+          ipcRenderer.send(
+            "event-occurred",
+            JSON.stringify({
+              id: eventTargetId,
+              class: eventTargetClassInfo,
+              href: aTag.href,
+              url: eventTargetUrl,
+              method: "A",
+            })
+          );
+        }
+
+        if (buttonTag) {
+          ipcRenderer.send(
+            "event-occurred",
+            JSON.stringify({
+              id: eventTargetId,
+              class: eventTargetClassInfo,
+              url: eventTargetUrl,
+              method: "BUTTON",
+            })
+          );
+        }
+
+        if (iButtonTag) {
+          ipcRenderer.send(
+            "event-occurred",
+            JSON.stringify({
+              id: eventTargetId,
+              class: eventTargetClassInfo,
+              url: eventTargetUrl,
+              method: "INPUT",
+            })
+          );
+        }
       }
     });
   });
