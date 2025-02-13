@@ -5,6 +5,7 @@ const useTabStore = create((set) => ({
   tabFocusedIndex: 0,
   setBrowserTabList: (newTabList) => set({browserTabList: newTabList}),
   setTabFocusedIndex: (focusIndex) => set({tabFocusedIndex: focusIndex}),
+  resetTabInfo: () => set({browserTabList: [], tabFocusedIndex: 0}),
 }));
 
 export default useTabStore;

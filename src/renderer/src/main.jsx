@@ -10,8 +10,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <HashRouter>
       <Routes>
         <Route path="/" element={<App />}>
-          <Route path="/" element={<MainContent />} />
-          <Route path="/macro" element={<MacroContent />} />
+          <Route path="" element={<MainContent />} />
+          <Route path="macro" element={<MacroContent />} />
         </Route>
       </Routes>
     </HashRouter>
