@@ -31,7 +31,6 @@ function WebView({url, isHidden, index}) {
       };
 
       setBrowserTabList([...browserTabList]);
-      console.log(browserTabList);
     });
     webViewRef.current.addEventListener("did-fail-load", () => {});
     webViewRef.current.addEventListener("ipc-message", addNewTab);

@@ -1,7 +1,9 @@
+import StageCard from "../Card/StageCard";
+
 function ImageStage() {
   return (
-    <aside className="w-full h-full p-5 border">
-      <div id="imgStage" className="w-full h-[18%] border"></div>
+    <aside className="w-full h-full p-5 border flex flex-col overflow-scroll">
+      <StageCard direction="col" />
     </aside>
   );
 }
