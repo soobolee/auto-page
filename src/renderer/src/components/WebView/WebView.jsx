@@ -16,24 +16,27 @@ function WebView({url, isHidden, index}) {
       }
 
       if (event.channel === "process-success") {
-        setMacroStageList(JSON.parse(event.args[0]));
+        const eventStageInfo = event.args[0];
+        setMacroStageList(JSON.parse(eventStageInfo));
       }
     };
 
     webViewRef.current.addEventListener("dom-ready", () => {
       webViewRef.current.openDevTools();
 
-      browserTabList[index].title = webViewRef.current.getTitle();
-      browserTabList[index].canGoBack = webViewRef.current.canGoBack();
-      browserTabList[index].canGoForward = webViewRef.current.canGoForward();
+      const browserTab = browserTabList[index];
 
-      browserTabList[index].goBack = () => {
+      browserTab.title = webViewRef.current.getTitle();
+      browserTab.canGoBack = webViewRef.current.canGoBack();
+      browserTab.canGoForward = webViewRef.current.canGoForward();
+
+      browserTab.goBack = () => {
         webViewRef.current.goBack();
       };
-      browserTabList[index].goForward = () => {
+      browserTab.goForward = () => {
         webViewRef.current.goForward();
       };
-      browserTabList[index].goReload = () => {
+      browserTab.goReload = () => {
         webViewRef.current.reload();
       };
 
