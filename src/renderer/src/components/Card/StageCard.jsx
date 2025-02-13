@@ -3,23 +3,23 @@ import {nanoid} from "nanoid";
 function StageCard({direction, stageInfo}) {
   return (
     <div className={`${direction === "row" ? "w-50 h-full mx-2" : "w-full h-29 my-2"} shrink-0 border`}>
-      {direction === "row" ? (
+      {direction === "row" && (
         <>
           <p>{stageInfo.method}</p>
           <p>{stageInfo.id}</p>
-          <p>
+          <div>
             {stageInfo.class.map((stageClass) => (
               <div key={nanoid()}>
-                <span>{stageClass.className} : </span>
-                <span>{stageClass.classIndex}</span>
+                <p>
+                  {stageClass.className} : {stageClass.classIndex}
+                </p>
               </div>
             ))}
-          </p>
+          </div>
           <p>{stageInfo.url}</p>
         </>
-      ) : (
-        <>{stageInfo.img}</>
       )}
+      {direction === "col" && <img className="w-full h-full" src={stageInfo} />}
     </div>
   );
 }

@@ -2,6 +2,7 @@ import {useNavigate} from "react-router";
 import {nanoid} from "nanoid";
 import {faArrowLeft, faArrowRight, faRotateRight} from "@fortawesome/free-solid-svg-icons";
 import useTabStore from "../../store/useTabStore";
+import useMacroStageStore from "../../store/useMacroStageStore";
 import WindowTab from "../Tab/WindowTab";
 import Button from "../Button/Button";
 import CircleButton from "../Button/CircleButton";
@@ -9,9 +10,11 @@ import CircleButton from "../Button/CircleButton";
 function Header() {
   const navigate = useNavigate();
   const {browserTabList, tabFocusedIndex, resetTabInfo} = useTabStore();
+  const {resetStageList} = useMacroStageStore();
 
   const handleLogoClick = () => {
     resetTabInfo();
+    resetStageList();
     navigate("/");
   };
 

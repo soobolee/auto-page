@@ -1,50 +1,79 @@
-import {useEffect, useRef} from "react";
+import {useLayoutEffect, useRef} from "react";
 import useTabStore from "../../store/useTabStore";
-import useStageStore from "../../store/useMacroStageStore";
+import useMacroStageStore from "../../store/useMacroStageStore";
 
 function WebView({url, isHidden, index}) {
   const {browserTabList, setBrowserTabList, setTabFocusedIndex} = useTabStore();
-  const {setMacroStageList} = useStageStore();
+  const {macroImageList, setMacroStageList, setImageStageList} = useMacroStageStore();
 
   const webViewRef = useRef(null);
 
-  useEffect(() => {
-    const eventHandling = (event) => {
+  useLayoutEffect(() => {
+    const currentWebview = webViewRef.current;
+
+    const handleWebviewEvent = (event) => {
       if (event.channel === "new-tab") {
         setBrowserTabList([...browserTabList, {tabUrl: event.args[0]}]);
         setTabFocusedIndex(browserTabList.length + event.args.length - 1);
       }
 
-      if (event.channel === "process-success") {
-        const eventStageInfo = event.args[0];
-        setMacroStageList(JSON.parse(eventStageInfo));
+      if (event.channel === "down-success") {
+        const capturePage = async () => {
+          const captureImage = await currentWebview.capturePage(0.1);
+          const resizeImage = await captureImage.resize({
+            width: 100,
+            height: 100,
+            quality: "good",
+          });
+          const imageUrl = await resizeImage.toDataURL();
+          const eventStageList = event.args[0];
+
+          setImageStageList([...macroImageList, imageUrl]);
+          setMacroStageList(JSON.parse(eventStageList));
+        };
+
+        capturePage();
       }
     };
 
-    webViewRef.current.addEventListener("dom-ready", () => {
-      webViewRef.current.openDevTools();
+    currentWebview.addEventListener("ipc-message", handleWebviewEvent);
+
+    return () => {
+      currentWebview.removeEventListener("ipc-message", handleWebviewEvent);
+    };
+  }, [browserTabList, index, macroImageList, setBrowserTabList, setImageStageList, setMacroStageList, setTabFocusedIndex]);
+
+  useLayoutEffect(() => {
+    const currentWebview = webViewRef.current;
+
+    const handleDomReady = () => {
+      currentWebview.openDevTools();
 
       const browserTab = browserTabList[index];
 
-      browserTab.title = webViewRef.current.getTitle();
-      browserTab.canGoBack = webViewRef.current.canGoBack();
-      browserTab.canGoForward = webViewRef.current.canGoForward();
+      browserTab.title = currentWebview.getTitle();
+      browserTab.canGoBack = currentWebview.canGoBack();
+      browserTab.canGoForward = currentWebview.canGoForward();
 
       browserTab.goBack = () => {
-        webViewRef.current.goBack();
+        currentWebview.goBack();
       };
       browserTab.goForward = () => {
-        webViewRef.current.goForward();
+        currentWebview.goForward();
       };
       browserTab.goReload = () => {
-        webViewRef.current.reload();
+        currentWebview.reload();
       };
 
       setBrowserTabList([...browserTabList]);
-    });
-    webViewRef.current.addEventListener("did-fail-load", () => {});
-    webViewRef.current.addEventListener("ipc-message", eventHandling);
-  }, [browserTabList, index, setBrowserTabList, setMacroStageList, setTabFocusedIndex]);
+    };
+
+    currentWebview.addEventListener("dom-ready", handleDomReady);
+
+    return () => {
+      currentWebview.removeEventListener("dom-ready", handleDomReady);
+    };
+  }, [browserTabList, index, setBrowserTabList]);
 
   return <webview src={url} ref={webViewRef} className={`${!isHidden && "hidden"} bg-white w-full col-span-7`}></webview>;
 }

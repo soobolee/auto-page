@@ -5,7 +5,7 @@ try {
 
   ipcRenderer.on("down-success", (_, macroStageList) => {
     if (macroStageList) {
-      ipcRenderer.sendToHost("process-success", macroStageList);
+      ipcRenderer.sendToHost("down-success", macroStageList);
     }
   });
 
