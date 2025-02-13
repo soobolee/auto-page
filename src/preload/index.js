@@ -56,7 +56,7 @@ try {
               class: eventTargetClassInfo,
               href: aTag.href,
               url: eventTargetUrl,
-              method: "A",
+              method: "A:CLICK",
             })
           );
         }
@@ -68,7 +68,7 @@ try {
               id: eventTargetId,
               class: eventTargetClassInfo,
               url: eventTargetUrl,
-              method: "BUTTON",
+              method: "BUTTON:CLICK",
             })
           );
         }
@@ -80,7 +80,7 @@ try {
               id: eventTargetId,
               class: eventTargetClassInfo,
               url: eventTargetUrl,
-              method: "INPUT",
+              method: "INPUT:CLICK",
             })
           );
         }
