@@ -1,4 +1,5 @@
 import {useNavigate} from "react-router";
+import {nanoid} from "nanoid";
 import {faArrowLeft, faArrowRight, faRotateRight} from "@fortawesome/free-solid-svg-icons";
 import useTabStore from "../../store/useTabStore";
 import WindowTab from "../Tab/WindowTab";
@@ -32,7 +33,7 @@ function Header() {
           </>
         )}
         {browserTabList.length > 0 &&
-          browserTabList.map((tab, index) => <WindowTab key={tab.tabUrl} title={tab.title} index={index} isHidden={tabFocusedIndex === index} />)}
+          browserTabList.map((tab, index) => <WindowTab key={nanoid()} title={tab.title} index={index} isHidden={tabFocusedIndex === index} />)}
       </div>
     </header>
   );
