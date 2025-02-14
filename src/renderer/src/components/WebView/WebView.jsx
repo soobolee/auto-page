@@ -1,12 +1,21 @@
-import {useLayoutEffect, useRef} from "react";
+import {useEffect, useLayoutEffect, useRef} from "react";
 import useTabStore from "../../store/useTabStore";
 import useMacroStageStore from "../../store/useMacroStageStore";
 
 function WebView({url, isHidden, index}) {
   const {browserTabList, setBrowserTabList, setTabFocusedIndex} = useTabStore();
-  const {macroImageList, setMacroStageList, setImageStageList} = useMacroStageStore();
+  const {macroStageList, macroImageList, isMacroStart, stopMacro, setMacroStageList, setImageStageList} = useMacroStageStore();
 
   const webViewRef = useRef(null);
+
+  useEffect(() => {
+    if (isMacroStart) {
+      macroStageList.forEach((stageInfo) => {
+        webViewRef.current.send("auto-macro", JSON.stringify(stageInfo));
+      });
+      stopMacro();
+    }
+  }, [macroStageList, isMacroStart, stopMacro]);
 
   useLayoutEffect(() => {
     const currentWebview = webViewRef.current;
@@ -14,7 +23,6 @@ function WebView({url, isHidden, index}) {
     const handleWebviewEvent = (event) => {
       if (event.channel === "new-tab") {
         setBrowserTabList([...browserTabList, {tabUrl: event.args[0]}]);
-        setTabFocusedIndex(browserTabList.length + event.args.length - 1);
       }
 
       if (event.channel === "down-success") {
@@ -41,7 +49,7 @@ function WebView({url, isHidden, index}) {
     return () => {
       currentWebview.removeEventListener("ipc-message", handleWebviewEvent);
     };
-  }, [browserTabList, index, macroImageList, setBrowserTabList, setImageStageList, setMacroStageList, setTabFocusedIndex]);
+  }, [browserTabList, macroImageList, setBrowserTabList, setImageStageList, setMacroStageList, setTabFocusedIndex]);
 
   useLayoutEffect(() => {
     const currentWebview = webViewRef.current;

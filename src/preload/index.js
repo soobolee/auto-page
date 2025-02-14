@@ -1,25 +1,37 @@
-import {contextBridge, ipcRenderer} from "electron";
+import {ipcRenderer} from "electron";
 
 try {
-  contextBridge.exposeInMainWorld("electronAPI", {});
-
   ipcRenderer.on("down-success", (_, macroStageList) => {
     if (macroStageList) {
       ipcRenderer.sendToHost("down-success", macroStageList);
     }
   });
 
-  window.addEventListener("DOMContentLoaded", () => {
+  ipcRenderer.on("auto-macro", (_, macroStageInfo) => {
+    let isActived = false;
+    const stageInfo = JSON.parse(macroStageInfo);
+
+    if (stageInfo.id) {
+      document.querySelector(`#${stageInfo.id}`).click();
+      isActived = true;
+    }
+
+    if (!isActived && stageInfo.class) {
+      stageInfo.class.forEach((classInfo) => {
+        document.querySelectorAll(`.${classInfo.className}`)[classInfo.classIndex].click();
+      });
+    }
+  });
+
+  document.addEventListener("DOMContentLoaded", () => {
     if (document.title === "Auto Page") {
       return;
     }
 
-    setTimeout(() => {
-      const iframe = document.getElementsByTagName("iframe");
-      Array.from(iframe).forEach((frame) => {
-        frame.remove();
-      });
-    }, 3000);
+    const iframe = document.getElementsByTagName("iframe");
+    Array.from(iframe).forEach((frame) => {
+      frame.remove();
+    });
 
     document.addEventListener("click", (event) => {
       if (event.isTrusted) {
