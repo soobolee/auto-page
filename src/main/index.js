@@ -34,25 +34,12 @@ function createWindow() {
   });
 }
 
-async function macroFileWrite(fileContent) {
-  try {
-    await fs.writeFile(join(__dirname, "recordedStaged.json"), JSON.stringify(fileContent), {flag: "w+"});
-
-    return true;
-  } catch (error) {
-    console.error(error);
-  }
-}
-
 const macroStageList = [];
 
-ipcMain.on("event-occurred", async (event, payload) => {
+ipcMain.on("event-occurred", (event, payload) => {
   macroStageList.push(JSON.parse(payload));
-  const isSuccess = await macroFileWrite(macroStageList);
 
-  if (isSuccess) {
-    event.reply("down-success", JSON.stringify(macroStageList));
-  }
+  event.reply("down-success", JSON.stringify(macroStageList));
 });
 
 app.whenReady().then(() => {
