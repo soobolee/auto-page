@@ -10,7 +10,7 @@ import CircleButton from "../Button/CircleButton";
 function Header() {
   const navigate = useNavigate();
   const {browserTabList, tabFocusedIndex, resetTabInfo} = useTabStore();
-  const {startMacro, resetStageList} = useMacroStageStore();
+  const {startMacroExecute, resetStageList} = useMacroStageStore();
 
   const handleLogoClick = () => {
     resetTabInfo();
@@ -19,7 +19,7 @@ function Header() {
   };
 
   const handleStartMacro = () => {
-    startMacro();
+    startMacroExecute();
   };
 
   const focusedTabInfo = browserTabList[tabFocusedIndex] || {};

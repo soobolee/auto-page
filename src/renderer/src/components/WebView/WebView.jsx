@@ -4,18 +4,19 @@ import useMacroStageStore from "../../stores/useMacroStageStore";
 
 function WebView({url, isHidden, index}) {
   const {browserTabList, setBrowserTabList, setTabFocusedIndex} = useTabStore();
-  const {macroStageList, macroImageList, isMacroStart, stopMacro, setMacroStageList, setImageStageList} = useMacroStageStore();
+  const {macroStageList, macroImageList, isMacroStartExecute, isMacroRecordStart, stopMacroExecute, setMacroStageList, setImageStageList} =
+    useMacroStageStore();
 
   const webViewRef = useRef(null);
 
   useEffect(() => {
-    if (isMacroStart) {
+    if (isMacroStartExecute) {
       macroStageList.forEach((stageInfo) => {
         webViewRef.current.send("auto-macro", JSON.stringify(stageInfo));
       });
-      stopMacro();
+      stopMacroExecute();
     }
-  }, [macroStageList, isMacroStart, stopMacro]);
+  }, [macroStageList, isMacroStartExecute, stopMacroExecute]);
 
   useLayoutEffect(() => {
     const currentWebview = webViewRef.current;
@@ -26,6 +27,9 @@ function WebView({url, isHidden, index}) {
       }
 
       if (event.channel === "down-success") {
+        if (!isMacroRecordStart) {
+          return;
+        }
         const capturePage = async () => {
           const captureImage = await currentWebview.capturePage(0.1);
           const resizeImage = await captureImage.resize({
@@ -49,7 +53,16 @@ function WebView({url, isHidden, index}) {
     return () => {
       currentWebview.removeEventListener("ipc-message", handleWebviewEvent);
     };
-  }, [browserTabList, macroImageList, macroStageList, setBrowserTabList, setImageStageList, setMacroStageList, setTabFocusedIndex]);
+  }, [
+    browserTabList,
+    isMacroRecordStart,
+    macroImageList,
+    macroStageList,
+    setBrowserTabList,
+    setImageStageList,
+    setMacroStageList,
+    setTabFocusedIndex,
+  ]);
 
   useLayoutEffect(() => {
     const currentWebview = webViewRef.current;
