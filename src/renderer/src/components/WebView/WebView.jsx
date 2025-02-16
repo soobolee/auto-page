@@ -37,7 +37,7 @@ function WebView({url, isHidden, index}) {
           const eventStageList = event.args[0];
 
           setImageStageList([...macroImageList, imageUrl]);
-          setMacroStageList(JSON.parse(eventStageList));
+          setMacroStageList([...macroStageList, JSON.parse(eventStageList)]);
         };
 
         capturePage();
@@ -49,7 +49,7 @@ function WebView({url, isHidden, index}) {
     return () => {
       currentWebview.removeEventListener("ipc-message", handleWebviewEvent);
     };
-  }, [browserTabList, macroImageList, setBrowserTabList, setImageStageList, setMacroStageList, setTabFocusedIndex]);
+  }, [browserTabList, macroImageList, macroStageList, setBrowserTabList, setImageStageList, setMacroStageList, setTabFocusedIndex]);
 
   useLayoutEffect(() => {
     const currentWebview = webViewRef.current;

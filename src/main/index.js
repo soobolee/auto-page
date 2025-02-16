@@ -1,6 +1,6 @@
 import {app, BrowserWindow, ipcMain} from "electron";
 import {join} from "path";
-import fs from "fs/promises";
+import fs from "fs";
 import {electronApp, optimizer, is} from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
 
@@ -34,12 +34,10 @@ function createWindow() {
   });
 }
 
-const macroStageList = [];
-
 ipcMain.on("event-occurred", (event, payload) => {
-  macroStageList.push(JSON.parse(payload));
+  macroFileWrite(payload);
 
-  event.reply("down-success", JSON.stringify(macroStageList));
+  event.reply("down-success", payload);
 });
 
 app.whenReady().then(() => {
@@ -63,3 +61,22 @@ app.on("window-all-closed", () => {
     app.quit();
   }
 });
+
+function macroFileWrite(fileContent) {
+  try {
+    if (fs.existsSync(join(__dirname, "recordedStaged.json"))) {
+      const beforeStageList = fs.readFileSync(join(__dirname, "recordedStaged.json"));
+
+      if (!beforeStageList) {
+        console.error("매크로 파일을 불러오지 못했습니다.");
+        return;
+      }
+
+      fs.writeFileSync(join(__dirname, "recordedStaged.json"), JSON.stringify([...JSON.parse(beforeStageList), fileContent]), {flag: "w+"});
+    } else {
+      fs.writeFileSync(join(__dirname, "recordedStaged.json"), JSON.stringify([fileContent]), {flag: "w+"});
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}

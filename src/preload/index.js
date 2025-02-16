@@ -61,7 +61,12 @@ try {
         const iButtonTag = event.target.closest("input[type='button']");
 
         const eventTarget = aTag || buttonTag || iButtonTag;
-        const eventTargetId = eventTarget.getAttribute("id");
+
+        if (!eventTarget) {
+          return;
+        }
+
+        const eventTargetId = eventTarget.id;
         const eventTargetClassList = Array.from(eventTarget.classList);
         let eventTargetClassInfo = [];
 
@@ -117,6 +122,37 @@ try {
           );
         }
       }
+    });
+
+    document.addEventListener("change", (event) => {
+      console.log(event);
+      const eventTargetUrl = location.href;
+      const eventTarget = event.target;
+      const eventTargetClassList = Array.from(eventTarget.classList);
+
+      let eventTargetClassInfo = [];
+
+      if (eventTargetClassList.length) {
+        eventTargetClassInfo = eventTargetClassList.map((className) => {
+          const duplicatedClassList = Array.from(document.getElementsByClassName(className));
+
+          return {
+            className: className,
+            classIndex: duplicatedClassList.indexOf(eventTarget),
+          };
+        });
+      }
+
+      ipcRenderer.send(
+        "event-occurred",
+        JSON.stringify({
+          id: eventTarget.id,
+          class: eventTargetClassInfo,
+          url: eventTargetUrl,
+          method: "INPUT:INPUT",
+          value: eventTarget.value,
+        })
+      );
     });
   });
 } catch (error) {
