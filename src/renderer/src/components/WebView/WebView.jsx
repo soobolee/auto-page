@@ -26,25 +26,26 @@ function WebView({url, isHidden, index}) {
         setBrowserTabList([...browserTabList, {tabUrl: event.args[0]}]);
       }
 
-      if (event.channel === "down-success") {
+      if (event.channel === "client-event") {
         if (!isMacroRecordStart) {
           return;
         }
-        const capturePage = async () => {
-          const captureImage = await currentWebview.capturePage(0.1);
-          const resizeImage = await captureImage.resize({
-            width: 100,
-            height: 100,
-            quality: "good",
-          });
-          const imageUrl = await resizeImage.toDataURL();
-          const eventStageList = event.args[0];
+        // const capturePage = async () => {
+        //   const captureImage = await currentWebview.capturePage(0.1);
+        //   const resizeImage = await captureImage.resize({
+        //     width: 100,
+        //     height: 100,
+        //     quality: "good",
+        //   });
+        //   const imageUrl = await resizeImage.toDataURL();
 
-          setImageStageList([...macroImageList, imageUrl]);
-          setMacroStageList([...macroStageList, JSON.parse(eventStageList)]);
-        };
+        //   setImageStageList([...macroImageList, imageUrl]);
+        // };
+        // capturePage();
+        const eventStageList = event.args[0];
+        setMacroStageList([...macroStageList, JSON.parse(eventStageList)]);
 
-        capturePage();
+        currentWebview.send("capture-event");
       }
     };
 

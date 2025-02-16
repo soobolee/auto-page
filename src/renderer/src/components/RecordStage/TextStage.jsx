@@ -11,9 +11,11 @@ function TextStage() {
   };
 
   const finishRecord = () => {
-    window.electronAPI.saveMacro("", macroStageList);
-    resetStageList();
-    stopMacroRecord();
+    if (macroStageList.length > 1) {
+      window.electronAPI.saveMacro("", macroStageList);
+      resetStageList();
+      stopMacroRecord();
+    }
   };
 
   return (

@@ -1,9 +1,11 @@
 import {useNavigate} from "react-router";
+import useMacroStageStore from "../../stores/useMacroStageStore";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCirclePlus} from "@fortawesome/free-solid-svg-icons";
 
 function EmptyCard() {
   const navigate = useNavigate();
+  const {startMacroRecord} = useMacroStageStore();
 
   const handlePlusClick = (path) => {
     navigate(path);
@@ -15,6 +17,7 @@ function EmptyCard() {
         className="flex justify-center items-center flex-col w-[50%] h-full hover:bg-subsub rounded-2xl cursor-pointer"
         onClick={() => {
           handlePlusClick("/macro");
+          startMacroRecord();
         }}
       >
         <FontAwesomeIcon className="text-main text-5xl mb-5" icon={faCirclePlus} />

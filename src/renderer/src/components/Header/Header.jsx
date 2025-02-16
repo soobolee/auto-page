@@ -10,12 +10,16 @@ import CircleButton from "../Button/CircleButton";
 function Header() {
   const navigate = useNavigate();
   const {browserTabList, tabFocusedIndex, resetTabInfo} = useTabStore();
-  const {startMacroExecute, resetStageList} = useMacroStageStore();
+  const {macroStageList, startMacroExecute, resetStageList, stopMacroRecord} = useMacroStageStore();
 
-  const handleLogoClick = () => {
-    resetTabInfo();
-    resetStageList();
-    navigate("/");
+  const handleMainClick = () => {
+    if (macroStageList.length > 1) {
+      window.electronAPI.saveMacro("", macroStageList);
+      resetTabInfo();
+      resetStageList();
+      stopMacroRecord();
+      navigate("/");
+    }
   };
 
   const handleStartMacro = () => {
@@ -29,7 +33,7 @@ function Header() {
       <div className="h-[15%] w-full" style={{WebkitAppRegion: "drag"}}></div>
       <div className="h-[35%] w-full flex">
         <h3 className="text-white text-2xl mx-auto">Auto Pape</h3>
-        <Button buttonText={"메인"} buttonColor={"bg-sub"} onClick={handleLogoClick} />
+        <Button buttonText={"메인"} buttonColor={"bg-sub"} onClick={handleMainClick} />
         <Button buttonText={"임시시작"} buttonColor={"bg-subsub"} onClick={handleStartMacro} />
       </div>
       <div className="h-[40%] w-full flex items-end overflow-scroll">

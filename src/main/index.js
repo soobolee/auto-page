@@ -35,7 +35,7 @@ function createWindow() {
 }
 
 ipcMain.on("event-occurred", (event, payload) => {
-  event.reply("down-success", payload);
+  event.reply("client-event", payload);
 });
 
 ipcMain.handle("save-macro", (_, fileName, fileContent) => {

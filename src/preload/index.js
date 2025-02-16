@@ -6,10 +6,22 @@ try {
     saveMacro: (fileName, fileContent) => ipcRenderer.invoke("save-macro", fileName, fileContent),
   });
 
-  ipcRenderer.on("down-success", (_, macroStageList) => {
+  ipcRenderer.on("client-event", (_, macroStageList) => {
     if (macroStageList) {
-      ipcRenderer.sendToHost("down-success", macroStageList);
+      ipcRenderer.sendToHost("client-event", macroStageList);
     }
+  });
+
+  ipcRenderer.on("capture-event", () => {
+    let observer = new MutationObserver((mutationList) => {
+      console.log(mutationList);
+    });
+
+    observer.observe(document.body, {
+      attributes: true,
+      childList: true,
+      subtree: true,
+    });
   });
 
   ipcRenderer.on("get-macro-item", (_, macroItemList) => {
