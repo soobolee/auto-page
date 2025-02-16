@@ -1,8 +1,8 @@
 import {useNavigate} from "react-router";
 import {nanoid} from "nanoid";
 import {faArrowLeft, faArrowRight, faRotateRight} from "@fortawesome/free-solid-svg-icons";
-import useTabStore from "../../store/useTabStore";
-import useMacroStageStore from "../../store/useMacroStageStore";
+import useTabStore from "../../stores/useTabStore";
+import useMacroStageStore from "../../stores/useMacroStageStore";
 import WindowTab from "../Tab/WindowTab";
 import Button from "../Button/Button";
 import CircleButton from "../Button/CircleButton";

@@ -1,4 +1,4 @@
-import useTabStore from "../../store/useTabStore";
+import useTabStore from "../../stores/useTabStore";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSquarePlus} from "@fortawesome/free-solid-svg-icons";
 

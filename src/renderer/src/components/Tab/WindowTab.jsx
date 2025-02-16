@@ -1,4 +1,4 @@
-import useTabStore from "../../store/useTabStore";
+import useTabStore from "../../stores/useTabStore";
 
 function WindowTab({index, title, isHidden}) {
   const {browserTabList, tabFocusedIndex, setBrowserTabList, setTabFocusedIndex} = useTabStore();

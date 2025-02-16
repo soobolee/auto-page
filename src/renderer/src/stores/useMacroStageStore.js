@@ -6,7 +6,7 @@ const useMacroStageStore = create((set) => ({
   isMacroStart: false,
   setMacroStageList: (newStageList) => set({macroStageList: newStageList}),
   setImageStageList: (newImageList) => set({macroImageList: newImageList}),
-  resetStageList: () => set({macroStageList: [], macroImageList: []}),
+  resetStageList: () => set({macroStageList: [], macroImageList: [], isMacroStart: false}),
   startMacro: () => set({isMacroStart: true}),
   stopMacro: () => set({isMacroStart: false}),
 }));

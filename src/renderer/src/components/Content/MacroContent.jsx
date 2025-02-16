@@ -1,4 +1,4 @@
-import useTabStore from "../../store/useTabStore";
+import useTabStore from "../../stores/useTabStore";
 import ImageStage from "../RecordStage/ImageStage";
 import TextStage from "../RecordStage/TextStage";
 import InputUrlContent from "./InputUrlContent";

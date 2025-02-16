@@ -35,9 +35,19 @@ function createWindow() {
 }
 
 ipcMain.on("event-occurred", (event, payload) => {
-  macroFileWrite(payload);
-
   event.reply("down-success", payload);
+});
+
+ipcMain.handle("save-macro", (_, fileName, fileContent) => {
+  let name = fileName;
+  if (!fileName) {
+    name = fs.readdirSync(join(__dirname)).length;
+  }
+  macroFileWrite(name, fileContent);
+});
+
+ipcMain.handle("get-macro-item", () => {
+  return getMacroItemList();
 });
 
 app.whenReady().then(() => {
@@ -62,20 +72,37 @@ app.on("window-all-closed", () => {
   }
 });
 
-function macroFileWrite(fileContent) {
+function macroFileWrite(fileName, fileContent) {
   try {
-    if (fs.existsSync(join(__dirname, "recordedStaged.json"))) {
-      const beforeStageList = fs.readFileSync(join(__dirname, "recordedStaged.json"));
+    if (fs.existsSync(join(__dirname, `${fileName}.json`))) {
+      const beforeStageList = fs.readFileSync(join(__dirname, `${fileName}.json`));
 
       if (!beforeStageList) {
         console.error("매크로 파일을 불러오지 못했습니다.");
         return;
       }
 
-      fs.writeFileSync(join(__dirname, "recordedStaged.json"), JSON.stringify([...JSON.parse(beforeStageList), fileContent]), {flag: "w+"});
+      fs.writeFileSync(join(__dirname, `${fileName}.json`), [...beforeStageList, ...fileContent], {flag: "w+"});
     } else {
-      fs.writeFileSync(join(__dirname, "recordedStaged.json"), JSON.stringify([fileContent]), {flag: "w+"});
+      fs.writeFileSync(join(__dirname, `${fileName}.json`), JSON.stringify(fileContent), {flag: "w+"});
     }
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+function getMacroItemList() {
+  try {
+    const macroItemNameList = fs.readdirSync(join(__dirname));
+    const macroItemList = [];
+
+    macroItemNameList.forEach((macroName) => {
+      if (macroName.includes("json")) {
+        macroItemList.push({[macroName.replace(".json", "")]: fs.readFileSync(join(__dirname, macroName), {encoding: "utf8"})});
+      }
+    });
+
+    return macroItemList;
   } catch (error) {
     console.error(error);
   }

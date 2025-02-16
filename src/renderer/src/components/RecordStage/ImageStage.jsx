@@ -1,5 +1,5 @@
 import {nanoid} from "nanoid";
-import useMacroStageStore from "../../store/useMacroStageStore";
+import useMacroStageStore from "../../stores/useMacroStageStore";
 import StageCard from "../Card/StageCard";
 
 function ImageStage() {

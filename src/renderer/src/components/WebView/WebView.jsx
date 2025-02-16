@@ -1,6 +1,6 @@
 import {useEffect, useLayoutEffect, useRef} from "react";
-import useTabStore from "../../store/useTabStore";
-import useMacroStageStore from "../../store/useMacroStageStore";
+import useTabStore from "../../stores/useTabStore";
+import useMacroStageStore from "../../stores/useMacroStageStore";
 
 function WebView({url, isHidden, index}) {
   const {browserTabList, setBrowserTabList, setTabFocusedIndex} = useTabStore();

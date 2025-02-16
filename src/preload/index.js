@@ -1,9 +1,20 @@
-import {ipcRenderer} from "electron";
+import {ipcRenderer, contextBridge} from "electron";
 
 try {
+  contextBridge.exposeInMainWorld("electronAPI", {
+    getMacroItem: () => ipcRenderer.invoke("get-macro-item"),
+    saveMacro: (fileName, fileContent) => ipcRenderer.invoke("save-macro", fileName, fileContent),
+  });
+
   ipcRenderer.on("down-success", (_, macroStageList) => {
     if (macroStageList) {
       ipcRenderer.sendToHost("down-success", macroStageList);
+    }
+  });
+
+  ipcRenderer.on("get-macro-item", (_, macroItemList) => {
+    if (macroItemList) {
+      ipcRenderer.sendToHost("get-macro-item", macroItemList);
     }
   });
 
@@ -125,7 +136,6 @@ try {
     });
 
     document.addEventListener("change", (event) => {
-      console.log(event);
       const eventTargetUrl = location.href;
       const eventTarget = event.target;
       const eventTargetClassList = Array.from(eventTarget.classList);
