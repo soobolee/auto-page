@@ -4,24 +4,13 @@ try {
   contextBridge.exposeInMainWorld("electronAPI", {
     getMacroItem: () => ipcRenderer.invoke("get-macro-item"),
     saveMacro: (fileName, fileContent) => ipcRenderer.invoke("save-macro", fileName, fileContent),
+    capturePage: (webviewSize) => ipcRenderer.invoke("capture-page", webviewSize),
   });
 
   ipcRenderer.on("client-event", (_, macroStageList) => {
     if (macroStageList) {
       ipcRenderer.sendToHost("client-event", macroStageList);
     }
-  });
-
-  ipcRenderer.on("capture-event", () => {
-    let observer = new MutationObserver((mutationList) => {
-      console.log(mutationList);
-    });
-
-    observer.observe(document.body, {
-      attributes: true,
-      childList: true,
-      subtree: true,
-    });
   });
 
   ipcRenderer.on("get-macro-item", (_, macroItemList) => {
@@ -51,7 +40,7 @@ try {
       return;
     }
 
-    let observer = new MutationObserver((mutationList) => {
+    const observer = new MutationObserver((mutationList) => {
       for (const mutation of mutationList) {
         if (mutation.type === "childList") {
           mutation.addedNodes.forEach((node) => {

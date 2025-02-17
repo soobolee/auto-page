@@ -8,6 +8,7 @@ function EmptyCard() {
   const {startMacroRecord} = useMacroStageStore();
 
   const handlePlusClick = (path) => {
+    startMacroRecord();
     navigate(path);
   };
 
@@ -17,7 +18,6 @@ function EmptyCard() {
         className="flex justify-center items-center flex-col w-[50%] h-full hover:bg-subsub rounded-2xl cursor-pointer"
         onClick={() => {
           handlePlusClick("/macro");
-          startMacroRecord();
         }}
       >
         <FontAwesomeIcon className="text-main text-5xl mb-5" icon={faCirclePlus} />

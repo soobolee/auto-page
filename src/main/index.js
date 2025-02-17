@@ -4,8 +4,10 @@ import fs from "fs";
 import {electronApp, optimizer, is} from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
 
+let mainWindow = null;
+
 function createWindow() {
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 900,
     height: 670,
     show: false,
@@ -36,6 +38,28 @@ function createWindow() {
 
 ipcMain.on("event-occurred", (event, payload) => {
   event.reply("client-event", payload);
+});
+
+const waitUntil = async () => {
+  return await new Promise((resolve) => {
+    const interval = setInterval(() => {
+      if (!mainWindow.webContents.isBeingCaptured()) {
+        resolve();
+        clearInterval(interval);
+      }
+    }, 0);
+  });
+};
+
+ipcMain.handle("capture-page", async (_, webviewSize) => {
+  await waitUntil();
+  const captureImage = await mainWindow.webContents.capturePage(JSON.parse(webviewSize));
+  const resizeImage = await captureImage.resize({
+    quality: "good",
+  });
+  const imageUrl = await resizeImage.toDataURL();
+
+  return imageUrl;
 });
 
 ipcMain.handle("save-macro", (_, fileName, fileContent) => {

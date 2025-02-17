@@ -10,6 +10,16 @@ function WebView({url, isHidden, index}) {
   const webViewRef = useRef(null);
 
   useEffect(() => {
+    const rectInfo = webViewRef.current.getBoundingClientRect();
+    const webviewSize = {
+      x: rectInfo.x,
+      y: rectInfo.y,
+      width: rectInfo.width,
+      height: rectInfo.height,
+    };
+
+    window.sessionStorage.setItem("webviewSize", JSON.stringify(webviewSize));
+
     if (isMacroStartExecute) {
       macroStageList.forEach((stageInfo) => {
         webViewRef.current.send("auto-macro", JSON.stringify(stageInfo));
@@ -21,31 +31,31 @@ function WebView({url, isHidden, index}) {
   useLayoutEffect(() => {
     const currentWebview = webViewRef.current;
 
+    const capturePage = async () => {
+      const webviewSize = window.sessionStorage.getItem("webviewSize");
+      const capturedPage = await window.electronAPI.capturePage(webviewSize);
+      macroImageList.push(capturedPage);
+
+      setImageStageList([...macroImageList]);
+    };
+
     const handleWebviewEvent = (event) => {
       if (event.channel === "new-tab") {
         setBrowserTabList([...browserTabList, {tabUrl: event.args[0]}]);
+        setTabFocusedIndex(browserTabList.length + event.args.length - 1);
       }
 
       if (event.channel === "client-event") {
         if (!isMacroRecordStart) {
           return;
         }
-        // const capturePage = async () => {
-        //   const captureImage = await currentWebview.capturePage(0.1);
-        //   const resizeImage = await captureImage.resize({
-        //     width: 100,
-        //     height: 100,
-        //     quality: "good",
-        //   });
-        //   const imageUrl = await resizeImage.toDataURL();
 
-        //   setImageStageList([...macroImageList, imageUrl]);
-        // };
-        // capturePage();
         const eventStageList = event.args[0];
-        setMacroStageList([...macroStageList, JSON.parse(eventStageList)]);
+        const stageList = JSON.parse(eventStageList);
 
-        currentWebview.send("capture-event");
+        setMacroStageList([...macroStageList, stageList]);
+
+        capturePage();
       }
     };
 

@@ -18,8 +18,8 @@ function Header() {
       resetTabInfo();
       resetStageList();
       stopMacroRecord();
-      navigate("/");
     }
+    navigate("/");
   };
 
   const handleStartMacro = () => {
