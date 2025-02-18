@@ -10,11 +10,12 @@ import CircleButton from "../Button/CircleButton";
 function Header() {
   const navigate = useNavigate();
   const {browserTabList, tabFocusedIndex, resetTabInfo} = useTabStore();
-  const {macroStageList, startMacroExecute, resetStageList, stopMacroRecord} = useMacroStageStore();
+  const {macroStageList, macroImageList, startMacroExecute, resetStageList, stopMacroRecord} = useMacroStageStore();
 
   const handleMainClick = () => {
     if (macroStageList.length > 1) {
       window.electronAPI.saveMacro("", macroStageList);
+      window.electronAPI.saveImage("", macroImageList);
     }
     resetTabInfo();
     resetStageList();
