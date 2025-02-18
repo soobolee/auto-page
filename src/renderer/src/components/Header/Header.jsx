@@ -15,10 +15,10 @@ function Header() {
   const handleMainClick = () => {
     if (macroStageList.length > 1) {
       window.electronAPI.saveMacro("", macroStageList);
-      resetTabInfo();
-      resetStageList();
-      stopMacroRecord();
     }
+    resetTabInfo();
+    resetStageList();
+    stopMacroRecord();
     navigate("/");
   };
 

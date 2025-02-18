@@ -6,11 +6,10 @@ import {faCirclePlus} from "@fortawesome/free-solid-svg-icons";
 
 function EmptyCard() {
   const navigate = useNavigate();
-  const {startMacroRecord} = useMacroStageStore();
+  const {startMacroRecord, stopMacroRecord} = useMacroStageStore();
   const {setRecordMode} = useMenuStore();
 
   const handlePlusClick = (path) => {
-    startMacroRecord();
     navigate(path);
   };
 
@@ -20,6 +19,7 @@ function EmptyCard() {
         className="flex justify-center items-center flex-col w-[50%] h-full hover:bg-subsub rounded-2xl cursor-pointer"
         onClick={() => {
           handlePlusClick("/macro");
+          startMacroRecord();
           setRecordMode("auto");
         }}
       >
@@ -30,6 +30,7 @@ function EmptyCard() {
         className="flex justify-center items-center flex-col w-[50%] h-full hover:bg-subsub rounded-2xl cursor-pointer"
         onClick={() => {
           handlePlusClick("/macro");
+          stopMacroRecord();
           setRecordMode("manual");
         }}
       >

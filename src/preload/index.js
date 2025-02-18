@@ -7,6 +7,19 @@ try {
     capturePage: (webviewSize) => ipcRenderer.invoke("capture-page", webviewSize),
   });
 
+  const getClassInfo = (eventTargetClassList, eventTarget) => {
+    if (eventTargetClassList.length) {
+      return eventTargetClassList.map((className) => {
+        const duplicatedClassList = Array.from(document.getElementsByClassName(className));
+
+        return {
+          className: className,
+          classIndex: duplicatedClassList.indexOf(eventTarget),
+        };
+      });
+    }
+  };
+
   ipcRenderer.on("client-event", (_, macroStageList) => {
     if (macroStageList) {
       ipcRenderer.sendToHost("client-event", macroStageList);
@@ -18,7 +31,6 @@ try {
       ipcRenderer.sendToHost("get-macro-item", macroItemList);
     }
   });
-
   ipcRenderer.on("auto-macro", (_, macroStageInfo) => {
     let isActived = false;
     const stageInfo = JSON.parse(macroStageInfo);
@@ -65,102 +77,109 @@ try {
       frame.remove();
     });
 
-    document.addEventListener("click", (event) => {
-      if (event.isTrusted) {
-        const eventTargetUrl = location.href;
-        const aTag = event.target.closest("a");
-        const buttonTag = event.target.closest("button");
-        const iButtonTag = event.target.closest("input[type='button']");
+    window.addEventListener(
+      "click",
+      (event) => {
+        if (event.isTrusted) {
+          const eventTargetUrl = location.href;
+          const aTag = event.target.closest("a");
+          const buttonTag = event.target.closest("button");
+          const iButtonTag = event.target.closest("input[type='button']");
 
-        const eventTarget = aTag || buttonTag || iButtonTag;
+          const eventTarget = aTag || buttonTag || iButtonTag;
 
-        if (!eventTarget) {
-          return;
-        }
-
-        const eventTargetId = eventTarget.id;
-        const eventTargetClassList = Array.from(eventTarget.classList);
-        let eventTargetClassInfo = [];
-
-        if (eventTargetClassList.length) {
-          eventTargetClassInfo = eventTargetClassList.map((className) => {
-            const duplicatedClassList = Array.from(document.getElementsByClassName(className));
-
-            return {
-              className: className,
-              classIndex: duplicatedClassList.indexOf(eventTarget),
-            };
-          });
-        }
-
-        if (aTag) {
-          if (aTag.target === "_blank") {
-            ipcRenderer.sendToHost("new-tab", aTag.href);
+          if (!eventTarget) {
+            return;
           }
 
-          ipcRenderer.send(
-            "event-occurred",
-            JSON.stringify({
-              id: eventTargetId,
-              class: eventTargetClassInfo,
-              href: aTag.href,
-              url: eventTargetUrl,
-              method: "A:CLICK",
-            })
-          );
-        }
+          const eventTargetId = eventTarget.id;
+          const eventTargetClassList = Array.from(eventTarget.classList);
+          const eventTargetClassInfo = getClassInfo(eventTargetClassList, eventTarget);
 
-        if (buttonTag) {
-          ipcRenderer.send(
-            "event-occurred",
-            JSON.stringify({
-              id: eventTargetId,
-              class: eventTargetClassInfo,
-              url: eventTargetUrl,
-              method: "BUTTON:CLICK",
-            })
-          );
-        }
+          if (aTag) {
+            if (aTag.target === "_blank") {
+              ipcRenderer.sendToHost("new-tab", aTag.href);
+            }
 
-        if (iButtonTag) {
-          ipcRenderer.send(
-            "event-occurred",
-            JSON.stringify({
-              id: eventTargetId,
-              class: eventTargetClassInfo,
-              url: eventTargetUrl,
-              method: "INPUT:CLICK",
-            })
-          );
+            ipcRenderer.send(
+              "event-occurred",
+              JSON.stringify({
+                id: eventTargetId,
+                tagName: eventTarget.tagName,
+                class: eventTargetClassInfo,
+                href: aTag.href,
+                url: eventTargetUrl,
+                method: "CLICK",
+              })
+            );
+          }
+
+          if (buttonTag) {
+            ipcRenderer.send(
+              "event-occurred",
+              JSON.stringify({
+                id: eventTargetId,
+                tagName: eventTarget.tagName,
+                class: eventTargetClassInfo,
+                url: eventTargetUrl,
+                method: "CLICK",
+              })
+            );
+          }
+
+          if (iButtonTag) {
+            ipcRenderer.send(
+              "event-occurred",
+              JSON.stringify({
+                id: eventTargetId,
+                tagName: eventTarget.tagName,
+                class: eventTargetClassInfo,
+                url: eventTargetUrl,
+                method: "CLICK",
+              })
+            );
+          }
         }
+      },
+      {capture: true}
+    );
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter") {
+        return;
       }
-    });
-
-    document.addEventListener("change", (event) => {
-      const eventTargetUrl = location.href;
       const eventTarget = event.target;
+      const eventTargetUrl = location.href;
       const eventTargetClassList = Array.from(eventTarget.classList);
-
-      let eventTargetClassInfo = [];
-
-      if (eventTargetClassList.length) {
-        eventTargetClassInfo = eventTargetClassList.map((className) => {
-          const duplicatedClassList = Array.from(document.getElementsByClassName(className));
-
-          return {
-            className: className,
-            classIndex: duplicatedClassList.indexOf(eventTarget),
-          };
-        });
-      }
+      const eventTargetClassInfo = getClassInfo(eventTargetClassList, eventTarget);
 
       ipcRenderer.send(
         "event-occurred",
         JSON.stringify({
           id: eventTarget.id,
+          tagName: eventTarget.tagName,
           class: eventTargetClassInfo,
           url: eventTargetUrl,
-          method: "INPUT:INPUT",
+          method: "KEYDOWN",
+          value: eventTarget.value,
+        })
+      );
+    });
+
+    document.addEventListener("change", (event) => {
+      const eventTarget = event.target;
+      const eventTargetUrl = location.href;
+      const eventTargetClassList = Array.from(eventTarget.classList);
+      const eventTargetClassInfo = getClassInfo(eventTargetClassList, eventTarget);
+
+      ipcRenderer.send(
+        "event-occurred",
+        JSON.stringify({
+          id: eventTarget.id,
+          tagName: eventTarget.tagName,
+          class: eventTargetClassInfo,
+          url: eventTargetUrl,
+          method: "CHANGE",
           value: eventTarget.value,
         })
       );

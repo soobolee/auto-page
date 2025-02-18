@@ -8,13 +8,14 @@ function StageCard({direction, stageInfo}) {
           <p>method: {stageInfo.method}</p>
           <p>id: {stageInfo.id}</p>
           <div>
-            {stageInfo.class.map((stageClass) => (
-              <div key={nanoid()}>
-                <p>
-                  class: {stageClass.className} : {stageClass.classIndex}
-                </p>
-              </div>
-            ))}
+            {stageInfo.class &&
+              stageInfo.class.map((stageClass) => (
+                <div key={nanoid()}>
+                  <p>
+                    class: {stageClass.className} : {stageClass.classIndex}
+                  </p>
+                </div>
+              ))}
           </div>
           <p>url: {stageInfo.url}</p>
           <p>href: {stageInfo.href}</p>

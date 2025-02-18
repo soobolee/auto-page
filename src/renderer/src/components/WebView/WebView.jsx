@@ -21,10 +21,7 @@ function WebView({url, isHidden, index}) {
     window.sessionStorage.setItem("webviewSize", JSON.stringify(webviewSize));
 
     if (isMacroStartExecute) {
-      macroStageList.forEach((stageInfo) => {
-        webViewRef.current.send("auto-macro", JSON.stringify(stageInfo));
-      });
-      stopMacroExecute();
+      webViewRef.current.send("auto-macro", JSON.stringify(macroStageList));
     }
   }, [macroStageList, isMacroStartExecute, stopMacroExecute]);
 
@@ -40,6 +37,10 @@ function WebView({url, isHidden, index}) {
     };
 
     const handleWebviewEvent = (event) => {
+      if (event.channel === "macro-stop") {
+        window.sessionStorage.setItem("resumeMacroList", JSON.stringify(event.args[0]));
+      }
+
       if (event.channel === "new-tab") {
         setBrowserTabList([...browserTabList, {tabUrl: event.args[0]}]);
         setTabFocusedIndex(browserTabList.length + event.args.length - 1);
@@ -53,9 +54,25 @@ function WebView({url, isHidden, index}) {
         const eventStageList = event.args[0];
         const stageList = JSON.parse(eventStageList);
 
-        setMacroStageList([...macroStageList, stageList]);
+        const lastStage = macroStageList[macroStageList.length - 1];
+        let isDuplicate = false;
 
-        capturePage();
+        if (lastStage) {
+          isDuplicate = Object.keys(stageList).every((key) => {
+            if (key !== "method") {
+              return JSON.stringify(lastStage[key]) === JSON.stringify(stageList[key]);
+            } else if (key === "method" && stageList[key] === "CLICK") {
+              return false;
+            } else {
+              return true;
+            }
+          });
+        }
+
+        if (!isDuplicate) {
+          setMacroStageList([...macroStageList, stageList]);
+          capturePage();
+        }
       }
     };
 
@@ -105,7 +122,7 @@ function WebView({url, isHidden, index}) {
     return () => {
       currentWebview.removeEventListener("dom-ready", handleDomReady);
     };
-  }, [browserTabList, index, setBrowserTabList]);
+  }, [browserTabList, index, isMacroStartExecute, setBrowserTabList]);
 
   return <webview src={url} ref={webViewRef} className={`${!isHidden && "hidden"} bg-white w-full col-span-7`}></webview>;
 }
