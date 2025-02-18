@@ -4,6 +4,7 @@ try {
   contextBridge.exposeInMainWorld("electronAPI", {
     getMacroItem: () => ipcRenderer.invoke("get-macro-item"),
     saveMacro: (fileName, fileContent) => ipcRenderer.invoke("save-macro", fileName, fileContent),
+    saveImage: (fileName, fileContent) => ipcRenderer.invoke("save-image", fileName, fileContent),
     capturePage: (webviewSize) => ipcRenderer.invoke("capture-page", webviewSize),
   });
 
