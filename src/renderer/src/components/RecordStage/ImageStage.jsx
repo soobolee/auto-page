@@ -1,7 +1,13 @@
+import {nanoid} from "nanoid";
+import useMacroStageStore from "../../stores/useMacroStageStore";
+import StageCard from "../Card/StageCard";
+
 function ImageStage() {
+  const {macroImageList} = useMacroStageStore();
+
   return (
-    <aside className="w-full h-full p-5 border">
-      <div id="imgStage" className="w-full h-[18%] border"></div>
+    <aside className="w-full h-full p-5 border flex flex-col overflow-scroll">
+      {macroImageList.length > 0 && macroImageList.map((stageInfo) => <StageCard key={nanoid()} direction={"col"} stageInfo={stageInfo} />)}
     </aside>
   );
 }

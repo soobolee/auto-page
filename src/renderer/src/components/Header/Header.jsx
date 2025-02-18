@@ -1,6 +1,8 @@
 import {useNavigate} from "react-router";
+import {nanoid} from "nanoid";
 import {faArrowLeft, faArrowRight, faRotateRight} from "@fortawesome/free-solid-svg-icons";
-import useTabStore from "../../store/useTabStore";
+import useTabStore from "../../stores/useTabStore";
+import useMacroStageStore from "../../stores/useMacroStageStore";
 import WindowTab from "../Tab/WindowTab";
 import Button from "../Button/Button";
 import CircleButton from "../Button/CircleButton";
@@ -8,10 +10,20 @@ import CircleButton from "../Button/CircleButton";
 function Header() {
   const navigate = useNavigate();
   const {browserTabList, tabFocusedIndex, resetTabInfo} = useTabStore();
+  const {macroStageList, startMacroExecute, resetStageList, stopMacroRecord} = useMacroStageStore();
 
-  const handleLogoClick = () => {
+  const handleMainClick = () => {
+    if (macroStageList.length > 1) {
+      window.electronAPI.saveMacro("", macroStageList);
+    }
     resetTabInfo();
+    resetStageList();
+    stopMacroRecord();
     navigate("/");
+  };
+
+  const handleStartMacro = () => {
+    startMacroExecute();
   };
 
   const focusedTabInfo = browserTabList[tabFocusedIndex] || {};
@@ -21,7 +33,8 @@ function Header() {
       <div className="h-[15%] w-full" style={{WebkitAppRegion: "drag"}}></div>
       <div className="h-[35%] w-full flex">
         <h3 className="text-white text-2xl mx-auto">Auto Pape</h3>
-        <Button buttonText={"메인"} buttonColor={"sub"} onClick={handleLogoClick} />
+        <Button buttonText={"메인"} buttonColor={"bg-sub"} onClick={handleMainClick} />
+        <Button buttonText={"임시시작"} buttonColor={"bg-subsub"} onClick={handleStartMacro} />
       </div>
       <div className="h-[40%] w-full flex items-end overflow-scroll">
         {browserTabList.length > 0 && (
@@ -32,7 +45,7 @@ function Header() {
           </>
         )}
         {browserTabList.length > 0 &&
-          browserTabList.map((tab, index) => <WindowTab key={tab.tabUrl} title={tab.title} index={index} isHidden={tabFocusedIndex === index} />)}
+          browserTabList.map((tab, index) => <WindowTab key={nanoid()} title={tab.title} index={index} isHidden={tabFocusedIndex === index} />)}
       </div>
     </header>
   );

@@ -1,10 +1,13 @@
 import {app, BrowserWindow, ipcMain} from "electron";
 import {join} from "path";
+import fs from "fs";
 import {electronApp, optimizer, is} from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
 
+let mainWindow = null;
+
 function createWindow() {
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 900,
     height: 670,
     show: false,
@@ -28,10 +31,48 @@ function createWindow() {
     mainWindow.loadFile(join(__dirname, "../renderer/index.html"));
   }
 
-  mainWindow.webContents.on("will-attach-webview", (e, webPreferences) => {
+  mainWindow.webContents.on("will-attach-webview", (_, webPreferences) => {
     webPreferences.preload = join(__dirname, "../preload/index.js");
   });
 }
+
+ipcMain.on("event-occurred", (event, payload) => {
+  event.reply("client-event", payload);
+});
+
+const waitUntil = async () => {
+  return await new Promise((resolve) => {
+    const interval = setInterval(() => {
+      if (!mainWindow.webContents.isBeingCaptured()) {
+        resolve();
+        clearInterval(interval);
+      }
+    }, 0);
+  });
+};
+
+ipcMain.handle("capture-page", async (_, webviewSize) => {
+  await waitUntil();
+  const captureImage = await mainWindow.webContents.capturePage(JSON.parse(webviewSize));
+  const resizeImage = await captureImage.resize({
+    quality: "good",
+  });
+  const imageUrl = await resizeImage.toDataURL();
+
+  return imageUrl;
+});
+
+ipcMain.handle("save-macro", (_, fileName, fileContent) => {
+  let name = fileName;
+  if (!fileName) {
+    name = fs.readdirSync(join(__dirname)).length;
+  }
+  macroFileWrite(name, fileContent);
+});
+
+ipcMain.handle("get-macro-item", () => {
+  return getMacroItemList();
+});
 
 app.whenReady().then(() => {
   electronApp.setAppUserModelId("com.electron");
@@ -54,3 +95,39 @@ app.on("window-all-closed", () => {
     app.quit();
   }
 });
+
+function macroFileWrite(fileName, fileContent) {
+  try {
+    if (fs.existsSync(join(__dirname, `${fileName}.json`))) {
+      const beforeStageList = fs.readFileSync(join(__dirname, `${fileName}.json`));
+
+      if (!beforeStageList) {
+        console.error("매크로 파일을 불러오지 못했습니다.");
+        return;
+      }
+
+      fs.writeFileSync(join(__dirname, `${fileName}.json`), [...beforeStageList, ...fileContent], {flag: "w+"});
+    } else {
+      fs.writeFileSync(join(__dirname, `${fileName}.json`), JSON.stringify(fileContent), {flag: "w+"});
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+function getMacroItemList() {
+  try {
+    const macroItemNameList = fs.readdirSync(join(__dirname));
+    const macroItemList = [];
+
+    macroItemNameList.forEach((macroName) => {
+      if (macroName.includes("json")) {
+        macroItemList.push({[macroName.replace(".json", "")]: fs.readFileSync(join(__dirname, macroName), {encoding: "utf8"})});
+      }
+    });
+
+    return macroItemList;
+  } catch (error) {
+    console.error(error);
+  }
+}
