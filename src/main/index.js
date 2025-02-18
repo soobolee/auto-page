@@ -63,11 +63,11 @@ ipcMain.handle("capture-page", async (_, webviewSize) => {
 });
 
 ipcMain.handle("save-macro", (_, fileName, fileContent) => {
-  let name = fileName;
-  if (!fileName) {
-    name = fs.readdirSync(join(__dirname)).length;
-  }
-  macroFileWrite(name, fileContent);
+  macroFileWrite(fileName, fileContent);
+});
+
+ipcMain.handle("save-image", (_, fileName, fileContent) => {
+  macroFileWrite(fileName, fileContent, true);
 });
 
 ipcMain.handle("get-macro-item", () => {
@@ -96,33 +96,59 @@ app.on("window-all-closed", () => {
   }
 });
 
-function macroFileWrite(fileName, fileContent) {
+function macroFileWrite(fileName, fileContent, isImage) {
   try {
-    if (fs.existsSync(join(__dirname, `${fileName}.json`))) {
-      const beforeStageList = fs.readFileSync(join(__dirname, `${fileName}.json`));
+    const folderPath = getFilePath(isImage);
+    let macroName = fileName;
 
-      if (!beforeStageList) {
-        console.error("매크로 파일을 불러오지 못했습니다.");
+    if (!fileName) {
+      if (fs.existsSync(folderPath)) {
+        macroName = fs.readdirSync(folderPath).length + 1;
+      } else {
+        fs.mkdirSync(folderPath);
+        macroName = 1;
+      }
+    }
+
+    const filePath = getFilePath(isImage, `${macroName}.json`);
+
+    if (fs.existsSync(filePath)) {
+      const beforeJsonList = fs.readFileSync(filePath);
+
+      if (!beforeJsonList) {
+        console.error("매크로 관련 파일을 불러오지 못했습니다.");
         return;
       }
 
-      fs.writeFileSync(join(__dirname, `${fileName}.json`), [...beforeStageList, ...fileContent], {flag: "w+"});
+      fs.writeFileSync(filePath, [...beforeJsonList, fileContent], {flag: "w+"});
     } else {
-      fs.writeFileSync(join(__dirname, `${fileName}.json`), JSON.stringify(fileContent), {flag: "w+"});
+      fs.writeFileSync(filePath, JSON.stringify(fileContent), {flag: "w+"});
     }
   } catch (error) {
     console.error(error);
   }
 }
 
-function getMacroItemList() {
+function getFilePath(isImage, fileName = "") {
+  if (isImage) {
+    return join(__dirname, `../../imageFile/${fileName}`);
+  } else {
+    return join(__dirname, `../../macroFile/${fileName}`);
+  }
+}
+
+function getMacroItemList(isImage) {
   try {
-    const macroItemNameList = fs.readdirSync(join(__dirname));
+    if (!fs.existsSync(getFilePath(isImage))) {
+      return;
+    }
+
+    const macroItemNameList = fs.readdirSync(getFilePath(isImage));
     const macroItemList = [];
 
     macroItemNameList.forEach((macroName) => {
       if (macroName.includes("json")) {
-        macroItemList.push({[macroName.replace(".json", "")]: fs.readFileSync(join(__dirname, macroName), {encoding: "utf8"})});
+        macroItemList.push({[macroName.replace(".json", "")]: fs.readFileSync(getFilePath(isImage, macroName), {encoding: "utf8"})});
       }
     });
 

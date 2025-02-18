@@ -4,7 +4,7 @@ import Button from "../Button/Button";
 import StageCard from "../Card/StageCard";
 
 function TextStage() {
-  const {macroStageList, resetStageList, startMacroRecord, stopMacroRecord} = useMacroStageStore();
+  const {macroStageList, macroImageList, resetStageList, startMacroRecord, stopMacroRecord} = useMacroStageStore();
 
   const startRecord = () => {
     startMacroRecord();
@@ -13,6 +13,7 @@ function TextStage() {
   const finishRecord = () => {
     if (macroStageList.length > 1) {
       window.electronAPI.saveMacro("", macroStageList);
+      window.electronAPI.saveImage("", macroImageList);
       resetStageList();
       stopMacroRecord();
     }
