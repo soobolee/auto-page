@@ -9,3 +9,6 @@ out
 
 .prettierignore
 .prettierrc
+
+macroFile
+imageFile
