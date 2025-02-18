@@ -1,26 +1,31 @@
-import {useNavigate} from "react-router";
 import {nanoid} from "nanoid";
+import {useNavigate} from "react-router";
 import {faArrowLeft, faArrowRight, faRotateRight} from "@fortawesome/free-solid-svg-icons";
 import useTabStore from "../../stores/useTabStore";
 import useMacroStageStore from "../../stores/useMacroStageStore";
+import useUserConfigStore from "../../stores/useUserConfigStore";
+import useMenuStore from "../../stores/useMenuStore";
 import WindowTab from "../Tab/WindowTab";
 import Button from "../Button/Button";
 import CircleButton from "../Button/CircleButton";
 
 function Header() {
   const navigate = useNavigate();
-  const {browserTabList, tabFocusedIndex, resetTabInfo} = useTabStore();
-  const {macroStageList, macroImageList, resetStageList, stopMacroRecord} = useMacroStageStore();
+
+  const {browserTabList, resetTabInfo, tabFocusedIndex} = useTabStore();
+  const {macroStageList, resetStageList} = useMacroStageStore();
+  const {openModal} = useUserConfigStore();
+  const {setRecordMode} = useMenuStore();
 
   const handleMainClick = () => {
     if (macroStageList.length > 1) {
-      window.electronAPI.saveMacro("", macroStageList);
-      window.electronAPI.saveImage("", macroImageList);
+      openModal();
+    } else {
+      setRecordMode("auto");
+      resetStageList();
+      resetTabInfo();
+      navigate("/");
     }
-    resetTabInfo();
-    resetStageList();
-    stopMacroRecord();
-    navigate("/");
   };
 
   const focusedTabInfo = browserTabList[tabFocusedIndex] || {};

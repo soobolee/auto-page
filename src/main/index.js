@@ -99,15 +99,10 @@ app.on("window-all-closed", () => {
 function macroFileWrite(fileName, fileContent, isImage) {
   try {
     const folderPath = getFilePath(isImage);
-    let macroName = fileName;
+    let macroName = fileName || getCurrentTime();
 
-    if (!fileName) {
-      if (fs.existsSync(folderPath)) {
-        macroName = fs.readdirSync(folderPath).length + 1;
-      } else {
-        fs.mkdirSync(folderPath);
-        macroName = 1;
-      }
+    if (!fs.existsSync(folderPath)) {
+      fs.mkdirSync(folderPath);
     }
 
     const filePath = getFilePath(isImage, `${macroName}.json`);
@@ -140,7 +135,7 @@ function getFilePath(isImage, fileName = "") {
 function getMacroItemList(isImage) {
   try {
     if (!fs.existsSync(getFilePath(isImage))) {
-      return;
+      return [];
     }
 
     const macroItemNameList = fs.readdirSync(getFilePath(isImage));
@@ -156,4 +151,24 @@ function getMacroItemList(isImage) {
   } catch (error) {
     console.error(error);
   }
+}
+
+function getCurrentTime() {
+  const date = new Date();
+  const year = addFrontZero(date.getFullYear());
+  const month = addFrontZero(date.getMonth() + 1);
+  const day = addFrontZero(date.getDate());
+  const hour = addFrontZero(date.getHours());
+  const minute = addFrontZero(date.getMinutes());
+  const second = addFrontZero(date.getSeconds());
+
+  return `${year}${month}${day}${hour}${minute}${second}`;
+}
+
+function addFrontZero(number) {
+  if (number < 10) {
+    return `0${number}`;
+  }
+
+  return number;
 }

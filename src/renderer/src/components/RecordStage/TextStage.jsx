@@ -1,10 +1,12 @@
 import {nanoid} from "nanoid";
 import useMacroStageStore from "../../stores/useMacroStageStore";
+import useUserConfigStore from "../../stores/useUserConfigStore";
 import Button from "../Button/Button";
 import StageCard from "../Card/StageCard";
 
 function TextStage() {
-  const {macroStageList, macroImageList, resetStageList, startMacroRecord, stopMacroRecord} = useMacroStageStore();
+  const {macroStageList, startMacroRecord} = useMacroStageStore();
+  const {openModal} = useUserConfigStore();
 
   const startRecord = () => {
     startMacroRecord();
@@ -12,10 +14,7 @@ function TextStage() {
 
   const finishRecord = () => {
     if (macroStageList.length > 1) {
-      window.electronAPI.saveMacro("", macroStageList);
-      window.electronAPI.saveImage("", macroImageList);
-      resetStageList();
-      stopMacroRecord();
+      openModal();
     }
   };
 

@@ -17,7 +17,11 @@ function MainContent() {
 
   useEffect(() => {
     async function getMacroItem() {
-      const macroItemList = await window.electronAPI.getMacroItem();
+      let macroItemList = await window.electronAPI.getMacroItem();
+
+      if (macroItemList.length === 0) {
+        macroItemList = [];
+      }
 
       const parseItemList = macroItemList.map((macroItem) => {
         const macroName = Object.keys(macroItem)[0];
