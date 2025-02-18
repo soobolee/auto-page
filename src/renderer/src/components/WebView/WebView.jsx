@@ -19,11 +19,7 @@ function WebView({url, isHidden, index}) {
     };
 
     window.sessionStorage.setItem("webviewSize", JSON.stringify(webviewSize));
-
-    if (isMacroStartExecute) {
-      webViewRef.current.send("auto-macro", JSON.stringify(macroStageList));
-    }
-  }, [macroStageList, isMacroStartExecute, stopMacroExecute]);
+  }, []);
 
   useLayoutEffect(() => {
     const currentWebview = webViewRef.current;
@@ -101,8 +97,10 @@ function WebView({url, isHidden, index}) {
       if (isMacroStartExecute) {
         const resumeMacroList = window.sessionStorage.getItem("resumeMacroList");
 
-        if (resumeMacroList.length > 0) {
+        if (resumeMacroList && resumeMacroList.length > 0) {
           webViewRef.current.send("auto-macro", resumeMacroList);
+        } else {
+          webViewRef.current.send("auto-macro", JSON.stringify(macroStageList));
         }
       }
 
