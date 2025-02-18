@@ -74,6 +74,11 @@ try {
       if (!macroBreak) {
         if (stageInfo.href && location.href !== stageInfo.href) {
           restStageList.shift();
+
+          if (restStageList.length === 0) {
+            ipcRenderer.sendToHost("macro-end");
+          }
+
           location.href = stageInfo.href;
         }
 
@@ -102,6 +107,10 @@ try {
         if (stageInfo.method === "CHANGE" || stageInfo.method === "KEYDOWN") {
           restStageList.shift();
           targetElement.value = stageInfo.value;
+        }
+
+        if (restStageList.length === 0) {
+          ipcRenderer.sendToHost("macro-end");
         }
       }
     }

@@ -4,7 +4,7 @@ import useMacroStageStore from "../../stores/useMacroStageStore";
 
 function WebView({url, isHidden, index}) {
   const {browserTabList, setBrowserTabList, setTabFocusedIndex} = useTabStore();
-  const {macroStageList, macroImageList, isMacroStartExecute, isMacroRecordStart, stopMacroExecute, setMacroStageList, setImageStageList} =
+  const {macroStageList, macroImageList, isMacroExecute, stopMacroExecute, isMacroRecordStart, setMacroStageList, setImageStageList} =
     useMacroStageStore();
 
   const webViewRef = useRef(null);
@@ -35,6 +35,11 @@ function WebView({url, isHidden, index}) {
     const handleWebviewEvent = (event) => {
       if (event.channel === "macro-stop") {
         window.sessionStorage.setItem("resumeMacroList", JSON.stringify(event.args[0]));
+      }
+
+      if (event.channel === "macro-end") {
+        stopMacroExecute();
+        setMacroStageList([]);
       }
 
       if (event.channel === "new-tab") {
@@ -82,6 +87,7 @@ function WebView({url, isHidden, index}) {
     isMacroRecordStart,
     macroImageList,
     macroStageList,
+    stopMacroExecute,
     setBrowserTabList,
     setImageStageList,
     setMacroStageList,
@@ -94,7 +100,7 @@ function WebView({url, isHidden, index}) {
     const handleDomReady = () => {
       currentWebview.openDevTools();
 
-      if (isMacroStartExecute) {
+      if (isMacroExecute) {
         const resumeMacroList = window.sessionStorage.getItem("resumeMacroList");
 
         if (resumeMacroList && resumeMacroList.length > 0) {
@@ -128,7 +134,7 @@ function WebView({url, isHidden, index}) {
     return () => {
       currentWebview.removeEventListener("dom-ready", handleDomReady);
     };
-  }, [browserTabList, index, isMacroStartExecute, setBrowserTabList]);
+  }, [browserTabList, index, isMacroExecute, macroStageList, setBrowserTabList]);
 
   return <webview src={url} ref={webViewRef} className={`${!isHidden && "hidden"} bg-white w-full col-span-7`}></webview>;
 }
