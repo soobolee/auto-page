@@ -98,6 +98,14 @@ function WebView({url, isHidden, index}) {
     const handleDomReady = () => {
       currentWebview.openDevTools();
 
+      if (isMacroStartExecute) {
+        const resumeMacroList = window.sessionStorage.getItem("resumeMacroList");
+
+        if (resumeMacroList.length > 0) {
+          webViewRef.current.send("auto-macro", resumeMacroList);
+        }
+      }
+
       const browserTab = browserTabList[index];
 
       browserTab.title = currentWebview.getTitle();
