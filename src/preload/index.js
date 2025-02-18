@@ -1,6 +1,8 @@
 import {ipcRenderer, contextBridge} from "electron";
 
 try {
+  let macroBreak = false;
+
   contextBridge.exposeInMainWorld("electronAPI", {
     getMacroItem: () => ipcRenderer.invoke("get-macro-item"),
     saveMacro: (fileName, fileContent) => ipcRenderer.invoke("save-macro", fileName, fileContent),
@@ -32,20 +34,90 @@ try {
       ipcRenderer.sendToHost("get-macro-item", macroItemList);
     }
   });
-  ipcRenderer.on("auto-macro", (_, macroStageInfo) => {
-    let isActived = false;
-    const stageInfo = JSON.parse(macroStageInfo);
 
-    if (stageInfo.id) {
-      document.querySelector(`#${stageInfo.id}`).click();
-      isActived = true;
-    }
+  async function sleep(delay) {
+    return new Promise((resolve) => setTimeout(resolve, delay));
+  }
 
-    if (!isActived && stageInfo.class) {
-      stageInfo.class.forEach((classInfo) => {
-        document.querySelectorAll(`.${classInfo.className}`)[classInfo.classIndex].click();
+  function waitForGetElement(selector, classIndex = 0) {
+    return new Promise((resolve) => {
+      if (document.querySelectorAll(selector)[classIndex]) {
+        return resolve(document.querySelectorAll(selector)[classIndex]);
+      }
+
+      const observer = new MutationObserver(() => {
+        if (document.querySelectorAll(selector)[classIndex]) {
+          resolve(document.querySelectorAll(selector)[classIndex]);
+          observer.disconnect();
+        }
       });
+
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+      });
+    });
+  }
+
+  const executeMacro = async (macroStageList) => {
+    const parseMacroStageList = JSON.parse(macroStageList);
+    const restStageList = [...parseMacroStageList];
+
+    window.addEventListener("beforeunload", () => {
+      macroBreak = true;
+      ipcRenderer.sendToHost("macro-stop", restStageList);
+    });
+
+    for (const stageInfo of parseMacroStageList) {
+      await sleep(1000);
+
+      if (!macroBreak) {
+        if (stageInfo.href && location.href !== stageInfo.href) {
+          restStageList.shift();
+
+          if (restStageList.length === 0) {
+            ipcRenderer.sendToHost("macro-end");
+          }
+
+          location.href = stageInfo.href;
+        }
+
+        let targetElement = null;
+
+        if (stageInfo.id) {
+          targetElement = await waitForGetElement(`#${stageInfo.id}`);
+        }
+
+        if (!targetElement && stageInfo.class) {
+          const classList = stageInfo.class;
+
+          for (const classInfo of classList) {
+            targetElement = await waitForGetElement(`.${classInfo.className}`, classInfo.classIndex);
+            if (targetElement) {
+              break;
+            }
+          }
+        }
+
+        if (stageInfo.method === "CLICK") {
+          await targetElement.click();
+          restStageList.shift();
+        }
+
+        if (stageInfo.method === "CHANGE" || stageInfo.method === "KEYDOWN") {
+          restStageList.shift();
+          targetElement.value = stageInfo.value;
+        }
+
+        if (restStageList.length === 0) {
+          ipcRenderer.sendToHost("macro-end");
+        }
+      }
     }
+  };
+
+  ipcRenderer.on("auto-macro", async (_, macroStageList) => {
+    executeMacro(macroStageList);
   });
 
   document.addEventListener("DOMContentLoaded", () => {

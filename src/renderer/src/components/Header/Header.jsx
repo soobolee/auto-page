@@ -10,7 +10,7 @@ import CircleButton from "../Button/CircleButton";
 function Header() {
   const navigate = useNavigate();
   const {browserTabList, tabFocusedIndex, resetTabInfo} = useTabStore();
-  const {macroStageList, macroImageList, startMacroExecute, resetStageList, stopMacroRecord} = useMacroStageStore();
+  const {macroStageList, macroImageList, resetStageList, stopMacroRecord} = useMacroStageStore();
 
   const handleMainClick = () => {
     if (macroStageList.length > 1) {
@@ -23,10 +23,6 @@ function Header() {
     navigate("/");
   };
 
-  const handleStartMacro = () => {
-    startMacroExecute();
-  };
-
   const focusedTabInfo = browserTabList[tabFocusedIndex] || {};
 
   return (
@@ -35,7 +31,6 @@ function Header() {
       <div className="h-[35%] w-full flex">
         <h3 className="text-white text-2xl mx-auto">Auto Pape</h3>
         <Button buttonText={"메인"} buttonColor={"bg-sub"} onClick={handleMainClick} />
-        <Button buttonText={"임시시작"} buttonColor={"bg-subsub"} onClick={handleStartMacro} />
       </div>
       <div className="h-[40%] w-full flex items-end overflow-scroll">
         {browserTabList.length > 0 && (
