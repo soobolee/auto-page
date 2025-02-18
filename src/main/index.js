@@ -63,15 +63,23 @@ ipcMain.handle("capture-page", async (_, webviewSize) => {
 });
 
 ipcMain.handle("save-macro", (_, fileName, fileContent) => {
-  macroFileWrite(fileName, fileContent);
+  writeMacroInfoFile(fileName, fileContent);
 });
 
 ipcMain.handle("save-image", (_, fileName, fileContent) => {
-  macroFileWrite(fileName, fileContent, true);
+  writeMacroInfoFile(fileName, fileContent, true);
+});
+
+ipcMain.on("save-shortcut", (_, shortCutInfo) => {
+  writeShortCutInfoFile(shortCutInfo);
 });
 
 ipcMain.handle("get-macro-item", () => {
   return getMacroItemList();
+});
+
+ipcMain.handle("get-shortcut-list", () => {
+  return getShortCutList();
 });
 
 app.whenReady().then(() => {
@@ -96,16 +104,16 @@ app.on("window-all-closed", () => {
   }
 });
 
-function macroFileWrite(fileName, fileContent, isImage) {
+function writeMacroInfoFile(fileName, fileContent, isImage) {
   try {
-    const folderPath = getFilePath(isImage);
+    const folderPath = getMacroFilePath(isImage);
     let macroName = fileName || getCurrentTime();
 
     if (!fs.existsSync(folderPath)) {
       fs.mkdirSync(folderPath);
     }
 
-    const filePath = getFilePath(isImage, `${macroName}.json`);
+    const filePath = getMacroFilePath(isImage, `${macroName}.json`);
 
     if (fs.existsSync(filePath)) {
       const beforeJsonList = fs.readFileSync(filePath);
@@ -115,7 +123,10 @@ function macroFileWrite(fileName, fileContent, isImage) {
         return;
       }
 
-      fs.writeFileSync(filePath, [...beforeJsonList, fileContent], {flag: "w+"});
+      const newJsonList = JSON.parse(beforeJsonList);
+      newJsonList.push(fileContent);
+
+      fs.writeFileSync(filePath, JSON.stringify(newJsonList), {flag: "w+"});
     } else {
       fs.writeFileSync(filePath, JSON.stringify(fileContent), {flag: "w+"});
     }
@@ -124,7 +135,36 @@ function macroFileWrite(fileName, fileContent, isImage) {
   }
 }
 
-function getFilePath(isImage, fileName = "") {
+function writeShortCutInfoFile(fileContent) {
+  try {
+    const folderPath = join(__dirname, `../../shortCutFile`);
+    const filePath = join(__dirname, `../../shortCutFile/shortcut.json`);
+
+    if (!fs.existsSync(folderPath)) {
+      fs.mkdirSync(folderPath);
+    }
+
+    if (fs.existsSync(filePath)) {
+      const beforeJsonList = fs.readFileSync(filePath);
+
+      if (!beforeJsonList) {
+        console.error("단축키 관련 파일을 불러오지 못했습니다.");
+        return;
+      }
+
+      const newJsonList = JSON.parse(beforeJsonList);
+      newJsonList.push(fileContent);
+
+      fs.writeFileSync(filePath, JSON.stringify(newJsonList), {flag: "w+"});
+    } else {
+      fs.writeFileSync(filePath, JSON.stringify([fileContent]), {flag: "w+"});
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+function getMacroFilePath(isImage, fileName = "") {
   if (isImage) {
     return join(__dirname, `../../imageFile/${fileName}`);
   } else {
@@ -134,20 +174,34 @@ function getFilePath(isImage, fileName = "") {
 
 function getMacroItemList(isImage) {
   try {
-    if (!fs.existsSync(getFilePath(isImage))) {
+    if (!fs.existsSync(getMacroFilePath(isImage))) {
       return [];
     }
 
-    const macroItemNameList = fs.readdirSync(getFilePath(isImage));
+    const macroItemNameList = fs.readdirSync(getMacroFilePath(isImage));
     const macroItemList = [];
 
     macroItemNameList.forEach((macroName) => {
       if (macroName.includes("json")) {
-        macroItemList.push({[macroName.replace(".json", "")]: fs.readFileSync(getFilePath(isImage, macroName), {encoding: "utf8"})});
+        macroItemList.push({[macroName.replace(".json", "")]: fs.readFileSync(getMacroFilePath(isImage, macroName), {encoding: "utf8"})});
       }
     });
 
     return macroItemList;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+function getShortCutList() {
+  try {
+    const filePath = join(__dirname, "../../shortCutFile/shortcut.json");
+
+    if (!fs.existsSync(filePath)) {
+      return [];
+    }
+
+    return fs.readFileSync(filePath, {encoding: "utf8"});
   } catch (error) {
     console.error(error);
   }
