@@ -127,29 +127,16 @@ try {
       return;
     }
 
-    const observer = new MutationObserver((mutationList) => {
-      for (const mutation of mutationList) {
-        if (mutation.type === "childList") {
-          mutation.addedNodes.forEach((node) => {
-            if (node.tagName === "IFRAME") {
-              const replacementText = document.createElement("div");
-              replacementText.innerHTML = "<div style='position:relative; top:50%; left:50%;'>iFrame은 등록 불가합니다.</div>";
-
-              node.parentNode.replaceChild(replacementText, node);
-            }
-          });
-        }
-      }
+    const observer = new MutationObserver(() => {
+      const iframe = document.getElementsByTagName("iframe");
+      Array.from(iframe).forEach((frame) => {
+        frame.remove();
+      });
     });
 
     observer.observe(document.body, {
       childList: true,
       subtree: true,
-    });
-
-    const iframe = document.getElementsByTagName("iframe");
-    Array.from(iframe).forEach((frame) => {
-      frame.remove();
     });
 
     window.addEventListener(
