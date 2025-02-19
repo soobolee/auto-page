@@ -25,19 +25,14 @@ function MainContent() {
       const macroItemList = await window.electronAPI.getMacroItem();
       const shortCutInfoList = await window.electronAPI.getShortCutList();
 
-      const parseMacroItemList = macroItemList.map((macroItem) => {
+      const macroList = macroItemList.map((macroItem) => {
         const macroName = Object.keys(macroItem)[0];
 
-        return {[macroName]: JSON.parse(macroItem[macroName])};
+        return {[macroName]: macroItem[macroName]};
       });
 
-      let parseShortCutInfoList = [];
-      if (shortCutInfoList.length > 0) {
-        parseShortCutInfoList = JSON.parse(shortCutInfoList);
-      }
-
-      setMacroItemList(parseMacroItemList);
-      setShortCutList(parseShortCutInfoList);
+      setMacroItemList(macroList);
+      setShortCutList(shortCutInfoList || []);
     }
 
     getMacroItem();

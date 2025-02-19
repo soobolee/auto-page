@@ -53,7 +53,7 @@ const waitUntil = async () => {
 
 ipcMain.handle("capture-page", async (_, webviewSize) => {
   await waitUntil();
-  const captureImage = await mainWindow.webContents.capturePage(JSON.parse(webviewSize));
+  const captureImage = await mainWindow.webContents.capturePage(webviewSize);
   const resizeImage = await captureImage.resize({
     quality: "good",
   });
@@ -189,7 +189,9 @@ function getMacroItemList(isImage) {
 
     macroItemNameList.forEach((macroName) => {
       if (macroName.includes("json")) {
-        macroItemList.push({[macroName.replace(".json", "")]: fs.readFileSync(getMacroFilePath(isImage, macroName), {encoding: "utf8"})});
+        const readFile = fs.readFileSync(getMacroFilePath(isImage, macroName), {encoding: "utf8"});
+
+        macroItemList.push({[macroName.replace(".json", "")]: JSON.parse(readFile)});
       }
     });
 
@@ -206,8 +208,9 @@ function getShortCutList() {
     if (!fs.existsSync(filePath)) {
       return [];
     }
+    const readFile = fs.readFileSync(filePath, {encoding: "utf8"});
 
-    return fs.readFileSync(filePath, {encoding: "utf8"});
+    return JSON.parse(readFile);
   } catch (error) {
     console.error(error);
   }

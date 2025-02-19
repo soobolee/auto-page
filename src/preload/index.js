@@ -57,20 +57,21 @@ try {
       observer.observe(document.body, {
         childList: true,
         subtree: true,
+        attributes: true,
+        characterData: true,
       });
     });
   }
 
   const executeMacro = async (macroStageList) => {
-    const parseMacroStageList = JSON.parse(macroStageList);
-    const restStageList = [...parseMacroStageList];
+    const restStageList = [...macroStageList];
 
     window.addEventListener("beforeunload", () => {
       macroBreak = true;
       ipcRenderer.sendToHost("macro-stop", restStageList);
     });
 
-    for (const stageInfo of parseMacroStageList) {
+    for (const stageInfo of macroStageList) {
       await sleep(1000);
 
       if (!macroBreak) {
@@ -163,43 +164,34 @@ try {
               ipcRenderer.sendToHost("new-tab", aTag.href);
             }
 
-            ipcRenderer.send(
-              "event-occurred",
-              JSON.stringify({
-                id: eventTargetId,
-                tagName: eventTarget.tagName,
-                class: eventTargetClassInfo,
-                href: aTag.href,
-                url: eventTargetUrl,
-                method: "CLICK",
-              })
-            );
+            ipcRenderer.send("event-occurred", {
+              id: eventTargetId,
+              tagName: eventTarget.tagName,
+              class: eventTargetClassInfo,
+              href: aTag.href,
+              url: eventTargetUrl,
+              method: "CLICK",
+            });
           }
 
           if (buttonTag) {
-            ipcRenderer.send(
-              "event-occurred",
-              JSON.stringify({
-                id: eventTargetId,
-                tagName: eventTarget.tagName,
-                class: eventTargetClassInfo,
-                url: eventTargetUrl,
-                method: "CLICK",
-              })
-            );
+            ipcRenderer.send("event-occurred", {
+              id: eventTargetId,
+              tagName: eventTarget.tagName,
+              class: eventTargetClassInfo,
+              url: eventTargetUrl,
+              method: "CLICK",
+            });
           }
 
           if (iButtonTag) {
-            ipcRenderer.send(
-              "event-occurred",
-              JSON.stringify({
-                id: eventTargetId,
-                tagName: eventTarget.tagName,
-                class: eventTargetClassInfo,
-                url: eventTargetUrl,
-                method: "CLICK",
-              })
-            );
+            ipcRenderer.send("event-occurred", {
+              id: eventTargetId,
+              tagName: eventTarget.tagName,
+              class: eventTargetClassInfo,
+              url: eventTargetUrl,
+              method: "CLICK",
+            });
           }
         }
       },
@@ -215,17 +207,14 @@ try {
       const eventTargetClassList = Array.from(eventTarget.classList);
       const eventTargetClassInfo = getClassInfo(eventTargetClassList, eventTarget);
 
-      ipcRenderer.send(
-        "event-occurred",
-        JSON.stringify({
-          id: eventTarget.id,
-          tagName: eventTarget.tagName,
-          class: eventTargetClassInfo,
-          url: eventTargetUrl,
-          method: "KEYDOWN",
-          value: eventTarget.value,
-        })
-      );
+      ipcRenderer.send("event-occurred", {
+        id: eventTarget.id,
+        tagName: eventTarget.tagName,
+        class: eventTargetClassInfo,
+        url: eventTargetUrl,
+        method: "KEYDOWN",
+        value: eventTarget.value,
+      });
     });
 
     document.addEventListener("change", (event) => {
@@ -234,17 +223,14 @@ try {
       const eventTargetClassList = Array.from(eventTarget.classList);
       const eventTargetClassInfo = getClassInfo(eventTargetClassList, eventTarget);
 
-      ipcRenderer.send(
-        "event-occurred",
-        JSON.stringify({
-          id: eventTarget.id,
-          tagName: eventTarget.tagName,
-          class: eventTargetClassInfo,
-          url: eventTargetUrl,
-          method: "CHANGE",
-          value: eventTarget.value,
-        })
-      );
+      ipcRenderer.send("event-occurred", {
+        id: eventTarget.id,
+        tagName: eventTarget.tagName,
+        class: eventTargetClassInfo,
+        url: eventTargetUrl,
+        method: "CHANGE",
+        value: eventTarget.value,
+      });
     });
   });
 } catch (error) {

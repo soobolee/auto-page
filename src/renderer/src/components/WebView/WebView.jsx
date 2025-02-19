@@ -53,7 +53,7 @@ function WebView({url, isHidden, index}) {
         }
 
         const eventStageList = event.args[0];
-        const stageList = JSON.parse(eventStageList);
+        const stageList = eventStageList;
 
         const lastStage = macroStageList[macroStageList.length - 1];
         let isDuplicate = false;
@@ -64,9 +64,8 @@ function WebView({url, isHidden, index}) {
               return JSON.stringify(lastStage[key]) === JSON.stringify(stageList[key]);
             } else if (key === "method" && stageList[key] === "CLICK") {
               return false;
-            } else {
-              return true;
             }
+            return true;
           });
         }
 
@@ -106,7 +105,7 @@ function WebView({url, isHidden, index}) {
         if (resumeMacroList && resumeMacroList.length > 0) {
           webViewRef.current.send("auto-macro", resumeMacroList);
         } else {
-          webViewRef.current.send("auto-macro", JSON.stringify(macroStageList));
+          webViewRef.current.send("auto-macro", macroStageList);
         }
       }
 
