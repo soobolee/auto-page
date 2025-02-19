@@ -7,7 +7,7 @@ function Navigation() {
   const {setMenuMode} = useMenuStore();
 
   const navIconList = [faHome, faBookmark, faSquarePlus, faKeyboard];
-  const navMenuList = ["home", "bookmark", "addmacro", "shortcut"];
+  const navMenuList = ["HOME", "BOOKMARK", "ADDMACRO", "SHORTCUT"];
 
   return (
     <nav className="w-[10%] h-[100%] bg-sub border">
