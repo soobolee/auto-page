@@ -3,7 +3,7 @@ import {faBookBookmark, faGear, faCircleXmark} from "@fortawesome/free-solid-svg
 
 function ContentCard({macroItem, onClick}) {
   const macroName = Object.keys(macroItem)[0];
-  const macroUrl = JSON.parse(macroItem[macroName])[0].url;
+  const macroUrl = macroItem[macroName][0].url;
 
   return (
     <div className="bg-white w-80 h-48 rounded-2xl m-5 p-3" onClick={onClick}>
