@@ -5,10 +5,8 @@ try {
 
   contextBridge.exposeInMainWorld("electronAPI", {
     getMacroItem: () => ipcRenderer.invoke("get-macro-item"),
-    getShortCutList: () => ipcRenderer.invoke("get-shortcut-list"),
-    saveMacro: (fileName, fileContent) => ipcRenderer.invoke("save-macro", fileName, fileContent),
+    saveMacro: (fileName, fileContent, contentType) => ipcRenderer.invoke("save-macro", fileName, fileContent, contentType),
     saveImage: (fileName, fileContent) => ipcRenderer.invoke("save-image", fileName, fileContent),
-    saveShortCut: (shortCutInfo) => ipcRenderer.send("save-shortcut", shortCutInfo),
     capturePage: (webviewSize) => ipcRenderer.invoke("capture-page", webviewSize),
   });
 
@@ -57,20 +55,21 @@ try {
       observer.observe(document.body, {
         childList: true,
         subtree: true,
+        attributes: true,
+        characterData: true,
       });
     });
   }
 
   const executeMacro = async (macroStageList) => {
-    const parseMacroStageList = JSON.parse(macroStageList);
-    const restStageList = [...parseMacroStageList];
+    const restStageList = [...macroStageList];
 
     window.addEventListener("beforeunload", () => {
       macroBreak = true;
       ipcRenderer.sendToHost("macro-stop", restStageList);
     });
 
-    for (const stageInfo of parseMacroStageList) {
+    for (const stageInfo of macroStageList) {
       await sleep(1000);
 
       if (!macroBreak) {
@@ -127,29 +126,16 @@ try {
       return;
     }
 
-    const observer = new MutationObserver((mutationList) => {
-      for (const mutation of mutationList) {
-        if (mutation.type === "childList") {
-          mutation.addedNodes.forEach((node) => {
-            if (node.tagName === "IFRAME") {
-              const replacementText = document.createElement("div");
-              replacementText.innerHTML = "<div style='position:relative; top:50%; left:50%;'>iFrame은 등록 불가합니다.</div>";
-
-              node.parentNode.replaceChild(replacementText, node);
-            }
-          });
-        }
-      }
+    const observer = new MutationObserver(() => {
+      const iframe = document.getElementsByTagName("iframe");
+      Array.from(iframe).forEach((frame) => {
+        frame.remove();
+      });
     });
 
     observer.observe(document.body, {
       childList: true,
       subtree: true,
-    });
-
-    const iframe = document.getElementsByTagName("iframe");
-    Array.from(iframe).forEach((frame) => {
-      frame.remove();
     });
 
     window.addEventListener(
@@ -176,43 +162,34 @@ try {
               ipcRenderer.sendToHost("new-tab", aTag.href);
             }
 
-            ipcRenderer.send(
-              "event-occurred",
-              JSON.stringify({
-                id: eventTargetId,
-                tagName: eventTarget.tagName,
-                class: eventTargetClassInfo,
-                href: aTag.href,
-                url: eventTargetUrl,
-                method: "CLICK",
-              })
-            );
+            ipcRenderer.send("event-occurred", {
+              id: eventTargetId,
+              tagName: eventTarget.tagName,
+              class: eventTargetClassInfo,
+              href: aTag.href,
+              url: eventTargetUrl,
+              method: "CLICK",
+            });
           }
 
           if (buttonTag) {
-            ipcRenderer.send(
-              "event-occurred",
-              JSON.stringify({
-                id: eventTargetId,
-                tagName: eventTarget.tagName,
-                class: eventTargetClassInfo,
-                url: eventTargetUrl,
-                method: "CLICK",
-              })
-            );
+            ipcRenderer.send("event-occurred", {
+              id: eventTargetId,
+              tagName: eventTarget.tagName,
+              class: eventTargetClassInfo,
+              url: eventTargetUrl,
+              method: "CLICK",
+            });
           }
 
           if (iButtonTag) {
-            ipcRenderer.send(
-              "event-occurred",
-              JSON.stringify({
-                id: eventTargetId,
-                tagName: eventTarget.tagName,
-                class: eventTargetClassInfo,
-                url: eventTargetUrl,
-                method: "CLICK",
-              })
-            );
+            ipcRenderer.send("event-occurred", {
+              id: eventTargetId,
+              tagName: eventTarget.tagName,
+              class: eventTargetClassInfo,
+              url: eventTargetUrl,
+              method: "CLICK",
+            });
           }
         }
       },
@@ -228,17 +205,14 @@ try {
       const eventTargetClassList = Array.from(eventTarget.classList);
       const eventTargetClassInfo = getClassInfo(eventTargetClassList, eventTarget);
 
-      ipcRenderer.send(
-        "event-occurred",
-        JSON.stringify({
-          id: eventTarget.id,
-          tagName: eventTarget.tagName,
-          class: eventTargetClassInfo,
-          url: eventTargetUrl,
-          method: "KEYDOWN",
-          value: eventTarget.value,
-        })
-      );
+      ipcRenderer.send("event-occurred", {
+        id: eventTarget.id,
+        tagName: eventTarget.tagName,
+        class: eventTargetClassInfo,
+        url: eventTargetUrl,
+        method: "KEYDOWN",
+        value: eventTarget.value,
+      });
     });
 
     document.addEventListener("change", (event) => {
@@ -247,17 +221,14 @@ try {
       const eventTargetClassList = Array.from(eventTarget.classList);
       const eventTargetClassInfo = getClassInfo(eventTargetClassList, eventTarget);
 
-      ipcRenderer.send(
-        "event-occurred",
-        JSON.stringify({
-          id: eventTarget.id,
-          tagName: eventTarget.tagName,
-          class: eventTargetClassInfo,
-          url: eventTargetUrl,
-          method: "CHANGE",
-          value: eventTarget.value,
-        })
-      );
+      ipcRenderer.send("event-occurred", {
+        id: eventTarget.id,
+        tagName: eventTarget.tagName,
+        class: eventTargetClassInfo,
+        url: eventTargetUrl,
+        method: "CHANGE",
+        value: eventTarget.value,
+      });
     });
   });
 } catch (error) {

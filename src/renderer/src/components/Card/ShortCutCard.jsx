@@ -1,35 +1,37 @@
 import {useState} from "react";
-import useUserConfigStore from "../../stores/useUserConfigStore";
+import useMenuStore from "../../stores/useMenuStore";
 import Button from "../Button/Button";
 
 function ShortCutCard({macroItem}) {
-  const {shortCutList} = useUserConfigStore();
+  const macroName = macroItem.macroName;
+  const shortCutItem = macroItem.shortCut || {};
 
-  const macroName = Object.keys(macroItem)[0];
-  const shortCutItem = shortCutList.find((item) => {
-    if (item.macroName === macroName) {
-      return item;
-    }
-  });
+  const [firstKeyUnit, setFirstKeyUnit] = useState(shortCutItem.firstKeyUnit);
+  const [secondKeyUnit, setSecondKeyUnit] = useState(shortCutItem.secondKeyUnit);
+  const [isSaveError, setIsSaveError] = useState(false);
+  const {setMenuMode} = useMenuStore();
 
-  const [firstKeyUnit, setFirstKeyUnit] = useState(shortCutItem ? shortCutItem.firstKeyUnit : "");
-  const [secondKeyUnit, setSecondKeyUnit] = useState(shortCutItem ? shortCutItem.secondKeyUnit : "");
-
-  const saveShortCut = () => {
+  const saveShortCut = async () => {
     if (!firstKeyUnit && !secondKeyUnit) {
       return;
     }
 
     let isDuplicated = false;
 
-    if (shortCutItem) {
+    if (Object.keys(shortCutItem).length) {
       if (shortCutItem.firstKeyUnit === firstKeyUnit && shortCutItem.secondKeyUnit === secondKeyUnit) {
         isDuplicated = true;
       }
     }
 
     if (!isDuplicated) {
-      window.electronAPI.saveShortCut({firstKeyUnit, secondKeyUnit, macroName});
+      const saveResult = await window.electronAPI.saveMacro(macroName, {firstKeyUnit, secondKeyUnit}, "shortCut");
+
+      if (saveResult) {
+        setMenuMode("HOME");
+      } else {
+        setIsSaveError(true);
+      }
     }
   };
 
@@ -57,7 +59,8 @@ function ShortCutCard({macroItem}) {
         />
         <div className="flex justify-center items-center text-7xl"> = </div>
         <input type="text" defaultValue={macroName} className="w-70 border-2 h-full bg-tab text-3xl" />
-        <Button buttonText={"저장"} buttonColor={"bg-green"} onClick={saveShortCut} />
+        {!isSaveError && <Button buttonText={"저장"} buttonColor={"bg-green"} onClick={saveShortCut} />}
+        {isSaveError && <Button buttonText={"재시도"} buttonColor={"bg-red"} onClick={saveShortCut} />}
       </div>
     </>
   );

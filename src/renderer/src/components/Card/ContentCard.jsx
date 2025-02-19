@@ -2,8 +2,8 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faBookBookmark, faGear, faCircleXmark} from "@fortawesome/free-solid-svg-icons";
 
 function ContentCard({macroItem, onClick}) {
-  const macroName = Object.keys(macroItem)[0];
-  const macroUrl = macroItem[macroName][0].url;
+  const macroName = macroItem.macroName;
+  const macroUrl = macroItem.stageList[0].url;
 
   return (
     <div className="bg-white w-80 h-48 rounded-2xl m-5 p-3" onClick={onClick}>
