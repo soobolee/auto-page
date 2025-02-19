@@ -107,6 +107,27 @@ function MainContent() {
               <EmptyCard />
             </div>
           )}
+          {menuMode === "BOOKMARK" && (
+            <div className="w-full h-full p-16 flex flex-row flex-wrap">
+              {macroItemList.length > 0 &&
+                macroItemList.map((item) => {
+                  return (
+                    item.bookmark && (
+                      <ContentCard
+                        key={nanoid()}
+                        macroItem={item}
+                        onClick={() => {
+                          setMacroStageList(item.stageList);
+                          setBrowserTabList([{tabUrl: item.stageList[0].url}]);
+                          startMacroExecute();
+                          navigate("/macro");
+                        }}
+                      />
+                    )
+                  );
+                })}
+            </div>
+          )}
           {menuMode === "SHORTCUT" && (
             <div className="w-full h-full p-16 flex flex-col items-center gap-10 overflow-scroll">
               {macroItemList.length > 0 ? (
