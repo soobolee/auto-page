@@ -1,18 +1,20 @@
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {useNavigate} from "react-router";
 import EmptyCard from "../Card/EmptyCard";
 import ContentCard from "../Card/ContentCard";
+import ShortCutCard from "../Card/ShortcutCard";
 import Navigation from "../Navigation/Navigation";
 import useMacroStageStore from "../../stores/useMacroStageStore";
 import useMacroItemStore from "../../stores/useMacroItemStore";
+import useUserConfigStore from "../../stores/useUserConfigStore";
 import useMenuStore from "../../stores/useMenuStore";
 import useTabStore from "../../stores/useTabStore";
 import {nanoid} from "nanoid";
-import ShortCutCard from "../Card/ShortcutCard";
 
 function MainContent() {
   const {menuMode} = useMenuStore();
   const {setMacroStageList, startMacroExecute} = useMacroStageStore();
+  const {shortCutList, shortCutUnitList, setShortCutList, setShortCutUnitList} = useUserConfigStore();
   const {macroItemList, setMacroItemList} = useMacroItemStore();
   const {setBrowserTabList} = useTabStore();
 
@@ -20,22 +22,78 @@ function MainContent() {
 
   useEffect(() => {
     async function getMacroItem() {
-      let macroItemList = await window.electronAPI.getMacroItem();
-      if (macroItemList.length === 0) {
-        macroItemList = [];
-      }
+      const macroItemList = await window.electronAPI.getMacroItem();
+      const shortCutInfoList = await window.electronAPI.getShortCutList();
 
-      const parseItemList = macroItemList.map((macroItem) => {
+      const parseMacroItemList = macroItemList.map((macroItem) => {
         const macroName = Object.keys(macroItem)[0];
 
-        return {[macroName]: macroItem[macroName]};
+        return {[macroName]: JSON.parse(macroItem[macroName])};
       });
 
-      setMacroItemList(parseItemList);
+      let parseShortCutInfoList = [];
+      if (shortCutInfoList.length > 0) {
+        parseShortCutInfoList = JSON.parse(shortCutInfoList);
+      }
+
+      setMacroItemList(parseMacroItemList);
+      setShortCutList(parseShortCutInfoList);
     }
 
     getMacroItem();
-  }, [setMacroItemList]);
+  }, [setMacroItemList, setShortCutList]);
+
+  useEffect(() => {
+    const handleShortCut = (event) => {
+      if (event.target.tagName === "INPUT") {
+        return;
+      }
+
+      setShortCutUnitList([...shortCutUnitList, event.key]);
+
+      if (shortCutUnitList.length === 1) {
+        const macroInfo = shortCutList.find((shortCut) => shortCut.firstKeyUnit === shortCutUnitList[0] && shortCut.secondKeyUnit === event.key);
+
+        if (!macroInfo) {
+          return;
+        }
+
+        const macroName = macroInfo.macroName;
+        const macroList = macroItemList.find((macroItem) => Object.keys(macroItem)[0] === macroName)[macroName];
+
+        setMacroStageList(macroList);
+        setBrowserTabList([{tabUrl: macroList[0].url}]);
+        startMacroExecute();
+        navigate("/macro");
+      }
+    };
+
+    const handleKeyup = (event) => {
+      if (event.target.tagName === "INPUT") {
+        return;
+      }
+
+      setShortCutUnitList([]);
+    };
+
+    document.addEventListener("keydown", handleShortCut);
+    document.addEventListener("keyup", handleKeyup);
+
+    return () => {
+      document.removeEventListener("keydown", handleShortCut);
+      document.removeEventListener("keyup", handleKeyup);
+    };
+  }, [
+    macroItemList,
+    menuMode,
+    navigate,
+    setBrowserTabList,
+    setMacroStageList,
+    setShortCutUnitList,
+    shortCutList,
+    shortCutUnitList,
+    startMacroExecute,
+  ]);
 
   return (
     <div className="flex h-[90%]">
@@ -51,7 +109,7 @@ function MainContent() {
                     key={nanoid()}
                     macroItem={item}
                     onClick={() => {
-                      const macroList = JSON.parse(Object.values(item)[0]);
+                      const macroList = Object.values(item)[0];
                       setMacroStageList(macroList);
                       setBrowserTabList([{tabUrl: macroList[0].url}]);
                       startMacroExecute();
@@ -64,7 +122,7 @@ function MainContent() {
           )}
           {menuMode === "shortcut" && (
             <div className="w-full h-full p-16 flex flex-col items-center gap-10 overflow-scroll">
-              {macroItemList.length > 0 && macroItemList.map((item) => <ShortCutCard key={nanoid()} macroItem={item} />)}
+              {macroItemList && macroItemList.map((item) => <ShortCutCard key={nanoid()} macroItem={item} />)}
             </div>
           )}
         </div>
