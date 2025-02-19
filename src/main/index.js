@@ -40,19 +40,12 @@ ipcMain.on("event-occurred", (event, payload) => {
   event.reply("client-event", payload);
 });
 
-const waitUntil = async () => {
-  return await new Promise((resolve) => {
-    const interval = setInterval(() => {
-      if (!mainWindow.webContents.isBeingCaptured()) {
-        resolve();
-        clearInterval(interval);
-      }
-    }, 0);
-  });
-};
+async function sleep(delay) {
+  return new Promise((resolve) => setTimeout(resolve, delay));
+}
 
 ipcMain.handle("capture-page", async (_, webviewSize) => {
-  await waitUntil();
+  await sleep(300);
   const captureImage = await mainWindow.webContents.capturePage(webviewSize);
   const resizeImage = await captureImage.resize({
     quality: "good",
@@ -62,24 +55,16 @@ ipcMain.handle("capture-page", async (_, webviewSize) => {
   return imageUrl;
 });
 
-ipcMain.handle("save-macro", (_, fileName, fileContent) => {
-  writeMacroInfoFile(fileName, fileContent);
+ipcMain.handle("save-macro", (_, fileName, fileContent, contentType) => {
+  return writeMacroInfoFile(fileName, fileContent, contentType);
 });
 
 ipcMain.handle("save-image", (_, fileName, fileContent) => {
-  writeMacroInfoFile(fileName, fileContent, true);
-});
-
-ipcMain.on("save-shortcut", (_, shortCutInfo) => {
-  writeShortCutInfoFile(shortCutInfo);
+  return writeMacroInfoFile(fileName, fileContent, "image");
 });
 
 ipcMain.handle("get-macro-item", () => {
   return getMacroItemList();
-});
-
-ipcMain.handle("get-shortcut-list", () => {
-  return getShortCutList();
 });
 
 app.whenReady().then(() => {
@@ -104,113 +89,67 @@ app.on("window-all-closed", () => {
   }
 });
 
-function writeMacroInfoFile(fileName, fileContent, isImage) {
+function writeMacroInfoFile(fileName, fileContent, contentType) {
   try {
-    const folderPath = getMacroFilePath(isImage);
+    const folderPath = getMacroFilePath(contentType);
     let macroName = fileName || getCurrentTime();
 
     if (!fs.existsSync(folderPath)) {
       fs.mkdirSync(folderPath);
     }
 
-    const filePath = getMacroFilePath(isImage, `${macroName}.json`);
+    const filePath = getMacroFilePath(contentType, `${macroName}.json`);
 
     if (fs.existsSync(filePath)) {
-      const beforeJsonList = fs.readFileSync(filePath);
+      const beforeJson = fs.readFileSync(filePath);
 
-      if (!beforeJsonList) {
+      if (!beforeJson) {
         console.error("매크로 관련 파일을 불러오지 못했습니다.");
         return;
       }
 
-      const newJsonList = JSON.parse(beforeJsonList);
-      newJsonList.push(fileContent);
+      const parseJson = JSON.parse(beforeJson);
+      parseJson[contentType] = fileContent;
 
-      fs.writeFileSync(filePath, JSON.stringify(newJsonList), {flag: "w+"});
+      fs.writeFileSync(filePath, JSON.stringify(parseJson), {flag: "w+"});
     } else {
-      fs.writeFileSync(filePath, JSON.stringify(fileContent), {flag: "w+"});
+      fs.writeFileSync(filePath, JSON.stringify({[contentType]: fileContent}), {flag: "w+"});
     }
+
+    return true;
   } catch (error) {
     console.error(error);
   }
 }
 
-function writeShortCutInfoFile(fileContent) {
-  try {
-    const folderPath = join(__dirname, `../../shortCutFile`);
-    const filePath = join(__dirname, `../../shortCutFile/shortcut.json`);
-
-    if (!fs.existsSync(folderPath)) {
-      fs.mkdirSync(folderPath);
-    }
-
-    if (fs.existsSync(filePath)) {
-      const beforeJsonList = fs.readFileSync(filePath);
-
-      if (!beforeJsonList) {
-        console.error("단축키 관련 파일을 불러오지 못했습니다.");
-        return;
-      }
-
-      const newJsonList = JSON.parse(beforeJsonList);
-
-      const sameNameIndex = newJsonList.findIndex((item) => item.macroName === fileContent.macroName);
-      newJsonList[sameNameIndex] = fileContent;
-
-      if (sameNameIndex < 0) {
-        newJsonList.push(fileContent);
-      }
-
-      fs.writeFileSync(filePath, JSON.stringify(newJsonList), {flag: "w+"});
-    } else {
-      fs.writeFileSync(filePath, JSON.stringify([fileContent]), {flag: "w+"});
-    }
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-function getMacroFilePath(isImage, fileName = "") {
-  if (isImage) {
+function getMacroFilePath(contentType = "stageList", fileName = "") {
+  if (contentType === "image") {
     return join(__dirname, `../../imageFile/${fileName}`);
-  } else {
-    return join(__dirname, `../../macroFile/${fileName}`);
   }
+
+  return join(__dirname, `../../macroFile/${fileName}`);
 }
 
-function getMacroItemList(isImage) {
+function getMacroItemList(contentType) {
   try {
-    if (!fs.existsSync(getMacroFilePath(isImage))) {
+    if (!fs.existsSync(getMacroFilePath(contentType))) {
       return [];
     }
 
-    const macroItemNameList = fs.readdirSync(getMacroFilePath(isImage));
+    const macroItemNameList = fs.readdirSync(getMacroFilePath(contentType));
     const macroItemList = [];
 
     macroItemNameList.forEach((macroName) => {
       if (macroName.includes("json")) {
-        const readFile = fs.readFileSync(getMacroFilePath(isImage, macroName), {encoding: "utf8"});
+        const readFile = fs.readFileSync(getMacroFilePath(contentType, macroName), {encoding: "utf8"});
+        const parseReadFile = JSON.parse(readFile);
 
-        macroItemList.push({[macroName.replace(".json", "")]: JSON.parse(readFile)});
+        parseReadFile["macroName"] = macroName.replace(".json", "");
+        macroItemList.push(parseReadFile);
       }
     });
 
     return macroItemList;
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-function getShortCutList() {
-  try {
-    const filePath = join(__dirname, "../../shortCutFile/shortcut.json");
-
-    if (!fs.existsSync(filePath)) {
-      return [];
-    }
-    const readFile = fs.readFileSync(filePath, {encoding: "utf8"});
-
-    return JSON.parse(readFile);
   } catch (error) {
     console.error(error);
   }

@@ -5,10 +5,8 @@ try {
 
   contextBridge.exposeInMainWorld("electronAPI", {
     getMacroItem: () => ipcRenderer.invoke("get-macro-item"),
-    getShortCutList: () => ipcRenderer.invoke("get-shortcut-list"),
-    saveMacro: (fileName, fileContent) => ipcRenderer.invoke("save-macro", fileName, fileContent),
+    saveMacro: (fileName, fileContent, contentType) => ipcRenderer.invoke("save-macro", fileName, fileContent, contentType),
     saveImage: (fileName, fileContent) => ipcRenderer.invoke("save-image", fileName, fileContent),
-    saveShortCut: (shortCutInfo) => ipcRenderer.send("save-shortcut", shortCutInfo),
     capturePage: (webviewSize) => ipcRenderer.invoke("capture-page", webviewSize),
   });
 
