@@ -153,7 +153,13 @@ function writeShortCutInfoFile(fileContent) {
       }
 
       const newJsonList = JSON.parse(beforeJsonList);
-      newJsonList.push(fileContent);
+
+      const sameNameIndex = newJsonList.findIndex((item) => item.macroName === fileContent.macroName);
+      newJsonList[sameNameIndex] = fileContent;
+
+      if (sameNameIndex < 0) {
+        newJsonList.push(fileContent);
+      }
 
       fs.writeFileSync(filePath, JSON.stringify(newJsonList), {flag: "w+"});
     } else {
