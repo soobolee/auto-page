@@ -15,7 +15,7 @@ function NameModal() {
   const {recordMode, setRecordMode} = useMenuStore();
 
   const clickModalSave = () => {
-    window.electronAPI.saveMacro(macroName, macroStageList);
+    window.electronAPI.saveMacro(macroName, macroStageList, "stageList");
     window.electronAPI.saveImage(macroName, macroImageList);
     stopMacroRecord();
     resetStageList();
@@ -23,9 +23,9 @@ function NameModal() {
 
     if (recordMode === "auto") {
       resetTabInfo();
-      navigate("/");
     } else {
       setRecordMode("auto");
+      navigate("/");
     }
   };
 
