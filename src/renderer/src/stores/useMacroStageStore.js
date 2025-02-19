@@ -3,15 +3,21 @@ import {create} from "zustand";
 const useMacroStageStore = create((set) => ({
   macroStageList: [],
   macroImageList: [],
-  isMacroRecordStart: false,
-  isMacroExecute: false,
+  isMacroRecording: false,
+  isMacroExecuting: false,
   setMacroStageList: (newStageList) => set({macroStageList: newStageList}),
   setImageStageList: (newImageList) => set({macroImageList: newImageList}),
-  resetStageList: () => set({macroStageList: [], macroImageList: [], isMacroExecute: false}),
-  startMacroExecute: () => set({isMacroExecute: true}),
-  stopMacroExecute: () => set({isMacroExecute: false, macroStageList: []}),
-  startMacroRecord: () => set({isMacroRecordStart: true}),
-  stopMacroRecord: () => set({isMacroRecordStart: false}),
+  resetStageList: () => set({macroStageList: [], macroImageList: [], isMacroExecuting: false}),
+  toggleMacroExecute: () =>
+    set((state) => ({
+      isMacroExecuting: !state.isMacroExecuting,
+      macroStageList: state.isMacroExecuting ? state.macroStageList : [],
+    })),
+  startMacroExecute: () => set({isMacroExecuting: true}),
+  stopMacroExecute: () => set({isMacroExecuting: false, macroStageList: []}),
+  toggleMacroRecord: () => set((state) => ({isMacroRecording: !state.isMacroRecording})),
+  startMacroRecord: () => set({isMacroRecording: true}),
+  stopMacroRecord: () => set({isMacroRecording: false}),
 }));
 
 export default useMacroStageStore;

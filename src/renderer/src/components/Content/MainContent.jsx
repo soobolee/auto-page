@@ -14,7 +14,7 @@ import useTabStore from "../../stores/useTabStore";
 function MainContent() {
   const {menuMode} = useMenuStore();
   const {setMacroStageList, startMacroExecute} = useMacroStageStore();
-  const {shortCutList, shortCutUnitList, setShortCutUnitList} = useUserConfigStore();
+  const {shortCutUnitList, setShortCutUnitList} = useUserConfigStore();
   const {macroItemList, setMacroItemList} = useMacroItemStore();
   const {setBrowserTabList} = useTabStore();
 
@@ -71,17 +71,7 @@ function MainContent() {
       document.removeEventListener("keydown", handleShortCut);
       document.removeEventListener("keyup", handleKeyup);
     };
-  }, [
-    macroItemList,
-    menuMode,
-    navigate,
-    setBrowserTabList,
-    setMacroStageList,
-    setShortCutUnitList,
-    shortCutList,
-    shortCutUnitList,
-    startMacroExecute,
-  ]);
+  }, [macroItemList, menuMode, navigate, setBrowserTabList, setMacroStageList, setShortCutUnitList, shortCutUnitList, startMacroExecute]);
 
   return (
     <div className="flex h-[90%]">

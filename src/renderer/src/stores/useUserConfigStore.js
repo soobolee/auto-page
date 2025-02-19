@@ -2,11 +2,10 @@ import {create} from "zustand";
 
 const useUserConfigStore = create((set) => ({
   isShowModal: false,
-  shortCutList: [],
   shortCutUnitList: [],
+  toggleModal: () => set((state) => ({isShowModal: !state.isShowModal})),
   openModal: () => set({isShowModal: true}),
   closeModal: () => set({isShowModal: false}),
-  setShortCutList: (newShortCutList) => set({shortCutList: newShortCutList}),
   setShortCutUnitList: (newShortCutUnit) => set({shortCutUnitList: newShortCutUnit}),
 }));
 
