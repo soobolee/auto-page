@@ -63,6 +63,12 @@ ipcMain.handle("save-image", (_, fileName, fileContent) => {
   return writeMacroInfoFile(fileName, fileContent, "image");
 });
 
+ipcMain.handle("delete-macro-and-iamge", (_, fileName) => {
+  deleteFile(fileName);
+
+  return getMacroItemList();
+});
+
 ipcMain.handle("get-macro-item", () => {
   return getMacroItemList();
 });
@@ -117,6 +123,24 @@ function writeMacroInfoFile(fileName, fileContent, contentType) {
     }
 
     return true;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+function deleteFile(fileName) {
+  try {
+    const addedJsonFileName = `${fileName}.json`;
+    const macroFilePath = getMacroFilePath("stageList", addedJsonFileName);
+    const imageFilePath = getMacroFilePath("image", addedJsonFileName);
+
+    const pathList = [macroFilePath, imageFilePath];
+
+    pathList.forEach((path) => {
+      if (fs.existsSync(path)) {
+        fs.unlinkSync(path);
+      }
+    });
   } catch (error) {
     console.error(error);
   }

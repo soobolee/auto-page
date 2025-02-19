@@ -5,9 +5,10 @@ try {
 
   contextBridge.exposeInMainWorld("electronAPI", {
     getMacroItem: () => ipcRenderer.invoke("get-macro-item"),
+    capturePage: (webviewSize) => ipcRenderer.invoke("capture-page", webviewSize),
     saveMacro: (fileName, fileContent, contentType) => ipcRenderer.invoke("save-macro", fileName, fileContent, contentType),
     saveImage: (fileName, fileContent) => ipcRenderer.invoke("save-image", fileName, fileContent),
-    capturePage: (webviewSize) => ipcRenderer.invoke("capture-page", webviewSize),
+    deleteMacroAndImage: (fileName) => ipcRenderer.invoke("delete-macro-and-iamge", fileName),
   });
 
   const getClassInfo = (eventTargetClassList, eventTarget) => {
