@@ -12,11 +12,11 @@ function InputUrlContent() {
     try {
       const url = new URL(urlString);
 
-      if (url.protocol !== "https:" || url.protocol !== "http:") {
-        return false;
+      if (url.protocol === "https:" || url.protocol === "http:") {
+        return true;
       }
 
-      return true;
+      return false;
     } catch {
       return false;
     }

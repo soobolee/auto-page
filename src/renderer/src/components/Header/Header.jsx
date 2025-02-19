@@ -13,12 +13,12 @@ function Header() {
   const navigate = useNavigate();
 
   const {browserTabList, resetTabInfo, tabFocusedIndex} = useTabStore();
-  const {macroStageList, resetStageList, isMacroExecute} = useMacroStageStore();
+  const {macroStageList, resetStageList, isMacroExecuting} = useMacroStageStore();
   const {openModal} = useUserConfigStore();
   const {setRecordMode} = useMenuStore();
 
   const handleMainClick = () => {
-    if (isMacroExecute) {
+    if (isMacroExecuting) {
       return;
     }
 
