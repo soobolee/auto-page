@@ -60,15 +60,19 @@ try {
         characterData: true,
       });
 
-      sleep(3000).then(() => {
+      sleep(1500).then(() => {
+        if (document.querySelectorAll(selector)[classIndex]) {
+          return resolve(document.querySelectorAll(selector)[classIndex]);
+        }
+
         return resolve(null);
       });
     });
   }
 
   const executeMacro = async (macroStageList) => {
-    await sleep(2000);
     const restStageList = [...macroStageList];
+    let beforeTarget = [];
 
     window.addEventListener("beforeunload", () => {
       macroBreak = true;
@@ -76,9 +80,10 @@ try {
     });
 
     for (const stageInfo of macroStageList) {
+      await sleep(500);
       if (!macroBreak) {
         if (stageInfo.href && location.href !== stageInfo.href) {
-          restStageList.shift();
+          beforeTarget = restStageList.shift();
 
           if (restStageList.length === 0) {
             ipcRenderer.sendToHost("macro-end");
@@ -105,6 +110,9 @@ try {
         }
 
         if (!targetElement) {
+          if (beforeTarget.method === "KEYDOWN") {
+            break;
+          }
           alert("이벤트 타겟요소를 찾을 수 없습니다.");
           ipcRenderer.sendToHost("macro-end");
         }
@@ -112,13 +120,21 @@ try {
         if (stageInfo.method === "CLICK") {
           targetElement.focus();
           targetElement.click();
-          restStageList.shift();
+          beforeTarget = restStageList.shift();
         }
 
         if (stageInfo.method === "CHANGE" || stageInfo.method === "KEYDOWN") {
-          restStageList.shift();
+          targetElement.click();
           targetElement.focus();
           targetElement.value = stageInfo.value;
+          ipcRenderer.sendToHost("input-paste");
+
+          if (stageInfo.method === "KEYDOWN") {
+            targetElement.click();
+            targetElement.focus();
+            ipcRenderer.sendToHost("input-enter");
+          }
+          beforeTarget = restStageList.shift();
         }
 
         if (restStageList.length === 0) {

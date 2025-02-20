@@ -32,6 +32,21 @@ function WebView({url, isHidden, index}) {
       setImageStageList([...macroImageList]);
     };
 
+    const inputEnter = async () => {
+      currentWebview.sendInputEvent({type: "keyDown", keyCode: "Enter"});
+      currentWebview.sendInputEvent({type: "char", keyCode: "Enter"});
+      await currentWebview.sendInputEvent({type: "keyUp", keyCode: "Enter"});
+    };
+
+    const inputPaste = async () => {
+      currentWebview.sendInputEvent({type: "keyDown", keyCode: "Space"});
+      currentWebview.sendInputEvent({type: "char", keyCode: "Space"});
+      currentWebview.sendInputEvent({type: "keyUp", keyCode: "Space"});
+      currentWebview.sendInputEvent({type: "keyDown", keyCode: "Backspace"});
+      currentWebview.sendInputEvent({type: "char", keyCode: "Backspace"});
+      await currentWebview.sendInputEvent({type: "keyUp", keyCode: "BackSpace"});
+    };
+
     const handleWebviewEvent = (event) => {
       if (event.channel === "macro-stop") {
         window.sessionStorage.setItem("resumeMacroList", JSON.stringify(event.args[0]));
@@ -40,6 +55,15 @@ function WebView({url, isHidden, index}) {
       if (event.channel === "macro-end") {
         stopMacroExecute();
         setMacroStageList([]);
+        window.sessionStorage.removeItem("resumeMacroList");
+      }
+
+      if (event.channel === "input-enter") {
+        inputEnter();
+      }
+
+      if (event.channel === "input-paste") {
+        inputPaste();
       }
 
       if (event.channel === "new-tab") {
