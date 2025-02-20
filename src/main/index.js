@@ -161,9 +161,12 @@ function getMacroItemList(contentType) {
     macroItemNameList.forEach((macroName) => {
       if (macroName.includes("json")) {
         const readFile = fs.readFileSync(getMacroFilePath(contentType, macroName), {encoding: "utf8"});
+        const fileStat = fs.statSync(getMacroFilePath(contentType, macroName));
         const parseReadFile = JSON.parse(readFile);
 
         parseReadFile["macroName"] = macroName.replace(".json", "");
+        parseReadFile["birthTime"] = fileStat.birthtime;
+        parseReadFile["accessTime"] = fileStat.atime;
         macroItemList.push(parseReadFile);
       }
     });
