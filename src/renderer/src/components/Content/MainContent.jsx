@@ -1,18 +1,20 @@
 import {nanoid} from "nanoid";
 import {useEffect} from "react";
 import {useNavigate} from "react-router";
-import EmptyCard from "../Card/EmptyCard";
-import ContentCard from "../Card/ContentCard";
-import ShortCutCard from "../Card/ShortcutCard";
-import Navigation from "../Navigation/Navigation";
 import useMacroStageStore from "../../stores/useMacroStageStore";
 import useMacroItemStore from "../../stores/useMacroItemStore";
 import useUserConfigStore from "../../stores/useUserConfigStore";
 import useMenuStore from "../../stores/useMenuStore";
 import useTabStore from "../../stores/useTabStore";
+import EmptyCard from "../Card/EmptyCard";
+import ContentCard from "../Card/ContentCard";
+import ShortCutCard from "../Card/ShortcutCard";
+import Navigation from "../Navigation/Navigation";
+import DirectInputCard from "../Card/DirectInputCard";
+import Button from "../Button/Button";
 
 function MainContent() {
-  const {menuMode} = useMenuStore();
+  const {menuMode, macroConfigList, addMacroConfigList} = useMenuStore();
   const {setMacroStageList, startMacroExecute} = useMacroStageStore();
   const {shortCutUnitList, setShortCutUnitList} = useUserConfigStore();
   const {macroItemList, setMacroItemList} = useMacroItemStore();
@@ -116,6 +118,38 @@ function MainContent() {
                     )
                   );
                 })}
+            </div>
+          )}
+          {menuMode === "ADDMACRO" && (
+            <div className="w-full h-full p-16 flex flex-col items-center gap-10 overflow-scroll">
+              {macroConfigList.map((configList) => (
+                <DirectInputCard key={nanoid()} configList={configList} />
+              ))}
+              <div className="w-full text-right">
+                <Button
+                  buttonText={"추가"}
+                  buttonColor={"bg-subsub"}
+                  onClick={() => {
+                    macroConfigList.push("");
+                    addMacroConfigList([...macroConfigList]);
+                  }}
+                />
+                <Button
+                  buttonText={"취소"}
+                  buttonColor={"bg-red"}
+                  onClick={() => {
+                    addMacroConfigList([""]);
+                  }}
+                />
+                <Button
+                  buttonText={"저장"}
+                  buttonColor={"bg-green"}
+                  onClick={() => {
+                    macroConfigList.push("");
+                    addMacroConfigList([...macroConfigList]);
+                  }}
+                />
+              </div>
             </div>
           )}
           {menuMode === "SHORTCUT" && (
