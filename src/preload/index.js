@@ -1,8 +1,6 @@
 import {ipcRenderer, contextBridge} from "electron";
 
 try {
-  let macroBreak = false;
-
   contextBridge.exposeInMainWorld("electronAPI", {
     getMacroItem: () => ipcRenderer.invoke("get-macro-item"),
     capturePage: (webviewSize) => ipcRenderer.invoke("capture-page", webviewSize),
@@ -61,6 +59,7 @@ try {
       });
 
       sleep(1500).then(() => {
+        observer.disconnect();
         if (document.querySelectorAll(selector)[classIndex]) {
           return resolve(document.querySelectorAll(selector)[classIndex]);
         }
@@ -73,6 +72,7 @@ try {
   const executeMacro = async (macroStageList) => {
     const restStageList = [...macroStageList];
     let beforeTarget = [];
+    let macroBreak = false;
 
     window.addEventListener("beforeunload", () => {
       macroBreak = true;
@@ -90,6 +90,7 @@ try {
           }
 
           location.href = stageInfo.href;
+          return;
         }
 
         let targetElement = null;
@@ -115,6 +116,7 @@ try {
           }
           alert("이벤트 타겟요소를 찾을 수 없습니다.");
           ipcRenderer.sendToHost("macro-end");
+          break;
         }
 
         if (stageInfo.method === "CLICK") {
