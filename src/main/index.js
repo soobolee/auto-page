@@ -40,13 +40,8 @@ ipcMain.on("event-occurred", (event, payload) => {
   event.reply("client-event", payload);
 });
 
-async function sleep(delay) {
-  return new Promise((resolve) => setTimeout(resolve, delay));
-}
-
 ipcMain.handle("capture-page", async (_, webviewSize) => {
-  await sleep(300);
-  const captureImage = await mainWindow.webContents.capturePage(webviewSize);
+  const captureImage = await mainWindow.webContents.capturePage(JSON.parse(webviewSize));
   const resizeImage = await captureImage.resize({
     quality: "good",
   });

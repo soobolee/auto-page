@@ -23,7 +23,9 @@ function NameModal() {
 
     if (recordMode === "auto") {
       resetTabInfo();
+      navigate("/");
     } else {
+      resetTabInfo();
       setRecordMode("auto");
       navigate("/");
     }

@@ -97,13 +97,12 @@ function WebView({url, isHidden, index}) {
     const currentWebview = webViewRef.current;
 
     const handleDomReady = () => {
-      currentWebview.openDevTools();
-
       if (isMacroExecuting) {
         const resumeMacroList = window.sessionStorage.getItem("resumeMacroList");
+        const parseResumeMacroList = JSON.parse(resumeMacroList);
 
-        if (resumeMacroList && resumeMacroList.length > 0) {
-          webViewRef.current.send("auto-macro", resumeMacroList);
+        if (parseResumeMacroList && parseResumeMacroList.length > 0) {
+          webViewRef.current.send("auto-macro", parseResumeMacroList);
         } else {
           webViewRef.current.send("auto-macro", macroStageList);
         }

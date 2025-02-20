@@ -36,7 +36,7 @@ try {
     }
   });
 
-  async function sleep(delay) {
+  function sleep(delay) {
     return new Promise((resolve) => setTimeout(resolve, delay));
   }
 
@@ -48,8 +48,8 @@ try {
 
       const observer = new MutationObserver(() => {
         if (document.querySelectorAll(selector)[classIndex]) {
-          resolve(document.querySelectorAll(selector)[classIndex]);
           observer.disconnect();
+          return resolve(document.querySelectorAll(selector)[classIndex]);
         }
       });
 
@@ -59,10 +59,15 @@ try {
         attributes: true,
         characterData: true,
       });
+
+      sleep(3000).then(() => {
+        return resolve(null);
+      });
     });
   }
 
   const executeMacro = async (macroStageList) => {
+    await sleep(2000);
     const restStageList = [...macroStageList];
 
     window.addEventListener("beforeunload", () => {
@@ -71,8 +76,6 @@ try {
     });
 
     for (const stageInfo of macroStageList) {
-      await sleep(1000);
-
       if (!macroBreak) {
         if (stageInfo.href && location.href !== stageInfo.href) {
           restStageList.shift();
@@ -101,13 +104,20 @@ try {
           }
         }
 
+        if (!targetElement) {
+          alert("이벤트 타겟요소를 찾을 수 없습니다.");
+          ipcRenderer.sendToHost("macro-end");
+        }
+
         if (stageInfo.method === "CLICK") {
-          await targetElement.click();
+          targetElement.focus();
+          targetElement.click();
           restStageList.shift();
         }
 
         if (stageInfo.method === "CHANGE" || stageInfo.method === "KEYDOWN") {
           restStageList.shift();
+          targetElement.focus();
           targetElement.value = stageInfo.value;
         }
 
@@ -197,40 +207,48 @@ try {
       {capture: true}
     );
 
-    document.addEventListener("keydown", (event) => {
-      if (event.key !== "Enter") {
-        return;
-      }
-      const eventTarget = event.target;
-      const eventTargetUrl = location.href;
-      const eventTargetClassList = Array.from(eventTarget.classList);
-      const eventTargetClassInfo = getClassInfo(eventTargetClassList, eventTarget);
+    document.addEventListener(
+      "keydown",
+      (event) => {
+        if (event.key !== "Enter") {
+          return;
+        }
+        const eventTarget = event.target;
+        const eventTargetUrl = location.href;
+        const eventTargetClassList = Array.from(eventTarget.classList);
+        const eventTargetClassInfo = getClassInfo(eventTargetClassList, eventTarget);
 
-      ipcRenderer.send("event-occurred", {
-        id: eventTarget.id,
-        tagName: eventTarget.tagName,
-        class: eventTargetClassInfo,
-        url: eventTargetUrl,
-        method: "KEYDOWN",
-        value: eventTarget.value,
-      });
-    });
+        ipcRenderer.send("event-occurred", {
+          id: eventTarget.id,
+          tagName: eventTarget.tagName,
+          class: eventTargetClassInfo,
+          url: eventTargetUrl,
+          method: "KEYDOWN",
+          value: eventTarget.value,
+        });
+      },
+      {capture: true}
+    );
 
-    document.addEventListener("change", (event) => {
-      const eventTarget = event.target;
-      const eventTargetUrl = location.href;
-      const eventTargetClassList = Array.from(eventTarget.classList);
-      const eventTargetClassInfo = getClassInfo(eventTargetClassList, eventTarget);
+    document.addEventListener(
+      "change",
+      (event) => {
+        const eventTarget = event.target;
+        const eventTargetUrl = location.href;
+        const eventTargetClassList = Array.from(eventTarget.classList);
+        const eventTargetClassInfo = getClassInfo(eventTargetClassList, eventTarget);
 
-      ipcRenderer.send("event-occurred", {
-        id: eventTarget.id,
-        tagName: eventTarget.tagName,
-        class: eventTargetClassInfo,
-        url: eventTargetUrl,
-        method: "CHANGE",
-        value: eventTarget.value,
-      });
-    });
+        ipcRenderer.send("event-occurred", {
+          id: eventTarget.id,
+          tagName: eventTarget.tagName,
+          class: eventTargetClassInfo,
+          url: eventTargetUrl,
+          method: "CHANGE",
+          value: eventTarget.value,
+        });
+      },
+      {capture: true}
+    );
   });
 } catch (error) {
   console.error(error);
