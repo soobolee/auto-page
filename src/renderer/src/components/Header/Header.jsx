@@ -37,8 +37,17 @@ function Header() {
   return (
     <header className="h-[10%] flex flex-col justify-around border">
       <div className="h-[15%] w-full" style={{WebkitAppRegion: "drag"}}></div>
-      <div className="h-[35%] w-full flex">
-        <h3 className="text-white text-2xl mx-auto">Auto Pape</h3>
+      <div className="h-[35%] w-full flex justify-center">
+        {browserTabList[tabFocusedIndex] ? (
+          <input
+            type="text"
+            value={browserTabList[tabFocusedIndex].tabUrl}
+            className="w-200 bg-white p-3 mx-auto overflow-scroll rounded-2xl whitespace-nowrap"
+            readOnly
+          />
+        ) : (
+          <h3 className="text-white text-2xl mx-auto">Auto Pape</h3>
+        )}
         <Button buttonText={"메인"} buttonColor={"bg-sub"} onClick={handleMainClick} />
       </div>
       <div className="h-[40%] w-full flex items-end overflow-scroll">

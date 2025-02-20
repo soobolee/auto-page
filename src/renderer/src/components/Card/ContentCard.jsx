@@ -60,7 +60,7 @@ function ContentCard({macroItem, onClick}) {
 
           <p className="text-3xl m-3">{macroName}</p>
         </div>
-        <p className="overflow-scroll">생성URL : {macroUrl}</p>
+        <p className="overflow-scroll whitespace-nowrap">생성URL : {macroUrl}</p>
         <p>생성일 : {birthTime}</p>
         <p>사용일 : {accessTime}</p>
       </div>
