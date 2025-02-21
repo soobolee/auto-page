@@ -5,6 +5,7 @@ const useMacroStageStore = create((set) => ({
   macroImageList: [],
   isMacroRecording: false,
   isMacroExecuting: false,
+  updateTargetMacroName: "",
   setMacroStageList: (newStageList) => set({macroStageList: newStageList}),
   setImageStageList: (newImageList) => set({macroImageList: newImageList}),
   resetStageList: () => set({macroStageList: [], macroImageList: [], isMacroExecuting: false}),
@@ -12,6 +13,7 @@ const useMacroStageStore = create((set) => ({
   stopMacroExecute: () => set({isMacroExecuting: false, macroStageList: []}),
   startMacroRecord: () => set({isMacroRecording: true}),
   stopMacroRecord: () => set({isMacroRecording: false}),
+  setUpdateTargetMacroName: (updateTargetName) => set({updateTargetMacroName: updateTargetName}),
 }));
 
 export default useMacroStageStore;

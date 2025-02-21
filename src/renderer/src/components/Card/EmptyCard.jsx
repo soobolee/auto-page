@@ -6,7 +6,7 @@ import {faCirclePlus} from "@fortawesome/free-solid-svg-icons";
 
 function EmptyCard() {
   const navigate = useNavigate();
-  const {startMacroRecord, stopMacroRecord} = useMacroStageStore();
+  const {startMacroRecord, stopMacroRecord, resetStageList} = useMacroStageStore();
   const {setRecordMode} = useMenuStore();
 
   const handlePlusClick = (path) => {
@@ -18,6 +18,7 @@ function EmptyCard() {
       <div
         className="flex justify-center items-center flex-col w-[50%] h-full hover:bg-subsub rounded-2xl cursor-pointer"
         onClick={() => {
+          resetStageList();
           handlePlusClick("/macro");
           startMacroRecord();
           setRecordMode("auto");
@@ -29,6 +30,7 @@ function EmptyCard() {
       <div
         className="flex justify-center items-center flex-col w-[50%] h-full hover:bg-subsub rounded-2xl cursor-pointer"
         onClick={() => {
+          resetStageList();
           handlePlusClick("/macro");
           stopMacroRecord();
           setRecordMode("manual");

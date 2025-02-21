@@ -8,13 +8,14 @@ import {faBookBookmark, faGear, faCircleXmark} from "@fortawesome/free-solid-svg
 function ContentCard({macroItem, onClick}) {
   const [isBookmark, setIsBookmark] = useState(macroItem.bookmark);
   const {setMacroItemList} = useMacroItemStore();
-  const {setImageStageList} = useMacroStageStore();
-  const {setMenuMode, setMacroConfigName, addMacroConfigList} = useMenuStore();
+  const {setMacroStageList, setImageStageList, setUpdateTargetMacroName} = useMacroStageStore();
+  const {setMenuMode} = useMenuStore();
 
   const macroName = macroItem.macroName;
   const macroUrl = macroItem.stageList[0].url;
   const birthDateObject = macroItem.birthTime;
   const accessDateObject = macroItem.accessTime;
+
   const birthTime = `${birthDateObject.getFullYear()}-${birthDateObject.getMonth() + 1}-${birthDateObject.getDate()}`;
   const accessTime = `${accessDateObject.getFullYear()}-${accessDateObject.getMonth() + 1}-${accessDateObject.getDate()}`;
 
@@ -33,11 +34,12 @@ function ContentCard({macroItem, onClick}) {
 
   const handleUpdate = async (event) => {
     event.stopPropagation();
-    const savedImageList = window.electronAPI.getMacroItemList("image", macroName);
+    const savedImageList = await window.electronAPI.getMacroItem("image", macroName);
+    const savedMacroList = await window.electronAPI.getMacroItem("stageList", macroName);
 
-    addMacroConfigList(macroItem.stageList);
-    setMacroConfigName(macroItem.macroName);
-    setImageStageList(savedImageList);
+    setUpdateTargetMacroName(macroName);
+    setImageStageList(savedImageList.image);
+    setMacroStageList(savedMacroList.stageList);
     setMenuMode("ADDMACRO");
   };
 

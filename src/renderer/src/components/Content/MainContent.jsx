@@ -1,5 +1,5 @@
 import {nanoid} from "nanoid";
-import {useEffect} from "react";
+import {useState, useEffect} from "react";
 import {useNavigate} from "react-router";
 import useMacroStageStore from "../../stores/useMacroStageStore";
 import useMacroItemStore from "../../stores/useMacroItemStore";
@@ -13,8 +13,10 @@ import Navigation from "../Navigation/Navigation";
 import DirectInputCard from "../Card/DirectInputCard";
 
 function MainContent() {
-  const {menuMode, macroConfigList, directMacroName, setDirectMacroName} = useMenuStore();
-  const {setMacroStageList, startMacroExecute} = useMacroStageStore();
+  const [macroNameList, setMacroNameList] = useState([]);
+  const {menuMode} = useMenuStore();
+  const {macroStageList, updateTargetMacroName, setMacroStageList, setImageStageList, startMacroExecute, setUpdateTargetMacroName} =
+    useMacroStageStore();
   const {shortCutUnitList, setShortCutUnitList} = useUserConfigStore();
   const {macroItemList, setMacroItemList} = useMacroItemStore();
   const {setBrowserTabList} = useTabStore();
@@ -24,7 +26,9 @@ function MainContent() {
   useEffect(() => {
     async function getMacroItemList() {
       const macroInfoList = await window.electronAPI.getMacroItemList();
+      const nameList = macroInfoList.map((macroInfo) => macroInfo.macroName);
 
+      setMacroNameList(nameList);
       setMacroItemList(macroInfoList);
     }
 
@@ -74,6 +78,15 @@ function MainContent() {
     };
   }, [macroItemList, menuMode, navigate, setBrowserTabList, setMacroStageList, setShortCutUnitList, shortCutUnitList, startMacroExecute]);
 
+  const handleUpdateSelect = async (event) => {
+    setUpdateTargetMacroName(event.target.value);
+    const savedImageList = await window.electronAPI.getMacroItem("image", event.target.value);
+    const savedMacroList = await window.electronAPI.getMacroItem("stageList", event.target.value);
+
+    setImageStageList(savedImageList.image);
+    setMacroStageList(savedMacroList.stageList);
+  };
+
   return (
     <div className="flex h-[90%]">
       <Navigation />
@@ -121,16 +134,15 @@ function MainContent() {
           )}
           {menuMode === "ADDMACRO" && (
             <div className="w-full h-full p-16 flex flex-col items-center gap-10 overflow-scroll">
-              <input
-                type="text"
-                className="w-70 h-13 rounded-2xl p-3 mr-2 bg-white"
-                value={directMacroName}
-                onChange={(event) => setDirectMacroName(event.target.value)}
-                placeholder="매크로 이름"
-              />
-              {macroConfigList.map((configList, index) => (
-                <DirectInputCard key={nanoid()} configList={configList} index={index} />
-              ))}
+              <select value={updateTargetMacroName} onChange={handleUpdateSelect} className="w-100 p-4 bg-white text-lg rounded-xl">
+                {macroNameList &&
+                  macroNameList.map((macroName) => (
+                    <option key={nanoid()} value={macroName}>
+                      {macroName}
+                    </option>
+                  ))}
+              </select>
+              {macroStageList && macroStageList.map((stageList, index) => <DirectInputCard key={nanoid()} stageList={stageList} index={index} />)}
             </div>
           )}
           {menuMode === "SHORTCUT" && (

@@ -1,10 +1,12 @@
 import {nanoid} from "nanoid";
 import useMenuStore from "../../stores/useMenuStore";
+import useMacroStageStore from "../../stores/useMacroStageStore";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faHome, faBookmark, faSquarePlus, faKeyboard} from "@fortawesome/free-solid-svg-icons";
 
 function Navigation() {
   const {setMenuMode} = useMenuStore();
+  const {resetStageList} = useMacroStageStore();
 
   const navIconList = [faHome, faBookmark, faSquarePlus, faKeyboard];
   const navMenuList = ["HOME", "BOOKMARK", "ADDMACRO", "SHORTCUT"];
@@ -19,6 +21,7 @@ function Navigation() {
               className="flex justify-center items-center w-full h-34 hover:bg-subsub"
               onClick={() => {
                 setMenuMode(navMenuList[index]);
+                resetStageList();
               }}
             >
               <FontAwesomeIcon className="cursor-pointer" icon={icon} />
