@@ -1,5 +1,5 @@
 import {nanoid} from "nanoid";
-import {useNavigate} from "react-router";
+import {useNavigate, useMatch} from "react-router";
 import {faArrowLeft, faArrowRight, faRotateRight} from "@fortawesome/free-solid-svg-icons";
 import useTabStore from "../../stores/useTabStore";
 import useMacroStageStore from "../../stores/useMacroStageStore";
@@ -16,6 +16,7 @@ function Header() {
   const {macroStageList, resetStageList, isMacroExecuting} = useMacroStageStore();
   const {openModal} = useUserConfigStore();
   const {setRecordMode} = useMenuStore();
+  const match = useMatch("/macro");
 
   const handleMainClick = () => {
     if (isMacroExecuting) {
@@ -48,7 +49,7 @@ function Header() {
         ) : (
           <h3 className="text-white text-2xl mx-auto">Auto Page</h3>
         )}
-        <Button buttonText={"메인"} buttonColor={"bg-sub"} onClick={handleMainClick} />
+        {match && <Button buttonText={"메인"} buttonColor={"bg-sub"} onClick={handleMainClick} />}
       </div>
       <div className="h-[40%] w-full flex items-end overflow-scroll">
         {browserTabList.length > 0 && (
