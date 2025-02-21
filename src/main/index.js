@@ -58,8 +58,8 @@ ipcMain.handle("save-image", (_, fileName, fileContent) => {
   return writeMacroInfoFile(fileName, fileContent, "image");
 });
 
-ipcMain.handle("delete-macro-and-iamge", (_, fileName) => {
-  deleteFile(fileName);
+ipcMain.handle("delete-macro-and-image", (_, fileName, imageDeleteOption) => {
+  deleteFile(fileName, imageDeleteOption);
 
   return getMacroItemList();
 });

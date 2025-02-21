@@ -46,7 +46,7 @@ function Header() {
             readOnly
           />
         ) : (
-          <h3 className="text-white text-2xl mx-auto">Auto Pape</h3>
+          <h3 className="text-white text-2xl mx-auto">Auto Page</h3>
         )}
         <Button buttonText={"메인"} buttonColor={"bg-sub"} onClick={handleMainClick} />
       </div>

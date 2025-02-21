@@ -6,7 +6,7 @@ try {
     capturePage: (webviewSize) => ipcRenderer.invoke("capture-page", webviewSize),
     saveMacro: (fileName, fileContent, contentType) => ipcRenderer.invoke("save-macro", fileName, fileContent, contentType),
     saveImage: (fileName, fileContent) => ipcRenderer.invoke("save-image", fileName, fileContent),
-    deleteMacroAndImage: (fileName) => ipcRenderer.invoke("delete-macro-and-iamge", fileName),
+    deleteMacroAndImage: (fileName, imageDeleteOption) => ipcRenderer.invoke("delete-macro-and-image", fileName, imageDeleteOption),
   });
 
   const getClassInfo = (eventTargetClassList, eventTarget) => {
