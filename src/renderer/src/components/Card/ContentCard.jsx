@@ -1,5 +1,6 @@
 import {useState} from "react";
 import useMacroItemStore from "../../stores/useMacroItemStore";
+import useMacroStageStore from "../../stores/useMacroStageStore";
 import useMenuStore from "../../stores/useMenuStore";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faBookBookmark, faGear, faCircleXmark} from "@fortawesome/free-solid-svg-icons";
@@ -7,7 +8,8 @@ import {faBookBookmark, faGear, faCircleXmark} from "@fortawesome/free-solid-svg
 function ContentCard({macroItem, onClick}) {
   const [isBookmark, setIsBookmark] = useState(macroItem.bookmark);
   const {setMacroItemList} = useMacroItemStore();
-  const {setMenuMode} = useMenuStore();
+  const {setImageStageList} = useMacroStageStore();
+  const {setMenuMode, setMacroConfigName, addMacroConfigList} = useMenuStore();
 
   const macroName = macroItem.macroName;
   const macroUrl = macroItem.stageList[0].url;
@@ -29,9 +31,13 @@ function ContentCard({macroItem, onClick}) {
     setIsBookmark(macroItem.bookmark);
   };
 
-  const handleUpdate = (event) => {
+  const handleUpdate = async (event) => {
     event.stopPropagation();
+    const savedImageList = window.electronAPI.getMacroItemList("image", macroName);
 
+    addMacroConfigList(macroItem.stageList);
+    setMacroConfigName(macroItem.macroName);
+    setImageStageList(savedImageList);
     setMenuMode("ADDMACRO");
   };
 

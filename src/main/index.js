@@ -64,8 +64,12 @@ ipcMain.handle("delete-macro-and-image", (_, fileName, imageDeleteOption) => {
   return getMacroItemList();
 });
 
-ipcMain.handle("get-macro-item", () => {
+ipcMain.handle("get-macro-item-list", () => {
   return getMacroItemList();
+});
+
+ipcMain.handle("get-macro-item", (contentType, fileName) => {
+  return getMacroItem(contentType, fileName);
 });
 
 app.whenReady().then(() => {
@@ -172,6 +176,21 @@ function getMacroItemList(contentType) {
     });
 
     return macroItemList;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+function getMacroItem(contentType, fileName) {
+  try {
+    if (!fs.existsSync(getMacroFilePath(contentType, fileName))) {
+      return [];
+    }
+
+    const readFile = fs.readFileSync(getMacroFilePath(contentType, fileName), {encoding: "utf8"});
+    const parseReadFile = JSON.parse(readFile);
+
+    return parseReadFile;
   } catch (error) {
     console.error(error);
   }

@@ -22,13 +22,13 @@ function MainContent() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    async function getMacroItem() {
-      const macroInfoList = await window.electronAPI.getMacroItem();
+    async function getMacroItemList() {
+      const macroInfoList = await window.electronAPI.getMacroItemList();
 
       setMacroItemList(macroInfoList);
     }
 
-    getMacroItem();
+    getMacroItemList();
   }, [setMacroItemList, menuMode]);
 
   useEffect(() => {

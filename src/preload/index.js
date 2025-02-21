@@ -2,6 +2,7 @@ import {ipcRenderer, contextBridge} from "electron";
 
 try {
   contextBridge.exposeInMainWorld("electronAPI", {
+    getMacroItemList: () => ipcRenderer.invoke("get-macro-item-list"),
     getMacroItem: () => ipcRenderer.invoke("get-macro-item"),
     capturePage: (webviewSize) => ipcRenderer.invoke("capture-page", webviewSize),
     saveMacro: (fileName, fileContent, contentType) => ipcRenderer.invoke("save-macro", fileName, fileContent, contentType),
@@ -25,12 +26,6 @@ try {
   ipcRenderer.on("client-event", (_, macroStageList) => {
     if (macroStageList) {
       ipcRenderer.sendToHost("client-event", macroStageList);
-    }
-  });
-
-  ipcRenderer.on("get-macro-item", (_, macroItemList) => {
-    if (macroItemList) {
-      ipcRenderer.sendToHost("get-macro-item", macroItemList);
     }
   });
 
