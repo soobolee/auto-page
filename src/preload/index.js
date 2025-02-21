@@ -3,7 +3,7 @@ import {ipcRenderer, contextBridge} from "electron";
 try {
   contextBridge.exposeInMainWorld("electronAPI", {
     getMacroItemList: () => ipcRenderer.invoke("get-macro-item-list"),
-    getMacroItem: () => ipcRenderer.invoke("get-macro-item"),
+    getMacroItem: (contentType, fileName) => ipcRenderer.invoke("get-macro-item", contentType, fileName),
     capturePage: (webviewSize) => ipcRenderer.invoke("capture-page", webviewSize),
     saveMacro: (fileName, fileContent, contentType) => ipcRenderer.invoke("save-macro", fileName, fileContent, contentType),
     saveImage: (fileName, fileContent) => ipcRenderer.invoke("save-image", fileName, fileContent),
@@ -75,7 +75,7 @@ try {
     });
 
     for (const stageInfo of macroStageList) {
-      await sleep(500);
+      await sleep(100);
       if (!macroBreak) {
         if (stageInfo.href && location.href !== stageInfo.href) {
           beforeTarget = restStageList.shift();

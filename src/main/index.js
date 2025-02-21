@@ -68,7 +68,7 @@ ipcMain.handle("get-macro-item-list", () => {
   return getMacroItemList();
 });
 
-ipcMain.handle("get-macro-item", (contentType, fileName) => {
+ipcMain.handle("get-macro-item", (_, contentType, fileName) => {
   return getMacroItem(contentType, fileName);
 });
 
@@ -183,11 +183,12 @@ function getMacroItemList(contentType) {
 
 function getMacroItem(contentType, fileName) {
   try {
-    if (!fs.existsSync(getMacroFilePath(contentType, fileName))) {
+    const addedJsonFileName = `${fileName}.json`;
+
+    if (!fs.existsSync(getMacroFilePath(contentType, addedJsonFileName))) {
       return [];
     }
-
-    const readFile = fs.readFileSync(getMacroFilePath(contentType, fileName), {encoding: "utf8"});
+    const readFile = fs.readFileSync(getMacroFilePath(contentType, addedJsonFileName), {encoding: "utf8"});
     const parseReadFile = JSON.parse(readFile);
 
     return parseReadFile;
