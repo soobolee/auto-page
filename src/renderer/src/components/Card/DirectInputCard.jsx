@@ -1,32 +1,30 @@
-import {useState, useRef, useEffect} from "react";
-import {nanoid} from "nanoid";
+import {useState} from "react";
 import useMacroStageStore from "../../stores/useMacroStageStore";
-import Button from "../Button/Button";
 
-function DirectInputCard({stageList, index}) {
-  const [formData, setFormData] = useState(stageList ? stageList : {});
-  const {macroStageList, macroImageList, updateTargetMacroName, setMacroStageList} = useMacroStageStore();
-  const formRef = useRef(null);
-
-  useEffect(() => {
-    if (formRef.current && stageList) {
-      setFormData(stageList);
-    }
-  }, [stageList]);
+function DirectInputCard({stageItem, index}) {
+  const [formData, setFormData] = useState(stageItem || {class: [{}]});
+  const {macroImageList} = useMacroStageStore();
 
   const handleInputValue = (event) => {
-    const target = event.target;
+    const {name, value} = event.target;
 
-    if (target.name.includes("class")) {
-      return;
+    if (name.includes("class")) {
+      const classIndex = name.split("-")[1];
+      const newClassArray = formData.class.map((classInfo, index) => {
+        if (index === parseInt(classIndex)) {
+          return {...classInfo, [name.split("-")[0]]: value};
+        }
+        return classInfo;
+      });
+
+      setFormData({...formData, class: newClassArray});
     } else {
-      setFormData({...formData, [target.name]: target.value});
-      setMacroStageList((state) => (state[index] = formData));
+      setFormData({...formData, [name]: value});
     }
   };
 
   return (
-    <form ref={formRef} className="w-full bg-white flex rounded-2xl">
+    <form className="w-full bg-white flex rounded-2xl">
       <ul className="w-[65%] p-3 ml-4">
         <li>
           <label className="w-25 inline-block">타겟 Tag</label>
@@ -51,13 +49,13 @@ function DirectInputCard({stageList, index}) {
           />
         </li>
         {formData.class &&
-          formData.class.map((classInfo) => {
+          formData.class.map((classInfo, index) => {
             return (
-              <li key={nanoid()}>
+              <li key={`classInfo${index}`}>
                 <label className="w-25 inline-block">타겟 Class</label>
                 <input
                   type="text"
-                  name="className"
+                  name={`className-${index}`}
                   value={classInfo.className}
                   onChange={handleInputValue}
                   className="w-[29%] my-2 h-8 p-2 inline-block border mr-4 rounded-lg"
@@ -66,7 +64,7 @@ function DirectInputCard({stageList, index}) {
                 <label className="w-20 inline-block">타겟 Index</label>
                 <input
                   type="text"
-                  name="classIndex"
+                  name={`classIndex-${index}`}
                   value={classInfo.classIndex}
                   onChange={handleInputValue}
                   className="w-[29%] my-2 h-8 p-2 inline-block border rounded-lg"
@@ -112,39 +110,11 @@ function DirectInputCard({stageList, index}) {
           <input type="hidden" name="method" value={formData.value} />
         </li>
       </ul>
-      <div className="w-[35%] h-full p-3">
-        <img src={macroImageList[index]} className={`${!macroImageList[index] && "invisible"} w-full h-[80%] mb-2`} />
-        {macroStageList.length - 1 === index && (
-          <div>
-            <Button
-              buttonText={"추가"}
-              buttonColor={"bg-subsub"}
-              onClick={() => {
-                macroStageList.push({});
-                setMacroStageList([...macroStageList]);
-              }}
-            />
-            <Button
-              buttonText={"취소"}
-              buttonColor={macroStageList.length > 1 ? "bg-red" : "bg-sub"}
-              onClick={() => {
-                if (macroStageList.length > 1) {
-                  macroStageList.pop();
-                  setMacroStageList([...macroStageList]);
-                }
-              }}
-            />
-            <Button
-              buttonText={"저장"}
-              buttonColor={macroStageList.length > 1 ? "bg-green" : "bg-sub"}
-              onClick={() => {
-                if (macroStageList.length > 1) {
-                  window.electronAPI.saveMacro(updateTargetMacroName, macroStageList, "stageList");
-                }
-              }}
-            />
-          </div>
-        )}
+      <div className="relative w-[35%] h-full p-3">
+        <button type="button" className="absolute top-[-20px] right-[-20px] w-10 h-10 bg-red text-white rounded-2xl">
+          삭제
+        </button>
+        <img src={macroImageList[index]} className={`${!macroImageList[index] && "invisible"} w-full h-full mb-2`} />
       </div>
     </form>
   );
