@@ -1,5 +1,5 @@
 import {app, BrowserWindow, ipcMain} from "electron";
-import {join} from "path";
+import path, {join} from "path";
 import fs from "fs";
 import {electronApp, optimizer, is} from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
@@ -127,13 +127,18 @@ function writeMacroInfoFile(fileName, fileContent, contentType) {
   }
 }
 
-function deleteFile(fileName) {
+function deleteFile(fileName, imageDeleteOption) {
   try {
     const addedJsonFileName = `${fileName}.json`;
     const macroFilePath = getMacroFilePath("stageList", addedJsonFileName);
     const imageFilePath = getMacroFilePath("image", addedJsonFileName);
+    const pathList = [];
 
-    const pathList = [macroFilePath, imageFilePath];
+    pathList.push(macroFilePath);
+
+    if (imageDeleteOption) {
+      pathList.push(imageFilePath);
+    }
 
     pathList.forEach((path) => {
       if (fs.existsSync(path)) {

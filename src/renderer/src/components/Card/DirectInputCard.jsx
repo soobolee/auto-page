@@ -1,9 +1,13 @@
 import {useState} from "react";
 import useMacroStageStore from "../../stores/useMacroStageStore";
+import useMacroItemStore from "../../stores/useMacroItemStore";
+import useMenuStore from "../../stores/useMenuStore";
 
 function DirectInputCard({stageItem, index}) {
   const [formData, setFormData] = useState(stageItem || {class: [{}]});
-  const {macroImageList} = useMacroStageStore();
+  const {macroStageList, macroImageList, updateTargetMacroName, setMacroStageList, setImageStageList} = useMacroStageStore();
+  const {setMacroItemList} = useMacroItemStore();
+  const {setMenuMode} = useMenuStore();
 
   const handleInputValue = (event) => {
     const {name, value} = event.target;
@@ -111,10 +115,49 @@ function DirectInputCard({stageItem, index}) {
         </li>
       </ul>
       <div className="relative w-[35%] h-full p-3">
-        <button type="button" className="absolute top-[-20px] right-[40px] w-10 h-10 bg-red text-white rounded-full">
+        <button
+          type="button"
+          className="absolute top-[-20px] right-[40px] w-10 h-10 bg-red text-white rounded-full"
+          onClick={async () => {
+            const newStageList = [...macroStageList];
+            const newImageList = [...macroImageList];
+
+            newStageList.splice(index, 1);
+            newImageList.splice(index, 1);
+
+            if (newStageList.length === 0 && newImageList.length === 0) {
+              const deletedList = window.electronAPI.deleteMacroAndImage(updateTargetMacroName, true);
+
+              setMacroItemList(deletedList);
+              setMenuMode("HOME");
+            } else {
+              const savedStageResult = await window.electronAPI.saveMacro(updateTargetMacroName, newStageList, "stageList");
+              const savedImageResult = await window.electronAPI.saveMacro(updateTargetMacroName, newImageList, "image");
+
+              if (savedStageResult && savedImageResult) {
+                setMacroStageList(newStageList);
+                setImageStageList(newImageList);
+              }
+            }
+          }}
+        >
           삭제
         </button>
-        <button type="button" className="absolute top-[-20px] right-[-10px] w-10 h-10 bg-green text-white rounded-full">
+        <button
+          type="button"
+          className="absolute top-[-20px] right-[-10px] w-10 h-10 bg-green text-white rounded-full"
+          onClick={async () => {
+            const newList = [...macroStageList];
+            newList[index] = formData;
+
+            const savedResult = await window.electronAPI.saveMacro(updateTargetMacroName, newList, "stageList");
+            if (savedResult) {
+              setMacroStageList(newList);
+            } else {
+              console.error("파일 저장에 실패했습니다.");
+            }
+          }}
+        >
           저장
         </button>
         <img src={macroImageList[index]} className={`${!macroImageList[index] && "invisible"} w-full h-full mb-2`} />
