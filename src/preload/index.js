@@ -105,6 +105,10 @@ try {
           }
         }
 
+        if (!targetElement && stageInfo.tagName) {
+          targetElement = await waitForGetElement(stageInfo.tagName, stageInfo.tagIndex);
+        }
+
         if (!targetElement) {
           if (beforeTarget.method === "KEYDOWN") {
             break;
@@ -178,6 +182,7 @@ try {
           }
 
           const eventTargetId = eventTarget.id;
+          const eventTagIndex = Array.from(document.querySelectorAll(eventTarget.tagName)).indexOf(eventTarget);
           const eventTargetClassList = Array.from(eventTarget.classList);
           const eventTargetClassInfo = getClassInfo(eventTargetClassList, eventTarget);
 
@@ -189,6 +194,7 @@ try {
             ipcRenderer.send("event-occurred", {
               id: eventTargetId,
               tagName: eventTarget.tagName,
+              tagIndex: eventTagIndex,
               class: eventTargetClassInfo,
               href: aTag.href,
               url: eventTargetUrl,
@@ -200,6 +206,7 @@ try {
             ipcRenderer.send("event-occurred", {
               id: eventTargetId,
               tagName: eventTarget.tagName,
+              tagIndex: eventTagIndex,
               class: eventTargetClassInfo,
               url: eventTargetUrl,
               method: "CLICK",
@@ -210,6 +217,7 @@ try {
             ipcRenderer.send("event-occurred", {
               id: eventTargetId,
               tagName: eventTarget.tagName,
+              tagIndex: eventTagIndex,
               class: eventTargetClassInfo,
               url: eventTargetUrl,
               method: "CLICK",
@@ -228,12 +236,14 @@ try {
         }
         const eventTarget = event.target;
         const eventTargetUrl = location.href;
+        const eventTagIndex = Array.from(document.querySelectorAll(eventTarget.tagName)).indexOf(eventTarget);
         const eventTargetClassList = Array.from(eventTarget.classList);
         const eventTargetClassInfo = getClassInfo(eventTargetClassList, eventTarget);
 
         ipcRenderer.send("event-occurred", {
           id: eventTarget.id,
           tagName: eventTarget.tagName,
+          tagIndex: eventTagIndex,
           class: eventTargetClassInfo,
           url: eventTargetUrl,
           method: "KEYDOWN",
@@ -248,12 +258,14 @@ try {
       (event) => {
         const eventTarget = event.target;
         const eventTargetUrl = location.href;
+        const eventTagIndex = Array.from(document.querySelectorAll(eventTarget.tagName)).indexOf(eventTarget);
         const eventTargetClassList = Array.from(eventTarget.classList);
         const eventTargetClassInfo = getClassInfo(eventTargetClassList, eventTarget);
 
         ipcRenderer.send("event-occurred", {
           id: eventTarget.id,
           tagName: eventTarget.tagName,
+          tagIndex: eventTagIndex,
           class: eventTargetClassInfo,
           url: eventTargetUrl,
           method: "CHANGE",

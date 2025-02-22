@@ -6,6 +6,9 @@ function StageCard({direction, stageInfo}) {
       {direction === "row" && (
         <>
           <p>method: {stageInfo.method}</p>
+          <p>
+            tag: {stageInfo.tagName} : {stageInfo.tagIndex}
+          </p>
           <p>id: {stageInfo.id}</p>
           <div>
             {stageInfo.class &&
