@@ -111,8 +111,11 @@ function DirectInputCard({stageItem, index}) {
         </li>
       </ul>
       <div className="relative w-[35%] h-full p-3">
-        <button type="button" className="absolute top-[-20px] right-[-20px] w-10 h-10 bg-red text-white rounded-2xl">
+        <button type="button" className="absolute top-[-20px] right-[40px] w-10 h-10 bg-red text-white rounded-full">
           삭제
+        </button>
+        <button type="button" className="absolute top-[-20px] right-[-10px] w-10 h-10 bg-green text-white rounded-full">
+          저장
         </button>
         <img src={macroImageList[index]} className={`${!macroImageList[index] && "invisible"} w-full h-full mb-2`} />
       </div>

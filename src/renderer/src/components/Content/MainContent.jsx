@@ -11,7 +11,6 @@ import ContentCard from "../Card/ContentCard";
 import ShortCutCard from "../Card/ShortcutCard";
 import Navigation from "../Navigation/Navigation";
 import DirectInputCard from "../Card/DirectInputCard";
-import Button from "../Button/Button";
 
 function MainContent() {
   const [macroNameList, setMacroNameList] = useState([]);
@@ -144,7 +143,6 @@ function MainContent() {
                       </option>
                     ))}
                 </select>
-                <Button buttonText={"저장"} buttonColor="bg-green" />
               </div>
               {macroStageList && macroStageList.map((stageItem, index) => <DirectInputCard key={nanoid()} stageItem={stageItem} index={index} />)}
             </div>
