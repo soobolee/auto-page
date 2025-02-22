@@ -19,7 +19,7 @@ function ContentCard({macroItem, onClick}) {
   const birthTime = `${birthDateObject.getFullYear()}-${birthDateObject.getMonth() + 1}-${birthDateObject.getDate()}`;
   const accessTime = `${accessDateObject.getFullYear()}-${accessDateObject.getMonth() + 1}-${accessDateObject.getDate()}`;
 
-  const handleBookmark = (event) => {
+  const handleBookmark = async (event) => {
     event.stopPropagation();
 
     if (macroItem.bookmark) {
@@ -29,6 +29,10 @@ function ContentCard({macroItem, onClick}) {
     }
 
     window.electronAPI.saveMacro(macroName, macroItem.bookmark, "bookmark");
+
+    const bookmarkMacroList = await window.electronAPI.getMacroItemList();
+
+    setMacroItemList(bookmarkMacroList);
     setIsBookmark(macroItem.bookmark);
   };
 

@@ -37,7 +37,7 @@ function MainContent() {
 
   useEffect(() => {
     const handleShortCut = (event) => {
-      if (event.target.tagName === "INPUT") {
+      if (event.target.tagName === "INPUT" || menuMode === "ADDMACRO") {
         return;
       }
 
@@ -62,7 +62,7 @@ function MainContent() {
     };
 
     const handleKeyup = (event) => {
-      if (event.target.tagName === "INPUT") {
+      if (event.target.tagName === "INPUT" || menuMode === "ADDMACRO") {
         return;
       }
 
@@ -134,15 +134,17 @@ function MainContent() {
           )}
           {menuMode === "ADDMACRO" && (
             <div className="w-full h-full p-16 flex flex-col items-center gap-10 overflow-scroll">
-              <select value={updateTargetMacroName} onChange={handleUpdateSelect} className="w-100 p-4 bg-white text-lg rounded-xl">
-                {macroNameList &&
-                  macroNameList.map((macroName) => (
-                    <option key={nanoid()} value={macroName}>
-                      {macroName}
-                    </option>
-                  ))}
-              </select>
-              {macroStageList && macroStageList.map((stageList, index) => <DirectInputCard key={nanoid()} stageList={stageList} index={index} />)}
+              <div>
+                <select value={updateTargetMacroName} onChange={handleUpdateSelect} className="w-100 p-4 bg-white text-lg rounded-xl">
+                  {macroNameList &&
+                    macroNameList.map((macroName) => (
+                      <option key={nanoid()} value={macroName}>
+                        {macroName}
+                      </option>
+                    ))}
+                </select>
+              </div>
+              {macroStageList && macroStageList.map((stageItem, index) => <DirectInputCard key={nanoid()} stageItem={stageItem} index={index} />)}
             </div>
           )}
           {menuMode === "SHORTCUT" && (
