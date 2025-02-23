@@ -16,7 +16,7 @@ function EmptyCard() {
   return (
     <div className="flex bg-white w-80 h-48 rounded-2xl m-5">
       <div
-        className="flex justify-center items-center flex-col w-[50%] h-full hover:bg-subsub rounded-2xl cursor-pointer"
+        className="flex justify-center items-center flex-col w-[50%] rounded-2xl cursor-pointer hover-small"
         onClick={() => {
           resetStageList();
           handlePlusClick("/macro");
@@ -28,7 +28,7 @@ function EmptyCard() {
         <p>자동</p>
       </div>
       <div
-        className="flex justify-center items-center flex-col w-[50%] h-full hover:bg-subsub rounded-2xl cursor-pointer"
+        className="flex justify-center items-center flex-col w-[50%] rounded-2xl cursor-pointer hover-small"
         onClick={() => {
           resetStageList();
           handlePlusClick("/macro");

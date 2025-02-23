@@ -28,7 +28,7 @@ function MainContent() {
       const macroInfoList = await window.electronAPI.getMacroItemList();
       const nameList = macroInfoList.map((macroInfo) => macroInfo.macroName);
 
-      setMacroNameList(nameList);
+      setMacroNameList(["매크로 선택", ...nameList]);
       setMacroItemList(macroInfoList);
     }
 

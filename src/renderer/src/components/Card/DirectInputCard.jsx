@@ -117,7 +117,7 @@ function DirectInputCard({stageItem, index}) {
       <div className="relative w-[35%] h-full p-3">
         <button
           type="button"
-          className="absolute top-[-20px] right-[40px] w-10 h-10 bg-red text-white rounded-full"
+          className="absolute top-[-20px] right-[40px] w-10 h-10 bg-red text-white rounded-full hover-big"
           onClick={async () => {
             const newStageList = [...macroStageList];
             const newImageList = [...macroImageList];
@@ -145,7 +145,7 @@ function DirectInputCard({stageItem, index}) {
         </button>
         <button
           type="button"
-          className="absolute top-[-20px] right-[-10px] w-10 h-10 bg-green text-white rounded-full"
+          className="absolute top-[-20px] right-[-10px] w-10 h-10 bg-green text-white rounded-full hover-big"
           onClick={async () => {
             const newList = [...macroStageList];
             newList[index] = formData;
@@ -160,7 +160,9 @@ function DirectInputCard({stageItem, index}) {
         >
           저장
         </button>
-        <img src={macroImageList[index]} className={`${!macroImageList[index] && "invisible"} w-full h-full mb-2`} />
+        <div>
+          <img src={macroImageList[index]} className={`${!macroImageList[index] && "invisible"} w-full h-full mb-2 hover-image`} />
+        </div>
       </div>
     </form>
   );

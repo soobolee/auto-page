@@ -10,6 +10,38 @@
   --color-red: #B82132;
 }
 
+.hover-small:hover {
+  transition: transform 0.3s;
+  transform: scale(1.1);
+  background-color: #9290a2;
+}
+
+.hover-big:hover {
+  transform: scale(1.3);
+}
+
+.hover-image:hover {
+  transform: scale(2);
+  position: relative;
+  right: 50%;
+  border: 3px solid #3CB371;
+  z-index: 1;
+}
+
+.hover-stage:hover {
+  transform: scale(0.5);
+  position: absolute;
+  right: -20%;
+  top: 0%;
+  border: 8px solid #3CB371;
+  z-index: 1;
+}
+
+button:active {
+  transform: scale(0.8);
+  transition: transform 0.1s;
+}
+
 html, body, #root {
   margin: 0;
   padding: 0;

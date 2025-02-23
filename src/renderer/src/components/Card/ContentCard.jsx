@@ -50,29 +50,26 @@ function ContentCard({macroItem, onClick}) {
   const handleDelete = async (event) => {
     event.stopPropagation();
 
-    const deletedMacroList = await window.electronAPI.deleteMacroAndImage(macroItem.macroName);
+    const deletedMacroList = await window.electronAPI.deleteMacroAndImage(macroItem.macroName, true);
     setMacroItemList(deletedMacroList);
   };
 
   return (
-    <div className="bg-white w-80 h-48 rounded-2xl m-5 p-3" onClick={onClick}>
+    <div className="bg-white w-90 h-48 rounded-2xl m-5 p-3" onClick={onClick}>
       <div className="h-full w-full flex flex-col">
-        <div className="h-[60%] w-full">
-          <div>
-            <p className={`${isBookmark && "text-red"} my-4 mx-2 text-xl cursor-pointer inline`} onClick={handleBookmark}>
-              <FontAwesomeIcon icon={faBookBookmark} />
-            </p>
-            <p className="my-4 mx-2 text-xl cursor-pointer inline" onClick={handleUpdate}>
-              <FontAwesomeIcon icon={faGear} />
-            </p>
-            <p className="my-4 mx-2 text-xl cursor-pointer inline" onClick={handleDelete}>
-              <FontAwesomeIcon icon={faCircleXmark} />
-            </p>
-          </div>
-
-          <p className="text-3xl m-3">{macroName}</p>
+        <div className="h-[25%] w-30 flex items-center hover-big" onClick={handleBookmark}>
+          <span className={`${isBookmark && "text-red"} my-4 mx-2 text-2xl cursor-pointer hover-big`}>
+            <FontAwesomeIcon icon={faBookBookmark} />
+          </span>
+          <span className="my-4 mx-2 text-2xl cursor-pointer hover-big" onClick={handleUpdate}>
+            <FontAwesomeIcon icon={faGear} />
+          </span>
+          <span className="my-4 mx-2 text-2xl cursor-pointer hover-big" onClick={handleDelete}>
+            <FontAwesomeIcon icon={faCircleXmark} />
+          </span>
         </div>
-        <p className="overflow-scroll whitespace-nowrap">생성URL : {macroUrl}</p>
+        <p className="text-3xl m-3">{macroName}</p>
+        <p className="overflow-x-scroll whitespace-nowrap">생성URL : {macroUrl}</p>
         <p>생성일 : {birthTime}</p>
         <p>사용일 : {accessTime}</p>
       </div>
