@@ -1,6 +1,6 @@
 import {nanoid} from "nanoid";
 import {useNavigate, useMatch} from "react-router";
-import {faArrowLeft, faArrowRight, faRotateRight} from "@fortawesome/free-solid-svg-icons";
+import {faArrowLeft, faArrowRight, faRotateRight, faFan} from "@fortawesome/free-solid-svg-icons";
 import useTabStore from "../../stores/useTabStore";
 import useMacroStageStore from "../../stores/useMacroStageStore";
 import useUserConfigStore from "../../stores/useUserConfigStore";
@@ -8,12 +8,13 @@ import useMenuStore from "../../stores/useMenuStore";
 import WindowTab from "../Tab/WindowTab";
 import Button from "../Button/Button";
 import CircleButton from "../Button/CircleButton";
+import LoadingCard from "../Card/LoadingCard";
 
 function Header() {
   const navigate = useNavigate();
 
   const {browserTabList, resetTabInfo, tabFocusedIndex} = useTabStore();
-  const {macroStageList, resetStageList, isMacroExecuting} = useMacroStageStore();
+  const {macroStageList, resetStageList, isMacroRecording, isMacroExecuting} = useMacroStageStore();
   const {openModal} = useUserConfigStore();
   const {setRecordMode} = useMenuStore();
   const match = useMatch("/macro");
@@ -39,17 +40,23 @@ function Header() {
     <header className="h-[10%] flex flex-col justify-around border">
       <div className="h-[15%] w-full" style={{WebkitAppRegion: "drag"}}></div>
       <div className="h-[35%] w-full flex justify-center">
-        {browserTabList[tabFocusedIndex] ? (
-          <input
-            type="text"
-            value={browserTabList[tabFocusedIndex].tabUrl}
-            className="w-200 bg-white p-3 mx-auto overflow-scroll rounded-2xl whitespace-nowrap"
-            readOnly
-          />
-        ) : (
-          <h3 className="text-white text-2xl mx-auto">Auto Page</h3>
-        )}
-        {match && <Button buttonText={"메인"} buttonColor={"bg-sub"} onClick={handleMainClick} />}
+        <div className="w-[70%] text-right px-10">
+          {browserTabList[tabFocusedIndex] ? (
+            <input
+              type="text"
+              value={browserTabList[tabFocusedIndex].tabUrl}
+              className="w-200 bg-white py-2 px-4 mx-auto overflow-scroll rounded-2xl whitespace-nowrap"
+              readOnly
+            />
+          ) : (
+            <span className="mx-50 text-white text-2xl">Auto Page</span>
+          )}
+        </div>
+        <div className="w-[15%] text-xl text-white">
+          {isMacroRecording && <LoadingCard shape="ping" text="매크로 기록 중" />}
+          {isMacroExecuting && <LoadingCard shape="spin" icon={faFan} text="매크로 실행 중" />}
+        </div>
+        <div className="w-[15%] text-right px-3">{match && <Button buttonText={"메인"} buttonColor={"bg-sub"} onClick={handleMainClick} />}</div>
       </div>
       <div className="h-[40%] w-full flex items-end overflow-scroll">
         {browserTabList.length > 0 && (
