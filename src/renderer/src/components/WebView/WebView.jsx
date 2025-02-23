@@ -1,4 +1,4 @@
-import {useEffect, useLayoutEffect, useRef} from "react";
+import {useEffect, useCallback, useRef} from "react";
 import useTabStore from "../../stores/useTabStore";
 import useMacroStageStore from "../../stores/useMacroStageStore";
 
@@ -9,8 +9,19 @@ function WebView({url, isHidden, index}) {
 
   const webViewRef = useRef(null);
 
+  const capturePage = useCallback(async () => {
+    const webviewSize = window.sessionStorage.getItem("webviewSize");
+    const capturedPage = await window.electronAPI.capturePage(webviewSize);
+    macroImageList.push(capturedPage);
+
+    setImageStageList([...macroImageList]);
+  }, [macroImageList, setImageStageList]);
+
   useEffect(() => {
-    const rectInfo = webViewRef.current.getBoundingClientRect();
+    const currentWebview = webViewRef.current;
+    let timerObject = null;
+
+    const rectInfo = currentWebview.getBoundingClientRect();
     const webviewSize = {
       x: rectInfo.x,
       y: rectInfo.y,
@@ -19,18 +30,34 @@ function WebView({url, isHidden, index}) {
     };
 
     window.sessionStorage.setItem("webviewSize", JSON.stringify(webviewSize));
-  }, []);
 
-  useLayoutEffect(() => {
-    const currentWebview = webViewRef.current;
+    const captureLoadedPage = () => {
+      const isEvent = window.sessionStorage.getItem("isEvent");
 
-    const capturePage = async () => {
-      const webviewSize = window.sessionStorage.getItem("webviewSize");
-      const capturedPage = await window.electronAPI.capturePage(webviewSize);
-      macroImageList.push(capturedPage);
+      if (!isMacroRecording || !JSON.parse(isEvent)) {
+        return;
+      }
 
-      setImageStageList([...macroImageList]);
+      currentWebview.removeEventListener("did-stop-loading", captureLoadedPage);
+
+      if (timerObject) {
+        clearTimeout(timerObject);
+      } else {
+        timerObject = setTimeout(() => {
+          window.sessionStorage.setItem("isEvent", false);
+          capturePage();
+        }, 600);
+      }
     };
+
+    currentWebview.addEventListener("did-stop-loading", captureLoadedPage);
+    return () => {
+      currentWebview.removeEventListener("did-stop-loading", captureLoadedPage);
+    };
+  }, [isMacroRecording, macroImageList, setImageStageList, capturePage]);
+
+  useEffect(() => {
+    const currentWebview = webViewRef.current;
 
     const inputEnter = async () => {
       currentWebview.sendInputEvent({type: "keyDown", keyCode: "Enter"});
@@ -76,11 +103,13 @@ function WebView({url, isHidden, index}) {
           return;
         }
 
-        const eventStageList = event.args[0];
-        const stageList = eventStageList;
-
+        const stageList = event.args[0];
         const lastStage = macroStageList[macroStageList.length - 1];
         let isDuplicate = false;
+
+        if (stageList.tagName === "A" || stageList.href) {
+          window.sessionStorage.setItem("isEvent", true);
+        }
 
         if (lastStage) {
           isDuplicate = Object.keys(stageList).every((key) => {
@@ -95,7 +124,11 @@ function WebView({url, isHidden, index}) {
 
         if (!isDuplicate) {
           setMacroStageList([...macroStageList, stageList]);
-          capturePage();
+
+          if (stageList.tagName !== "A" || !stageList.href) {
+            window.sessionStorage.setItem("isEvent", false);
+            capturePage();
+          }
         }
       }
     };
@@ -115,9 +148,10 @@ function WebView({url, isHidden, index}) {
     setImageStageList,
     setMacroStageList,
     setTabFocusedIndex,
+    capturePage,
   ]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const currentWebview = webViewRef.current;
 
     const handleDomReady = () => {
