@@ -77,7 +77,16 @@ try {
     for (const stageInfo of macroStageList) {
       await sleep(100);
       if (!macroBreak) {
-        if (stageInfo.href && location.href !== stageInfo.href) {
+        if (stageInfo.url && location.href !== stageInfo.url && stageInfo.tageName !== "A") {
+          if (restStageList.length === 0) {
+            ipcRenderer.sendToHost("macro-end");
+          }
+
+          location.href = stageInfo.url;
+          return;
+        }
+
+        if (stageInfo.href && location.href !== stageInfo.href && stageInfo.tagName === "A") {
           beforeTarget = restStageList.shift();
 
           if (restStageList.length === 0) {
