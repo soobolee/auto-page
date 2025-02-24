@@ -57,7 +57,7 @@ function Header() {
           {isMacroRecording && <LoadingCard shape="ping" text="매크로 기록 중" />}
           {isMacroExecuting && <LoadingCard shape="spin" icon={faFan} text="매크로 실행 중" />}
         </div>
-        <div className="w-[15%] text-right px-3">{match && <Button buttonText={"메인"} buttonColor={"bg-sub"} onClick={handleMainClick} />}</div>
+        <div className="w-[15%] text-right px-3">{match && <Button buttonText={"나가기"} buttonColor={"bg-sub"} onClick={handleMainClick} />}</div>
       </div>
       <div className="h-[40%] w-full flex items-end overflow-scroll">
         {browserTabList.length > 0 && (

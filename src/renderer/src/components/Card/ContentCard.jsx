@@ -1,15 +1,16 @@
 import {useState} from "react";
 import useMacroItemStore from "../../stores/useMacroItemStore";
 import useMacroStageStore from "../../stores/useMacroStageStore";
+import useModalStore from "../../stores/useModalStore";
 import useMenuStore from "../../stores/useMenuStore";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faBookBookmark, faGear, faCircleXmark} from "@fortawesome/free-solid-svg-icons";
-import {NAV_MENU} from "../../constants/textConstants";
+import {NAV_MENU, ALERT_DELETE_MACRO} from "../../constants/textConstants";
+import IconMenuCard from "./IconMenuCard";
 
 function ContentCard({macroItem, onClick}) {
   const [isBookmark, setIsBookmark] = useState(macroItem.bookmark);
   const {setMacroItemList} = useMacroItemStore();
   const {setMacroStageList, setImageStageList, setUpdateTargetMacroName} = useMacroStageStore();
+  const {openAlertModal, closeModal} = useModalStore();
   const {setMenuMode} = useMenuStore();
 
   const macroName = macroItem.macroName;
@@ -48,31 +49,34 @@ function ContentCard({macroItem, onClick}) {
     setMenuMode(NAV_MENU.ADDMACRO);
   };
 
-  const handleDelete = async (event) => {
+  const handleDelete = (event) => {
     event.stopPropagation();
 
-    const deletedMacroList = await window.electronAPI.deleteMacroAndImage(macroItem.macroName, true);
-    setMacroItemList(deletedMacroList);
+    const macroDelete = async () => {
+      const deletedMacroList = await window.electronAPI.deleteMacroAndImage(macroItem.macroName, true);
+      setMacroItemList(deletedMacroList);
+      closeModal();
+    };
+
+    openAlertModal(ALERT_DELETE_MACRO, macroDelete);
   };
 
   return (
-    <div className="bg-white w-90 h-48 rounded-2xl m-5 p-3" onClick={onClick}>
+    <div className="group relative w-95 h-48 m-5 p-3 bg-white rounded-2xl">
       <div className="h-full w-full flex flex-col">
-        <div className="h-[25%] w-30 flex items-center hover-big" onClick={handleBookmark}>
-          <span className={`${isBookmark && "text-red"} my-4 mx-2 text-2xl cursor-pointer hover-big`}>
-            <FontAwesomeIcon icon={faBookBookmark} />
-          </span>
-          <span className="my-4 mx-2 text-2xl cursor-pointer hover-big" onClick={handleUpdate}>
-            <FontAwesomeIcon icon={faGear} />
-          </span>
-          <span className="my-4 mx-2 text-2xl cursor-pointer hover-big" onClick={handleDelete}>
-            <FontAwesomeIcon icon={faCircleXmark} />
-          </span>
+        <IconMenuCard isBookmark={isBookmark} handleBookmark={handleBookmark} handleUpdate={handleUpdate} handleDelete={handleDelete} />
+        <div className="relative">
+          <p className="text-3xl mb-3">{macroName}</p>
+          <p className="overflow-x-scroll whitespace-nowrap">생성URL : {macroUrl}</p>
+          <p>생성일 : {birthTime}</p>
+          <p>사용일 : {accessTime}</p>
+          <button
+            className="absolute invisible group-hover:visible top-0 w-full h-full bg-green rounded-xl flex justify-center items-center text-white text-2xl"
+            onClick={onClick}
+          >
+            <span>시작하기</span>
+          </button>
         </div>
-        <p className="text-3xl m-3">{macroName}</p>
-        <p className="overflow-x-scroll whitespace-nowrap">생성URL : {macroUrl}</p>
-        <p>생성일 : {birthTime}</p>
-        <p>사용일 : {accessTime}</p>
       </div>
     </div>
   );
