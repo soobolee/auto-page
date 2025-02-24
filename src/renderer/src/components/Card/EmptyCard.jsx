@@ -15,7 +15,7 @@ function EmptyCard() {
   };
 
   return (
-    <div className="flex bg-white w-80 h-48 rounded-2xl m-5">
+    <div className="flex bg-white w-90 h-48 rounded-2xl m-5">
       <div
         className="flex justify-center items-center flex-col w-[50%] rounded-2xl cursor-pointer hover-small"
         onClick={() => {

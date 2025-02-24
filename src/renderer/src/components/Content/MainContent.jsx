@@ -3,7 +3,7 @@ import {useState, useEffect} from "react";
 import {useNavigate} from "react-router";
 import useMacroStageStore from "../../stores/useMacroStageStore";
 import useMacroItemStore from "../../stores/useMacroItemStore";
-import useUserConfigStore from "../../stores/useUserConfigStore";
+import useShortCutStore from "../../stores/useShortCutStore";
 import useMenuStore from "../../stores/useMenuStore";
 import useTabStore from "../../stores/useTabStore";
 import EmptyCard from "../Card/EmptyCard";
@@ -18,7 +18,7 @@ function MainContent() {
   const {menuMode} = useMenuStore();
   const {macroStageList, updateTargetMacroName, setMacroStageList, setImageStageList, startMacroExecute, setUpdateTargetMacroName} =
     useMacroStageStore();
-  const {shortCutUnitList, setShortCutUnitList} = useUserConfigStore();
+  const {shortCutUnitList, setShortCutUnitList} = useShortCutStore();
   const {macroItemList, setMacroItemList} = useMacroItemStore();
   const {setBrowserTabList} = useTabStore();
 

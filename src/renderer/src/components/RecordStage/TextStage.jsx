@@ -1,12 +1,12 @@
 import {nanoid} from "nanoid";
 import useMacroStageStore from "../../stores/useMacroStageStore";
-import useUserConfigStore from "../../stores/useUserConfigStore";
+import useModalStore from "../../stores/useModalStore";
 import Button from "../Button/Button";
 import StageCard from "../Card/StageCard";
 
 function TextStage() {
   const {macroStageList, startMacroRecord} = useMacroStageStore();
-  const {openModal} = useUserConfigStore();
+  const {openInputModal} = useModalStore();
 
   const startRecord = () => {
     startMacroRecord();
@@ -14,7 +14,7 @@ function TextStage() {
 
   const finishRecord = () => {
     if (macroStageList.length > 1) {
-      openModal();
+      openInputModal();
     }
   };
 

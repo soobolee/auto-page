@@ -1,16 +1,17 @@
 import {Outlet} from "react-router";
-import useUserConfigStore from "./stores/useUserConfigStore";
+import useModalStore from "./stores/useModalStore";
 import Header from "./components/Header/Header";
 import DimModal from "./components/Modal/DimModal";
 
 function App() {
-  const {isShowModal} = useUserConfigStore();
+  const {isShowInputModal, isShowAlertModal} = useModalStore();
+  const isShow = isShowInputModal || isShowAlertModal;
 
   return (
     <main className="w-full h-full bg-main">
       <Header />
       <Outlet />
-      {isShowModal && <DimModal />}
+      {isShow && <DimModal />}
     </main>
   );
 }

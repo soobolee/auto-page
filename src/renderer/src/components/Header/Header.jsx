@@ -3,7 +3,7 @@ import {useNavigate, useMatch} from "react-router";
 import {faArrowLeft, faArrowRight, faRotateRight, faFan} from "@fortawesome/free-solid-svg-icons";
 import useTabStore from "../../stores/useTabStore";
 import useMacroStageStore from "../../stores/useMacroStageStore";
-import useUserConfigStore from "../../stores/useUserConfigStore";
+import useModalStore from "../../stores/useModalStore";
 import useMenuStore from "../../stores/useMenuStore";
 import WindowTab from "../Tab/WindowTab";
 import Button from "../Button/Button";
@@ -16,7 +16,7 @@ function Header() {
 
   const {browserTabList, resetTabInfo, tabFocusedIndex} = useTabStore();
   const {macroStageList, resetStageList, isMacroRecording, isMacroExecuting} = useMacroStageStore();
-  const {openModal} = useUserConfigStore();
+  const {openInputModal} = useModalStore();
   const {setRecordMode} = useMenuStore();
   const match = useMatch(ROUTER_ROUTE.MACRO);
 
@@ -26,12 +26,12 @@ function Header() {
     }
 
     if (macroStageList.length > 1) {
-      openModal();
+      openInputModal();
     } else {
       setRecordMode(RECORD_MODE.AUTO);
       resetStageList();
       resetTabInfo();
-      navigate("/");
+      navigate(ROUTER_ROUTE.MAIN);
     }
   };
 
