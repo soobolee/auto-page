@@ -1,11 +1,11 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import useTabStore from "../../stores/useTabStore";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faSquarePlus} from "@fortawesome/free-solid-svg-icons";
+import {nanoid} from "nanoid";
 
 function InputUrlContent() {
   const [inputUrl, setInputUrl] = useState("");
   const [isUrlError, setIsUrlError] = useState("");
+  const [bookmarkUrlList, setBookmarkUrlList] = useState([]);
   const {setBrowserTabList} = useTabStore();
 
   const validationHttpsUrl = (urlString) => {
@@ -29,6 +29,15 @@ function InputUrlContent() {
       if (isUrl) {
         setIsUrlError(false);
         setBrowserTabList([{tabUrl: inputUrl}]);
+
+        const newBookmarkUrlList = [...bookmarkUrlList];
+        newBookmarkUrlList.push(inputUrl);
+
+        const dedUpeSet = new Set(newBookmarkUrlList);
+        const dedUpeList = Array.from(dedUpeSet);
+
+        setBookmarkUrlList(dedUpeList);
+        window.localStorage.setItem("bookmarkUrl", JSON.stringify(dedUpeList));
       } else {
         setInputUrl("");
         setIsUrlError(true);
@@ -39,6 +48,18 @@ function InputUrlContent() {
   const handleInput = (event) => {
     setInputUrl(event.target.value);
   };
+
+  const handleBookmarkClick = (bookmarkUrl) => {
+    setBrowserTabList([{tabUrl: bookmarkUrl}]);
+  };
+
+  useEffect(() => {
+    const urlList = window.localStorage.getItem("bookmarkUrl") || [];
+
+    if (urlList.length > 0) {
+      setBookmarkUrlList(JSON.parse(urlList));
+    }
+  }, []);
 
   return (
     <article className="flex items-center flex-col col-span-7">
@@ -53,8 +74,17 @@ function InputUrlContent() {
           placeholder={isUrlError ? "잘못된 URL을 입력했습니다." : "매크로 기록 URL 입력"}
         />
       </div>
-      <div>
-        <FontAwesomeIcon className="text-white text-5xl cursor-pointer hover:text-subsub" icon={faSquarePlus} />
+      <div className="flex justify-center w-[70%] overflow-x-scroll">
+        {bookmarkUrlList.length > 0 &&
+          bookmarkUrlList.map((bookmarkUrl) => (
+            <button
+              key={nanoid()}
+              className="w-40 h-10 mx-1 p-2 bg-white text-nowrap rounded-xl overflow-x-scroll"
+              onClick={() => handleBookmarkClick(bookmarkUrl)}
+            >
+              {bookmarkUrl}
+            </button>
+          ))}
       </div>
     </article>
   );
