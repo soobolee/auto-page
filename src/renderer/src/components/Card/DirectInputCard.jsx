@@ -161,9 +161,7 @@ function DirectInputCard({stageItem, index}) {
         >
           저장
         </button>
-        <div>
-          <img src={macroImageList[index]} className={`${!macroImageList[index] && "invisible"} w-full h-full mb-2 hover-image`} />
-        </div>
+        <img src={macroImageList[index]} className={`${!macroImageList[index] && "invisible"} w-full h-full hover-image`} />
       </div>
     </form>
   );

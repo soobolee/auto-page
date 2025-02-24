@@ -16,7 +16,7 @@ function Navigation() {
           return (
             <li
               key={nanoid()}
-              className={`${menuMode === NAV_MENU[key] ? "bg-green" : "hover:bg-subsub"} w-full h-34 my-2 flex flex-col justify-center items-center rounded-2xl`}
+              className={`${menuMode === NAV_MENU[key] ? "bg-green" : "hover:bg-subsub click-action"} w-full h-34 my-2 flex flex-col justify-center items-center rounded-2xl`}
               onClick={() => {
                 setMenuMode(NAV_MENU[key]);
                 resetStageList();

@@ -1,16 +1,13 @@
-import useUserConfigStore from "../../stores/useUserConfigStore";
 import useTabStore from "../../stores/useTabStore";
 import useMenuStore from "../../stores/useMenuStore";
 import ImageStage from "../RecordStage/ImageStage";
 import TextStage from "../RecordStage/TextStage";
 import InputUrlContent from "./InputUrlContent";
 import WebView from "../WebView/WebView";
-import DimModal from "../Modal/DimModal";
 import {RECORD_MODE} from "../../constants/textConstants";
 
 function MacroContent() {
   const {browserTabList, tabFocusedIndex} = useTabStore();
-  const {isShowModal} = useUserConfigStore();
   const {recordMode} = useMenuStore();
 
   return (
@@ -24,7 +21,6 @@ function MacroContent() {
         <ImageStage />
       </div>
       {recordMode === "manual" && <TextStage />}
-      {isShowModal && <DimModal />}
     </>
   );
 }

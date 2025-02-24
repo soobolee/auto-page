@@ -25,7 +25,7 @@ function StageCard({direction, stageInfo}) {
           <p>value: {stageInfo.value}</p>
         </>
       )}
-      {direction === "col" && <img className="w-full h-full hover-stage" src={stageInfo} />}
+      {direction === "col" && <img className="w-full h-full active-stage" src={stageInfo} />}
     </div>
   );
 }

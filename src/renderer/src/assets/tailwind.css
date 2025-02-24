@@ -28,7 +28,7 @@
   z-index: 1;
 }
 
-.hover-stage:hover {
+.active-stage:active {
   transform: scale(0.5);
   position: absolute;
   right: -20%;
@@ -37,7 +37,7 @@
   z-index: 1;
 }
 
-button:active {
+.click-action:active, button:active {
   transform: scale(0.8);
   transition: transform 0.1s;
 }
