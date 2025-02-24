@@ -3,13 +3,22 @@ import {create} from "zustand";
 const useModalStore = create((set) => ({
   isShowInputModal: false,
   isShowAlertModal: false,
-  modalText: "",
-  modalIcon: null,
-  modalButtonText: "",
-  modalButtonClick: null,
+  modalContent: {},
+  buttonClick: null,
   openInputModal: () => set({isShowInputModal: true}),
-  openAlertModal: () => set({isShowAlertModal: true}),
-  closeModal: () => set({isShowInputModal: false, isShowAlertModal: false}),
+  openAlertModal: (modalContent, buttonClick) =>
+    set({
+      isShowAlertModal: true,
+      modalContent: modalContent,
+      buttonClick: buttonClick,
+    }),
+  closeModal: () =>
+    set({
+      isShowInputModal: false,
+      isShowAlertModal: false,
+      modalContent: {},
+      buttonClick: null,
+    }),
 }));
 
 export default useModalStore;
