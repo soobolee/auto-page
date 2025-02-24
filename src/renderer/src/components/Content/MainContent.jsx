@@ -8,9 +8,10 @@ import useMenuStore from "../../stores/useMenuStore";
 import useTabStore from "../../stores/useTabStore";
 import EmptyCard from "../Card/EmptyCard";
 import ContentCard from "../Card/ContentCard";
-import ShortCutCard from "../Card/ShortcutCard";
+import ShortCutCard from "../Card/ShortCutCard";
 import Navigation from "../Navigation/Navigation";
 import DirectInputCard from "../Card/DirectInputCard";
+import {ROUTER_ROUTE, NAV_MENU, MENU_TITLE} from "../../constants/textConstants";
 
 function MainContent() {
   const [macroNameList, setMacroNameList] = useState([]);
@@ -37,7 +38,7 @@ function MainContent() {
 
   useEffect(() => {
     const handleShortCut = (event) => {
-      if (event.target.tagName === "INPUT" || menuMode === "ADDMACRO") {
+      if (event.target.tagName === "INPUT" || menuMode === NAV_MENU.ADDMACRO) {
         return;
       }
 
@@ -57,12 +58,12 @@ function MainContent() {
         setMacroStageList(macroInfo.stageList);
         setBrowserTabList([{tabUrl: macroInfo.stageList[0].url}]);
         startMacroExecute();
-        navigate("/macro");
+        navigate(ROUTER_ROUTE.MACRO);
       }
     };
 
     const handleKeyup = (event) => {
-      if (event.target.tagName === "INPUT" || menuMode === "ADDMACRO") {
+      if (event.target.tagName === "INPUT" || menuMode === NAV_MENU.ADDMACRO) {
         return;
       }
 
@@ -92,8 +93,8 @@ function MainContent() {
       <Navigation />
       <article className="w-full h-full flex justify-center items-center">
         <div className="w-[90%] h-[90%] bg-sub rounded-xl flex justify-center items-center flex-col">
-          <p className="mt-12 text-3xl text-white">매크로를 추가하고 바로 시작해 보세요.</p>
-          {menuMode === "HOME" && (
+          <p className="mt-12 text-3xl text-white">{MENU_TITLE[menuMode]}</p>
+          {menuMode === NAV_MENU.HOME && (
             <div className="w-full h-full p-16 flex flex-row flex-wrap">
               {macroItemList.length > 0 &&
                 macroItemList.map((item) => (
@@ -104,14 +105,14 @@ function MainContent() {
                       setMacroStageList(item.stageList);
                       setBrowserTabList([{tabUrl: item.stageList[0].url}]);
                       startMacroExecute();
-                      navigate("/macro");
+                      navigate(ROUTER_ROUTE.MACRO);
                     }}
                   />
                 ))}
               <EmptyCard />
             </div>
           )}
-          {menuMode === "BOOKMARK" && (
+          {menuMode === NAV_MENU.BOOKMARK && (
             <div className="w-full h-full p-16 flex flex-row flex-wrap">
               {macroItemList.length > 0 &&
                 macroItemList.map((item) => {
@@ -124,7 +125,7 @@ function MainContent() {
                           setMacroStageList(item.stageList);
                           setBrowserTabList([{tabUrl: item.stageList[0].url}]);
                           startMacroExecute();
-                          navigate("/macro");
+                          navigate(ROUTER_ROUTE.MACRO);
                         }}
                       />
                     )
@@ -132,7 +133,7 @@ function MainContent() {
                 })}
             </div>
           )}
-          {menuMode === "ADDMACRO" && (
+          {menuMode === NAV_MENU.ADDMACRO && (
             <div className="w-full h-full p-16 flex flex-col items-center gap-10 overflow-scroll">
               <div>
                 <select value={updateTargetMacroName} onChange={handleUpdateSelect} className="w-100 p-4 bg-white text-lg rounded-xl">
@@ -147,7 +148,7 @@ function MainContent() {
               {macroStageList && macroStageList.map((stageItem, index) => <DirectInputCard key={nanoid()} stageItem={stageItem} index={index} />)}
             </div>
           )}
-          {menuMode === "SHORTCUT" && (
+          {menuMode === NAV_MENU.SHORTCUT && (
             <div className="w-full h-full p-16 flex flex-col items-center gap-10 overflow-scroll">
               {macroItemList.length > 0 ? (
                 macroItemList.map((item) => <ShortCutCard key={nanoid()} macroItem={item} />)

@@ -4,14 +4,15 @@ import {HashRouter, Route, Routes} from "react-router";
 import App from "./App";
 import MainContent from "./components/Content/MainContent";
 import MacroContent from "./components/Content/MacroContent";
+import {ROUTER_ROUTE} from "./constants/textConstants";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <HashRouter>
       <Routes>
-        <Route path="/" element={<App />}>
+        <Route path={ROUTER_ROUTE.MAIN} element={<App />}>
           <Route index element={<MainContent />} />
-          <Route path="macro" element={<MacroContent />} />
+          <Route path={ROUTER_ROUTE.MACRO} element={<MacroContent />} />
         </Route>
       </Routes>
     </HashRouter>

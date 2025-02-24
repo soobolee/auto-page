@@ -4,6 +4,7 @@ import useMacroStageStore from "../../stores/useMacroStageStore";
 import useMenuStore from "../../stores/useMenuStore";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faBookBookmark, faGear, faCircleXmark} from "@fortawesome/free-solid-svg-icons";
+import {NAV_MENU} from "../../constants/textConstants";
 
 function ContentCard({macroItem, onClick}) {
   const [isBookmark, setIsBookmark] = useState(macroItem.bookmark);
@@ -44,7 +45,7 @@ function ContentCard({macroItem, onClick}) {
     setUpdateTargetMacroName(macroName);
     setImageStageList(savedImageList.image);
     setMacroStageList(savedMacroList.stageList);
-    setMenuMode("ADDMACRO");
+    setMenuMode(NAV_MENU.ADDMACRO);
   };
 
   const handleDelete = async (event) => {

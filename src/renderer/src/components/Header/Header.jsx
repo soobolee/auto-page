@@ -9,6 +9,7 @@ import WindowTab from "../Tab/WindowTab";
 import Button from "../Button/Button";
 import CircleButton from "../Button/CircleButton";
 import LoadingCard from "../Card/LoadingCard";
+import {ROUTER_ROUTE, RECORD_MODE} from "../../constants/textConstants";
 
 function Header() {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ function Header() {
   const {macroStageList, resetStageList, isMacroRecording, isMacroExecuting} = useMacroStageStore();
   const {openModal} = useUserConfigStore();
   const {setRecordMode} = useMenuStore();
-  const match = useMatch("/macro");
+  const match = useMatch(ROUTER_ROUTE.MACRO);
 
   const handleMainClick = () => {
     if (isMacroExecuting) {
@@ -27,7 +28,7 @@ function Header() {
     if (macroStageList.length > 1) {
       openModal();
     } else {
-      setRecordMode("auto");
+      setRecordMode(RECORD_MODE.AUTO);
       resetStageList();
       resetTabInfo();
       navigate("/");

@@ -6,6 +6,7 @@ import TextStage from "../RecordStage/TextStage";
 import InputUrlContent from "./InputUrlContent";
 import WebView from "../WebView/WebView";
 import DimModal from "../Modal/DimModal";
+import {RECORD_MODE} from "../../constants/textConstants";
 
 function MacroContent() {
   const {browserTabList, tabFocusedIndex} = useTabStore();
@@ -14,7 +15,7 @@ function MacroContent() {
 
   return (
     <>
-      <div className={`${recordMode === "auto" ? "h-[90%]" : "h-[75%]"} w-full grid grid-cols-8`}>
+      <div className={`${recordMode === RECORD_MODE.AUTO ? "h-[90%]" : "h-[75%]"} w-full grid grid-cols-8`}>
         {browserTabList.length <= 0 && <InputUrlContent />}
         {browserTabList.length > 0 &&
           browserTabList.map((tab, index) => {

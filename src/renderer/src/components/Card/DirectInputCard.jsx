@@ -2,6 +2,7 @@ import {useState} from "react";
 import useMacroStageStore from "../../stores/useMacroStageStore";
 import useMacroItemStore from "../../stores/useMacroItemStore";
 import useMenuStore from "../../stores/useMenuStore";
+import {NAV_MENU} from "../../constants/textConstants";
 
 function DirectInputCard({stageItem, index}) {
   const [formData, setFormData] = useState(stageItem || {class: [{}]});
@@ -129,7 +130,7 @@ function DirectInputCard({stageItem, index}) {
               const deletedList = window.electronAPI.deleteMacroAndImage(updateTargetMacroName, true);
 
               setMacroItemList(deletedList);
-              setMenuMode("HOME");
+              setMenuMode(NAV_MENU.HOME);
             } else {
               const savedStageResult = await window.electronAPI.saveMacro(updateTargetMacroName, newStageList, "stageList");
               const savedImageResult = await window.electronAPI.saveMacro(updateTargetMacroName, newImageList, "image");

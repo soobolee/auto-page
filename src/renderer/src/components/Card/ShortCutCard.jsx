@@ -1,6 +1,7 @@
 import {useState} from "react";
 import useMenuStore from "../../stores/useMenuStore";
 import Button from "../Button/Button";
+import {NAV_MENU} from "../../constants/textConstants";
 
 function ShortCutCard({macroItem}) {
   const macroName = macroItem.macroName;
@@ -28,7 +29,7 @@ function ShortCutCard({macroItem}) {
       const saveResult = await window.electronAPI.saveMacro(macroName, {firstKeyUnit, secondKeyUnit}, "shortCut");
 
       if (saveResult) {
-        setMenuMode("HOME");
+        setMenuMode(NAV_MENU.HOME);
       } else {
         setIsSaveError(true);
       }

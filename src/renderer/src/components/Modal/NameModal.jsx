@@ -5,6 +5,7 @@ import useMacroStageStore from "../../stores/useMacroStageStore";
 import useTabStore from "../../stores/useTabStore";
 import Button from "../Button/Button";
 import useMenuStore from "../../stores/useMenuStore";
+import {RECORD_MODE} from "../../constants/textConstants";
 
 function NameModal() {
   const navigate = useNavigate();
@@ -21,12 +22,12 @@ function NameModal() {
     resetStageList();
     closeModal();
 
-    if (recordMode === "auto") {
+    if (recordMode === RECORD_MODE.AUTO) {
       resetTabInfo();
       navigate("/");
     } else {
       resetTabInfo();
-      setRecordMode("auto");
+      setRecordMode(RECORD_MODE.AUTO);
       navigate("/");
     }
   };

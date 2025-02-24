@@ -1,8 +1,9 @@
 import {create} from "zustand";
+import {NAV_MENU, RECORD_MODE} from "../constants/textConstants";
 
 const useMenuStore = create((set) => ({
-  menuMode: "HOME",
-  recordMode: "auto",
+  menuMode: NAV_MENU.HOME,
+  recordMode: RECORD_MODE.AUTO,
   setMenuMode: (newMode) => set({menuMode: newMode}),
   setRecordMode: (newMode) => set({recordMode: newMode}),
 }));
