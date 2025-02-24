@@ -29,44 +29,61 @@ try {
     }
   });
 
-  function sleep(delay) {
+  const sleep = (delay) => {
     return new Promise((resolve) => setTimeout(resolve, delay));
-  }
+  };
 
-  function waitForGetElement(selector, classIndex = 0) {
-    return new Promise((resolve) => {
-      if (document.querySelectorAll(selector)[classIndex]) {
-        return resolve(document.querySelectorAll(selector)[classIndex]);
+  const waitForGetElement = async (selector, classIndex = 0, stageInfo, restStageList) => {
+    let targetElement = null;
+
+    if (stageInfo.url && location.href !== stageInfo.url && stageInfo.tageName !== "A") {
+      if (restStageList.length === 0) {
+        ipcRenderer.sendToHost("macro-end");
       }
 
-      const observer = new MutationObserver(() => {
-        if (document.querySelectorAll(selector)[classIndex]) {
-          observer.disconnect();
-          return resolve(document.querySelectorAll(selector)[classIndex]);
-        }
-      });
+      ipcRenderer.sendToHost("macro-stop", restStageList);
+      location.href = stageInfo.url;
+      return;
+    }
 
-      observer.observe(document.body, {
-        childList: true,
-        subtree: true,
-        attributes: true,
-        characterData: true,
-      });
+    if (document.querySelectorAll(selector)[classIndex]) {
+      targetElement = document.querySelectorAll(selector)[classIndex];
+    }
 
-      sleep(1500).then(() => {
+    if (targetElement) {
+      return targetElement;
+    }
+
+    const observer = new MutationObserver(() => {
+      targetElement = document.querySelectorAll(selector)[classIndex];
+      if (targetElement) {
         observer.disconnect();
-        if (document.querySelectorAll(selector)[classIndex]) {
-          return resolve(document.querySelectorAll(selector)[classIndex]);
-        }
-
-        return resolve(null);
-      });
+        return targetElement;
+      }
     });
-  }
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      characterData: true,
+    });
+
+    const start = Date.now();
+
+    while (!targetElement && Date.now() - start < 1500) {
+      targetElement = document.querySelectorAll(selector)[classIndex];
+      await sleep(100);
+    }
+
+    observer.disconnect();
+
+    return targetElement || null;
+  };
 
   const executeMacro = async (macroStageList) => {
     const restStageList = [...macroStageList];
-    let beforeTarget = [];
+    let beforeTarget = null;
     let macroBreak = false;
 
     window.addEventListener("beforeunload", () => {
@@ -75,17 +92,8 @@ try {
     });
 
     for (const stageInfo of macroStageList) {
-      await sleep(100);
+      await sleep(200);
       if (!macroBreak) {
-        if (stageInfo.url && location.href !== stageInfo.url && stageInfo.tageName !== "A") {
-          if (restStageList.length === 0) {
-            ipcRenderer.sendToHost("macro-end");
-          }
-
-          location.href = stageInfo.url;
-          return;
-        }
-
         if (stageInfo.href && location.href !== stageInfo.href && stageInfo.tagName === "A") {
           beforeTarget = restStageList.shift();
 
@@ -93,6 +101,8 @@ try {
             ipcRenderer.sendToHost("macro-end");
           }
 
+          macroBreak = true;
+          ipcRenderer.sendToHost("macro-stop", restStageList);
           location.href = stageInfo.href;
           return;
         }
@@ -100,14 +110,14 @@ try {
         let targetElement = null;
 
         if (stageInfo.id) {
-          targetElement = await waitForGetElement(`#${stageInfo.id}`);
+          targetElement = await waitForGetElement(`#${stageInfo.id}`, null, stageInfo, restStageList);
         }
 
         if (!targetElement && stageInfo.class) {
           const classList = stageInfo.class;
 
           for (const classInfo of classList) {
-            targetElement = await waitForGetElement(`.${classInfo.className}`, classInfo.classIndex);
+            targetElement = await waitForGetElement(`.${classInfo.className}`, classInfo.classIndex, stageInfo, restStageList);
             if (targetElement) {
               break;
             }
@@ -115,7 +125,7 @@ try {
         }
 
         if (!targetElement && stageInfo.tagName) {
-          targetElement = await waitForGetElement(stageInfo.tagName, stageInfo.tagIndex);
+          targetElement = await waitForGetElement(stageInfo.tagName, stageInfo.tagIndex, stageInfo, restStageList);
         }
 
         if (!targetElement) {
@@ -128,20 +138,20 @@ try {
         }
 
         if (stageInfo.method === "CLICK") {
-          targetElement.focus();
-          targetElement.click();
+          await targetElement.focus();
+          await targetElement.click();
           beforeTarget = restStageList.shift();
         }
 
         if (stageInfo.method === "CHANGE" || stageInfo.method === "KEYDOWN") {
-          targetElement.click();
-          targetElement.focus();
+          await targetElement.click();
+          await targetElement.focus();
           targetElement.value = stageInfo.value;
           ipcRenderer.sendToHost("input-paste");
 
           if (stageInfo.method === "KEYDOWN") {
-            targetElement.click();
-            targetElement.focus();
+            await targetElement.click();
+            await targetElement.focus();
             ipcRenderer.sendToHost("input-enter");
           }
           beforeTarget = restStageList.shift();
@@ -158,6 +168,7 @@ try {
     executeMacro(macroStageList);
   });
 
+  let lastEventTimestamp = 0;
   document.addEventListener("DOMContentLoaded", () => {
     if (document.title === "Auto Page") {
       return;
@@ -189,6 +200,13 @@ try {
           if (!eventTarget) {
             return;
           }
+
+          const currentTimestamp = Date.now();
+          if (currentTimestamp - lastEventTimestamp < 500) {
+            return;
+          }
+
+          lastEventTimestamp = currentTimestamp;
 
           const eventTargetId = eventTarget.id;
           const eventTagIndex = Array.from(document.querySelectorAll(eventTarget.tagName)).indexOf(eventTarget);
@@ -243,6 +261,13 @@ try {
         if (event.key !== "Enter") {
           return;
         }
+
+        const currentTimestamp = Date.now();
+        if (currentTimestamp - lastEventTimestamp < 500) {
+          return;
+        }
+
+        lastEventTimestamp = currentTimestamp;
         const eventTarget = event.target;
         const eventTargetUrl = location.href;
         const eventTagIndex = Array.from(document.querySelectorAll(eventTarget.tagName)).indexOf(eventTarget);

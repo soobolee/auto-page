@@ -60,17 +60,17 @@ function WebView({url, isHidden, index}) {
     const currentWebview = webViewRef.current;
 
     const inputEnter = async () => {
-      currentWebview.sendInputEvent({type: "keyDown", keyCode: "Enter"});
-      currentWebview.sendInputEvent({type: "char", keyCode: "Enter"});
+      await currentWebview.sendInputEvent({type: "keyDown", keyCode: "Enter"});
+      await currentWebview.sendInputEvent({type: "char", keyCode: "Enter"});
       await currentWebview.sendInputEvent({type: "keyUp", keyCode: "Enter"});
     };
 
     const inputPaste = async () => {
-      currentWebview.sendInputEvent({type: "keyDown", keyCode: "Space"});
-      currentWebview.sendInputEvent({type: "char", keyCode: "Space"});
-      currentWebview.sendInputEvent({type: "keyUp", keyCode: "Space"});
-      currentWebview.sendInputEvent({type: "keyDown", keyCode: "Backspace"});
-      currentWebview.sendInputEvent({type: "char", keyCode: "Backspace"});
+      await currentWebview.sendInputEvent({type: "keyDown", keyCode: "Space"});
+      await currentWebview.sendInputEvent({type: "char", keyCode: "Space"});
+      await currentWebview.sendInputEvent({type: "keyUp", keyCode: "Space"});
+      await currentWebview.sendInputEvent({type: "keyDown", keyCode: "Backspace"});
+      await currentWebview.sendInputEvent({type: "char", keyCode: "Backspace"});
       await currentWebview.sendInputEvent({type: "keyUp", keyCode: "BackSpace"});
     };
 
@@ -125,7 +125,7 @@ function WebView({url, isHidden, index}) {
         if (!isDuplicate) {
           setMacroStageList([...macroStageList, stageList]);
 
-          if (stageList.tagName !== "A" || !stageList.href) {
+          if (stageList.tagName !== "A" || stageList.href.includes("#")) {
             window.sessionStorage.setItem("isEvent", false);
             capturePage();
           }
@@ -157,6 +157,8 @@ function WebView({url, isHidden, index}) {
     const handleDomReady = () => {
       if (isMacroExecuting) {
         const resumeMacroList = window.sessionStorage.getItem("resumeMacroList");
+        window.sessionStorage.removeItem("resumeMacroList");
+
         const parseResumeMacroList = JSON.parse(resumeMacroList);
 
         if (parseResumeMacroList && parseResumeMacroList.length > 0) {

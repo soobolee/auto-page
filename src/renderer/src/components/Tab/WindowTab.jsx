@@ -1,7 +1,9 @@
 import useTabStore from "../../stores/useTabStore";
+import useMacroStageStore from "../../stores/useMacroStageStore";
 
 function WindowTab({index, title, isHidden}) {
   const {browserTabList, tabFocusedIndex, setBrowserTabList, setTabFocusedIndex} = useTabStore();
+  const {resetStageList} = useMacroStageStore();
 
   return (
     <div
@@ -25,6 +27,7 @@ function WindowTab({index, title, isHidden}) {
           }
           if (newFocuedIndex < 0) {
             newFocuedIndex = 0;
+            resetStageList();
           }
 
           setTabFocusedIndex(newFocuedIndex);
