@@ -5,31 +5,30 @@ import useMacroStageStore from "../../stores/useMacroStageStore";
 import useTabStore from "../../stores/useTabStore";
 import Button from "../Button/Button";
 import useMenuStore from "../../stores/useMenuStore";
-import {ROUTER_ROUTE, RECORD_MODE} from "../../constants/textConstants";
+import {ROUTER_ROUTE, RECORD_MODE, ALERT_ERROR_SAVE} from "../../constants/textConstants";
 
 function NameModal() {
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState("");
-  const {closeModal} = useModalStore();
+  const {openAlertModal, closeModal} = useModalStore();
   const {resetTabInfo} = useTabStore();
   const {macroStageList, macroImageList, resetStageList, stopMacroRecord} = useMacroStageStore();
-  const {recordMode, setRecordMode} = useMenuStore();
+  const {setRecordMode} = useMenuStore();
 
   const clickModalSave = () => {
-    window.electronAPI.saveMacro(inputValue, macroStageList, "stageList");
-    window.electronAPI.saveImage(inputValue, macroImageList);
+    const saveMacroResult = window.electronAPI.saveMacro(inputValue, macroStageList, "stageList");
+    const saveImageResult = window.electronAPI.saveImage(inputValue, macroImageList);
     stopMacroRecord();
-    resetStageList();
     closeModal();
 
-    if (recordMode === RECORD_MODE.AUTO) {
-      resetTabInfo();
-      navigate(ROUTER_ROUTE.MAIN);
-    } else {
-      resetTabInfo();
-      setRecordMode(RECORD_MODE.AUTO);
-      navigate(ROUTER_ROUTE.MAIN);
+    if (!saveMacroResult || !saveImageResult) {
+      openAlertModal(ALERT_ERROR_SAVE);
     }
+
+    setRecordMode(RECORD_MODE.AUTO);
+    resetStageList();
+    resetTabInfo();
+    navigate(ROUTER_ROUTE.MAIN);
   };
 
   const inputMacroName = (event) => {

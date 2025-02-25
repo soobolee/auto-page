@@ -1,9 +1,12 @@
 import {useEffect, useCallback, useRef} from "react";
 import useTabStore from "../../stores/useTabStore";
 import useMacroStageStore from "../../stores/useMacroStageStore";
+import useModalStore from "../../stores/useModalStore";
+import {ALERT_ERROR_SAVE} from "../../constants/textConstants";
 
 function WebView({url, isHidden, index}) {
   const {browserTabList, setBrowserTabList, setTabFocusedIndex} = useTabStore();
+  const {openAlertModal} = useModalStore();
   const {macroStageList, macroImageList, isMacroExecuting, stopMacroExecute, isMacroRecording, setMacroStageList, setImageStageList} =
     useMacroStageStore();
 
@@ -12,10 +15,15 @@ function WebView({url, isHidden, index}) {
   const capturePage = useCallback(async () => {
     const webviewSize = window.sessionStorage.getItem("webviewSize");
     const capturedPage = await window.electronAPI.capturePage(webviewSize);
-    macroImageList.push(capturedPage);
+
+    if (!capturePage) {
+      openAlertModal(ALERT_ERROR_SAVE);
+    } else {
+      macroImageList.push(capturedPage);
+    }
 
     setImageStageList([...macroImageList]);
-  }, [macroImageList, setImageStageList]);
+  }, [macroImageList, openAlertModal, setImageStageList]);
 
   useEffect(() => {
     const currentWebview = webViewRef.current;

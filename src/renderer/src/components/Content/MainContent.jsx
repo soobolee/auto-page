@@ -11,7 +11,8 @@ import ContentCard from "../Card/ContentCard";
 import ShortCutCard from "../Card/ShortCutCard";
 import Navigation from "../Navigation/Navigation";
 import DirectInputCard from "../Card/DirectInputCard";
-import {ROUTER_ROUTE, NAV_MENU, MENU_TITLE} from "../../constants/textConstants";
+import {ROUTER_ROUTE, NAV_MENU, MENU_TITLE, ALERT_ERROR_LOAD, ALERT_ERROR_SAVE} from "../../constants/textConstants";
+import useModalStore from "../../stores/useModalStore";
 
 function MainContent() {
   const [macroNameList, setMacroNameList] = useState([]);
@@ -20,6 +21,7 @@ function MainContent() {
     useMacroStageStore();
   const {shortCutUnitList, setShortCutUnitList} = useShortCutStore();
   const {macroItemList, setMacroItemList} = useMacroItemStore();
+  const {openAlertModal} = useModalStore();
   const {setBrowserTabList} = useTabStore();
 
   const navigate = useNavigate();
@@ -27,6 +29,11 @@ function MainContent() {
   useEffect(() => {
     async function getMacroItemList() {
       const macroInfoList = await window.electronAPI.getMacroItemList();
+
+      if (!macroInfoList) {
+        openAlertModal(ALERT_ERROR_LOAD);
+      }
+
       const nameList = macroInfoList.map((macroInfo) => macroInfo.macroName);
 
       setMacroNameList(["매크로 선택", ...nameList]);
@@ -34,7 +41,7 @@ function MainContent() {
     }
 
     getMacroItemList();
-  }, [setMacroItemList, menuMode]);
+  }, [setMacroItemList, menuMode, openAlertModal]);
 
   useEffect(() => {
     const handleShortCut = (event) => {
@@ -83,6 +90,10 @@ function MainContent() {
     setUpdateTargetMacroName(event.target.value);
     const savedImageList = await window.electronAPI.getMacroItem("image", event.target.value);
     const savedMacroList = await window.electronAPI.getMacroItem("stageList", event.target.value);
+
+    if (!savedImageList || !savedMacroList) {
+      openAlertModal(ALERT_ERROR_SAVE);
+    }
 
     setImageStageList(savedImageList.image);
     setMacroStageList(savedMacroList.stageList);

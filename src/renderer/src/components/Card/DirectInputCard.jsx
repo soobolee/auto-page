@@ -3,7 +3,7 @@ import useMacroStageStore from "../../stores/useMacroStageStore";
 import useMacroItemStore from "../../stores/useMacroItemStore";
 import useMenuStore from "../../stores/useMenuStore";
 import useModalStore from "../../stores/useModalStore";
-import {ALERT_DELETE_STAGE, ALERT_SAVE_STAGE, NAV_MENU} from "../../constants/textConstants";
+import {ALERT_DELETE_STAGE, ALERT_ERROR_DELETE, ALERT_ERROR_SAVE, ALERT_SAVE_STAGE, NAV_MENU} from "../../constants/textConstants";
 
 function DirectInputCard({stageItem, index}) {
   const [formData, setFormData] = useState(stageItem || {class: [{}]});
@@ -41,6 +41,10 @@ function DirectInputCard({stageItem, index}) {
       if (newStageList.length === 0 && newImageList.length === 0) {
         const deletedList = window.electronAPI.deleteMacroAndImage(updateTargetMacroName, true);
 
+        if (!deletedList) {
+          openAlertModal(ALERT_ERROR_DELETE);
+        }
+
         setMacroItemList(deletedList);
         setMenuMode(NAV_MENU.HOME);
       } else {
@@ -50,6 +54,8 @@ function DirectInputCard({stageItem, index}) {
         if (savedStageResult && savedImageResult) {
           setMacroStageList(newStageList);
           setImageStageList(newImageList);
+        } else {
+          openAlertModal(ALERT_ERROR_SAVE);
         }
       }
 
@@ -65,10 +71,11 @@ function DirectInputCard({stageItem, index}) {
       newList[index] = formData;
 
       const savedResult = await window.electronAPI.saveMacro(updateTargetMacroName, newList, "stageList");
-      if (savedResult) {
+
+      if (!savedResult) {
         setMacroStageList(newList);
       } else {
-        console.error("파일 저장에 실패했습니다.");
+        openAlertModal(ALERT_ERROR_SAVE);
       }
 
       closeModal();

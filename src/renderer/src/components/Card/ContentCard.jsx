@@ -3,7 +3,7 @@ import useMacroItemStore from "../../stores/useMacroItemStore";
 import useMacroStageStore from "../../stores/useMacroStageStore";
 import useModalStore from "../../stores/useModalStore";
 import useMenuStore from "../../stores/useMenuStore";
-import {NAV_MENU, ALERT_DELETE_MACRO} from "../../constants/textConstants";
+import {NAV_MENU, ALERT_DELETE_MACRO, ALERT_ERROR_SAVE, ALERT_ERROR_LOAD, ALERT_ERROR_DELETE} from "../../constants/textConstants";
 import IconMenuCard from "./IconMenuCard";
 
 function ContentCard({macroItem, onClick}) {
@@ -30,18 +30,30 @@ function ContentCard({macroItem, onClick}) {
       macroItem.bookmark = true;
     }
 
-    window.electronAPI.saveMacro(macroName, macroItem.bookmark, "bookmark");
+    const saveResult = window.electronAPI.saveMacro(macroName, macroItem.bookmark, "bookmark");
+
+    if (!saveResult) {
+      openAlertModal(ALERT_ERROR_SAVE);
+    }
 
     const bookmarkMacroList = await window.electronAPI.getMacroItemList();
 
-    setMacroItemList(bookmarkMacroList);
-    setIsBookmark(macroItem.bookmark);
+    if (bookmarkMacroList) {
+      setMacroItemList(bookmarkMacroList);
+      setIsBookmark(macroItem.bookmark);
+    } else {
+      openAlertModal(ALERT_ERROR_LOAD);
+    }
   };
 
   const handleUpdate = async (event) => {
     event.stopPropagation();
     const savedImageList = await window.electronAPI.getMacroItem("image", macroName);
     const savedMacroList = await window.electronAPI.getMacroItem("stageList", macroName);
+
+    if (!savedImageList || !savedMacroList) {
+      openAlertModal(ALERT_ERROR_SAVE);
+    }
 
     setUpdateTargetMacroName(macroName);
     setImageStageList(savedImageList.image);
@@ -54,6 +66,11 @@ function ContentCard({macroItem, onClick}) {
 
     const macroDelete = async () => {
       const deletedMacroList = await window.electronAPI.deleteMacroAndImage(macroItem.macroName, true);
+
+      if (!deletedMacroList) {
+        openAlertModal(ALERT_ERROR_DELETE);
+      }
+
       setMacroItemList(deletedMacroList);
       closeModal();
     };
