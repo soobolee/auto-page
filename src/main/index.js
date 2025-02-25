@@ -6,7 +6,7 @@ import icon from "../../resources/icon.png?asset";
 
 let mainWindow = null;
 
-function createWindow() {
+const createWindow = () => {
   mainWindow = new BrowserWindow({
     width: 900,
     height: 670,
@@ -35,7 +35,7 @@ function createWindow() {
   mainWindow.webContents.on("will-attach-webview", (_, webPreferences) => {
     webPreferences.preload = join(__dirname, "../preload/index.js");
   });
-}
+};
 
 app.whenReady().then(() => {
   electronApp.setAppUserModelId("com.electron");
@@ -64,13 +64,17 @@ ipcMain.on("event-occurred", (event, payload) => {
 });
 
 ipcMain.handle("capture-page", async (_, webviewSize) => {
-  const captureImage = await mainWindow.webContents.capturePage(JSON.parse(webviewSize));
-  const resizeImage = await captureImage.resize({
-    quality: "good",
-  });
-  const imageUrl = await resizeImage.toDataURL();
+  try {
+    const captureImage = await mainWindow.webContents.capturePage(JSON.parse(webviewSize));
+    const resizeImage = await captureImage.resize({
+      quality: "good",
+    });
+    const imageUrl = await resizeImage.toDataURL();
 
-  return imageUrl;
+    return imageUrl || null;
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 ipcMain.handle("save-macro", (_, fileName, fileContent, contentType) => {
@@ -82,7 +86,11 @@ ipcMain.handle("save-image", (_, fileName, fileContent) => {
 });
 
 ipcMain.handle("delete-macro-and-image", (_, fileName, imageDeleteOption) => {
-  deleteFile(fileName, imageDeleteOption);
+  const deletedResult = deleteFile(fileName, imageDeleteOption);
+
+  if (!deletedResult) {
+    return;
+  }
 
   return getMacroItemList();
 });
@@ -95,7 +103,7 @@ ipcMain.handle("get-macro-item", (_, contentType, fileName) => {
   return getMacroItem(contentType, fileName);
 });
 
-function writeMacroInfoFile(fileName, fileContent, contentType) {
+const writeMacroInfoFile = (fileName, fileContent, contentType) => {
   try {
     const folderPath = getMacroFilePath(contentType);
     let macroName = fileName || getCurrentTime();
@@ -126,9 +134,9 @@ function writeMacroInfoFile(fileName, fileContent, contentType) {
   } catch (error) {
     console.error(error);
   }
-}
+};
 
-function deleteFile(fileName, imageDeleteOption) {
+const deleteFile = (fileName, imageDeleteOption) => {
   try {
     const addedJsonFileName = `${fileName}.json`;
     const macroFilePath = getMacroFilePath("stageList", addedJsonFileName);
@@ -146,29 +154,30 @@ function deleteFile(fileName, imageDeleteOption) {
         fs.unlinkSync(path);
       }
     });
+
+    return true;
   } catch (error) {
     console.error(error);
   }
-}
+};
 
-function getMacroFilePath(contentType = "stageList", fileName = "") {
+const getMacroFilePath = (contentType = "stageList", fileName = "") => {
   if (contentType === "image") {
     return join(app.getPath("userData"), `/imageFile/${fileName}`);
   }
 
   return join(app.getPath("userData"), `/macroFile/${fileName}`);
-}
+};
 
-function getMacroItemList(contentType) {
+const getMacroItemList = (contentType) => {
   try {
     if (!fs.existsSync(getMacroFilePath(contentType))) {
       return [];
     }
 
     const macroItemNameList = fs.readdirSync(getMacroFilePath(contentType));
-    const macroItemList = [];
 
-    macroItemNameList.forEach((macroName) => {
+    const macroItemList = macroItemNameList.map((macroName) => {
       if (macroName.includes("json")) {
         const readFile = fs.readFileSync(getMacroFilePath(contentType, macroName), {encoding: "utf8"});
         const fileStat = fs.statSync(getMacroFilePath(contentType, macroName));
@@ -177,7 +186,8 @@ function getMacroItemList(contentType) {
         parseReadFile["macroName"] = macroName.replace(".json", "");
         parseReadFile["birthTime"] = fileStat.birthtime;
         parseReadFile["accessTime"] = fileStat.atime;
-        macroItemList.push(parseReadFile);
+
+        return parseReadFile;
       }
     });
 
@@ -185,9 +195,9 @@ function getMacroItemList(contentType) {
   } catch (error) {
     console.error(error);
   }
-}
+};
 
-function getMacroItem(contentType, fileName) {
+const getMacroItem = (contentType, fileName) => {
   try {
     const addedJsonFileName = `${fileName}.json`;
 
@@ -201,9 +211,9 @@ function getMacroItem(contentType, fileName) {
   } catch (error) {
     console.error(error);
   }
-}
+};
 
-function getCurrentTime() {
+const getCurrentTime = () => {
   const date = new Date();
   const year = addFrontZero(date.getFullYear());
   const month = addFrontZero(date.getMonth() + 1);
@@ -213,12 +223,12 @@ function getCurrentTime() {
   const second = addFrontZero(date.getSeconds());
 
   return `${year}${month}${day}${hour}${minute}${second}`;
-}
+};
 
-function addFrontZero(number) {
+const addFrontZero = (number) => {
   if (number < 10) {
     return `0${number}`;
   }
 
   return number;
-}
+};
