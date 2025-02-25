@@ -1,10 +1,46 @@
 {
-  "name": "auto-page",
+  "name": "autopage",
   "version": "1.0.0",
-  "description": "autopage",
+  "description": "copycat web surfing",
   "main": "./out/main/index.js",
   "author": "leesoobo",
-  "homepage": "https://electron-vite.org",
+  "homepage": "https://github.com/soobolee/auto-page",
+  "build": {
+    "productName": "AUTOPAGE",
+    "appId": "com.leesoobo.autopage",
+    "asar": true,
+    "mac": {
+      "target": [
+        "default"
+      ],
+      "icon": "build/icon.ico"
+    },
+    "dmg": {
+      "title": "AUTOPAGE",
+      "icon": "build/icon.png"
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": false,
+      "createDesktopShortcut": true,
+      "perMachine": true,
+      "language": 1042,
+      "installerIcon": "build/icon.ico",
+      "shortcutName": "AUTOPAGE",
+      "artifactName": "AUTOPAGE-${version}.${ext}",
+      "uninstallDisplayName": "AUTOPAGE"
+    },
+    "directories": {
+      "buildResources": "./build/",
+      "output": "./dist/"
+    }
+  },
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint . --ignore-pattern 'out'",
@@ -35,7 +71,7 @@
     "@eslint/js": "^9.20.0",
     "@vitejs/plugin-react": "^4.3.1",
     "electron": "^31.0.2",
-    "electron-builder": "^24.13.3",
+    "electron-builder": "^25.1.8",
     "electron-vite": "^2.3.0",
     "eslint": "^9.20.0",
     "eslint-config-prettier": "^10.0.1",
