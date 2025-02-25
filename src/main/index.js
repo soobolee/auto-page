@@ -14,6 +14,7 @@ function createWindow() {
     autoHideMenuBar: true,
     titleBarStyle: "hiddenInset",
     ...(process.platform === "linux" ? {icon} : {}),
+    icon: icon,
     webPreferences: {
       preload: join(__dirname, "../preload/index.js"),
       webviewTag: true,
@@ -35,6 +36,28 @@ function createWindow() {
     webPreferences.preload = join(__dirname, "../preload/index.js");
   });
 }
+
+app.whenReady().then(() => {
+  electronApp.setAppUserModelId("com.electron");
+
+  app.on("browser-window-created", (_, window) => {
+    optimizer.watchWindowShortcuts(window);
+  });
+
+  createWindow();
+
+  app.on("activate", function () {
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow();
+    }
+  });
+});
+
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") {
+    app.quit();
+  }
+});
 
 ipcMain.on("event-occurred", (event, payload) => {
   event.reply("client-event", payload);
@@ -70,28 +93,6 @@ ipcMain.handle("get-macro-item-list", () => {
 
 ipcMain.handle("get-macro-item", (_, contentType, fileName) => {
   return getMacroItem(contentType, fileName);
-});
-
-app.whenReady().then(() => {
-  electronApp.setAppUserModelId("com.electron");
-
-  app.on("browser-window-created", (_, window) => {
-    optimizer.watchWindowShortcuts(window);
-  });
-
-  createWindow();
-
-  app.on("activate", function () {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
-    }
-  });
-});
-
-app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
-    app.quit();
-  }
 });
 
 function writeMacroInfoFile(fileName, fileContent, contentType) {
@@ -152,10 +153,10 @@ function deleteFile(fileName, imageDeleteOption) {
 
 function getMacroFilePath(contentType = "stageList", fileName = "") {
   if (contentType === "image") {
-    return join(__dirname, `../../imageFile/${fileName}`);
+    return join(app.getPath("userData"), `/imageFile/${fileName}`);
   }
 
-  return join(__dirname, `../../macroFile/${fileName}`);
+  return join(app.getPath("userData"), `/macroFile/${fileName}`);
 }
 
 function getMacroItemList(contentType) {
