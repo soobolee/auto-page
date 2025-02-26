@@ -125,7 +125,7 @@ function MainContent() {
           )}
           {menuMode === NAV_MENU.BOOKMARK && (
             <div className="w-full h-full p-16 flex flex-row flex-wrap">
-              {macroItemList.length > 0 &&
+              {macroItemList.length > 0 ? (
                 macroItemList.map((item) => {
                   return (
                     item.bookmark && (
@@ -141,7 +141,10 @@ function MainContent() {
                       />
                     )
                   );
-                })}
+                })
+              ) : (
+                <p className="text-white mx-auto">북마크 버튼을 눌러 북마크를 등록해 편하게 보세요.</p>
+              )}
             </div>
           )}
           {menuMode === NAV_MENU.ADDMACRO && (
