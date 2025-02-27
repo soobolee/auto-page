@@ -2,7 +2,7 @@ import {useEffect, useCallback, useRef} from "react";
 import useTabStore from "../../stores/useTabStore";
 import useMacroStageStore from "../../stores/useMacroStageStore";
 import useModalStore from "../../stores/useModalStore";
-import {ALERT_ERROR_SAVE} from "../../constants/textConstants";
+import {ALERT_ERROR_SAVE, ALERT_ERROR_URL} from "../../constants/textConstants";
 
 function WebView({url, isHidden, index}) {
   const {browserTabList, setBrowserTabList, setTabFocusedIndex} = useTabStore();
@@ -162,6 +162,10 @@ function WebView({url, isHidden, index}) {
   useEffect(() => {
     const currentWebview = webViewRef.current;
 
+    const handleDomFail = () => {
+      openAlertModal(ALERT_ERROR_URL);
+    };
+
     const handleDomReady = () => {
       if (isMacroExecuting) {
         const resumeMacroList = window.sessionStorage.getItem("resumeMacroList");
@@ -196,11 +200,13 @@ function WebView({url, isHidden, index}) {
     };
 
     currentWebview.addEventListener("dom-ready", handleDomReady);
+    currentWebview.addEventListener("did-fail-load", handleDomFail);
 
     return () => {
       currentWebview.removeEventListener("dom-ready", handleDomReady);
+      currentWebview.removeEventListener("did-fail-load", handleDomFail);
     };
-  }, [browserTabList, index, isMacroExecuting, macroStageList, setBrowserTabList]);
+  }, [browserTabList, index, isMacroExecuting, macroStageList, openAlertModal, setBrowserTabList]);
 
   return <webview src={url} ref={webViewRef} className={`${!isHidden && "hidden"} bg-white w-full col-span-7`}></webview>;
 }
