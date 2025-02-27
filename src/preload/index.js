@@ -23,15 +23,35 @@ try {
     }
   };
 
+  const sleep = (delay) => {
+    return new Promise((resolve) => setTimeout(resolve, delay));
+  };
+
+  let endOfInput = false;
+
+  const waitEndOfIpc = async (eventChannel) => {
+    ipcRenderer.sendToHost(eventChannel);
+
+    while (!endOfInput) {
+      await sleep(10);
+    }
+
+    endOfInput = false;
+  };
+
+  ipcRenderer.on("end-input", () => {
+    endOfInput = true;
+  });
+
   ipcRenderer.on("client-event", (_, macroStageList) => {
     if (macroStageList) {
       ipcRenderer.sendToHost("client-event", macroStageList);
     }
   });
 
-  const sleep = (delay) => {
-    return new Promise((resolve) => setTimeout(resolve, delay));
-  };
+  ipcRenderer.on("auto-macro", async (_, macroStageList) => {
+    executeMacro(macroStageList);
+  });
 
   const waitForGetElement = async (selector, classIndex = 0, stageInfo, restStageList) => {
     let targetElement = null;
@@ -93,6 +113,8 @@ try {
 
     for (const stageInfo of macroStageList) {
       await sleep(200);
+      let currentTargetIndex = 0;
+
       if (!macroBreak) {
         if (stageInfo.href && location.href !== stageInfo.href && stageInfo.tagName === "A") {
           beforeTarget = restStageList.shift();
@@ -107,54 +129,72 @@ try {
           return;
         }
 
-        let targetElement = null;
+        let targetElementList = [];
 
         if (stageInfo.id) {
-          targetElement = await waitForGetElement(`#${stageInfo.id}`, null, stageInfo, restStageList);
+          const targetElement = await waitForGetElement(`#${stageInfo.id}`, null, stageInfo, restStageList);
+          targetElementList.push(targetElement);
         }
 
-        if (!targetElement && stageInfo.class) {
+        if (stageInfo.class) {
           const classList = stageInfo.class;
 
           for (const classInfo of classList) {
-            targetElement = await waitForGetElement(`.${classInfo.className}`, classInfo.classIndex, stageInfo, restStageList);
-            if (targetElement) {
-              break;
-            }
+            const targetElement = await waitForGetElement(`.${classInfo.className}`, classInfo.classIndex, stageInfo, restStageList);
+            targetElementList.push(targetElement);
           }
         }
 
-        if (!targetElement && stageInfo.tagName) {
-          targetElement = await waitForGetElement(stageInfo.tagName, stageInfo.tagIndex, stageInfo, restStageList);
+        if (stageInfo.tagName) {
+          const targetElement = await waitForGetElement(stageInfo.tagName, stageInfo.tagIndex, stageInfo, restStageList);
+          targetElementList.push(targetElement);
         }
 
-        if (!targetElement) {
+        if (!targetElementList.length) {
           if (beforeTarget.method === "KEYDOWN") {
             break;
           }
-          alert("이벤트 타겟요소를 찾을 수 없습니다.");
+
           ipcRenderer.sendToHost("macro-end");
+          alert("이벤트 타겟요소를 찾을 수 없습니다. 잠시 후 재시도 해주세요.");
           break;
         }
 
-        if (stageInfo.method === "CLICK") {
-          await targetElement.focus();
-          await targetElement.click();
-          beforeTarget = restStageList.shift();
-        }
+        targetElementList.filter((targetElement) => targetElement);
 
-        if (stageInfo.method === "CHANGE" || stageInfo.method === "KEYDOWN") {
-          await targetElement.click();
-          await targetElement.focus();
-          targetElement.value = stageInfo.value;
-          ipcRenderer.sendToHost("input-paste");
-
-          if (stageInfo.method === "KEYDOWN") {
-            await targetElement.click();
-            await targetElement.focus();
-            ipcRenderer.sendToHost("input-enter");
+        const executeEvent = async () => {
+          if (stageInfo.method === "CLICK") {
+            targetElementList[currentTargetIndex].focus();
+            targetElementList[currentTargetIndex].click();
+            beforeTarget = restStageList.shift();
           }
-          beforeTarget = restStageList.shift();
+
+          if (stageInfo.method === "CHANGE" || stageInfo.method === "KEYDOWN") {
+            targetElementList[currentTargetIndex].click();
+            targetElementList[currentTargetIndex].focus();
+            targetElementList[currentTargetIndex].value = stageInfo.value;
+            await waitEndOfIpc("input-paste");
+
+            if (stageInfo.method === "KEYDOWN") {
+              targetElementList[currentTargetIndex].click();
+              targetElementList[currentTargetIndex].focus();
+              await waitEndOfIpc("input-enter");
+            }
+            beforeTarget = restStageList.shift();
+          }
+        };
+
+        try {
+          await executeEvent();
+        } catch {
+          currentTargetIndex += 1;
+
+          if (currentTargetIndex >= targetElementList.length) {
+            ipcRenderer.sendToHost("macro-end");
+            alert("이벤트 타겟요소를 찾을 수 없습니다. 잠시 후 재시도 해주세요.");
+          }
+
+          await executeEvent();
         }
 
         if (restStageList.length === 0) {
@@ -163,10 +203,6 @@ try {
       }
     }
   };
-
-  ipcRenderer.on("auto-macro", async (_, macroStageList) => {
-    executeMacro(macroStageList);
-  });
 
   let lastEventTimestamp = 0;
   document.addEventListener("DOMContentLoaded", () => {

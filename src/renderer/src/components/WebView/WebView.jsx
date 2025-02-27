@@ -2,7 +2,7 @@ import {useEffect, useCallback, useRef} from "react";
 import useTabStore from "../../stores/useTabStore";
 import useMacroStageStore from "../../stores/useMacroStageStore";
 import useModalStore from "../../stores/useModalStore";
-import {ALERT_ERROR_SAVE, ALERT_ERROR_URL} from "../../constants/textConstants";
+import {ALERT_ERROR_SAVE} from "../../constants/textConstants";
 
 function WebView({url, isHidden, index}) {
   const {browserTabList, setBrowserTabList, setTabFocusedIndex} = useTabStore();
@@ -71,6 +71,7 @@ function WebView({url, isHidden, index}) {
       await currentWebview.sendInputEvent({type: "keyDown", keyCode: "Enter"});
       await currentWebview.sendInputEvent({type: "char", keyCode: "Enter"});
       await currentWebview.sendInputEvent({type: "keyUp", keyCode: "Enter"});
+      currentWebview.send("end-input");
     };
 
     const inputPaste = async () => {
@@ -80,6 +81,7 @@ function WebView({url, isHidden, index}) {
       await currentWebview.sendInputEvent({type: "keyDown", keyCode: "Backspace"});
       await currentWebview.sendInputEvent({type: "char", keyCode: "Backspace"});
       await currentWebview.sendInputEvent({type: "keyUp", keyCode: "BackSpace"});
+      currentWebview.send("end-input");
     };
 
     const handleWebviewEvent = (event) => {
@@ -162,10 +164,6 @@ function WebView({url, isHidden, index}) {
   useEffect(() => {
     const currentWebview = webViewRef.current;
 
-    const handleDomFail = () => {
-      openAlertModal(ALERT_ERROR_URL);
-    };
-
     const handleDomReady = () => {
       if (isMacroExecuting) {
         const resumeMacroList = window.sessionStorage.getItem("resumeMacroList");
@@ -193,18 +191,16 @@ function WebView({url, isHidden, index}) {
         currentWebview.goForward();
       };
       browserTab.goReload = () => {
-        currentWebview.reload();
+        currentWebview.reloadIgnoringCache();
       };
 
       setBrowserTabList([...browserTabList]);
     };
 
     currentWebview.addEventListener("dom-ready", handleDomReady);
-    currentWebview.addEventListener("did-fail-load", handleDomFail);
 
     return () => {
       currentWebview.removeEventListener("dom-ready", handleDomReady);
-      currentWebview.removeEventListener("did-fail-load", handleDomFail);
     };
   }, [browserTabList, index, isMacroExecuting, macroStageList, openAlertModal, setBrowserTabList]);
 
