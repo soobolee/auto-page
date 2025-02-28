@@ -10,6 +10,24 @@ try {
     deleteMacroAndImage: (fileName, imageDeleteOption) => ipcRenderer.invoke("delete-macro-and-image", fileName, imageDeleteOption),
   });
 
+  const sendTargetElementInfo = (eventTarget, method) => {
+    const eventTargetUrl = location.href;
+    const eventTagIndex = Array.from(document.querySelectorAll(eventTarget.tagName)).indexOf(eventTarget);
+    const eventTargetClassList = Array.from(eventTarget.classList);
+    const eventTargetClassInfo = getClassInfo(eventTargetClassList, eventTarget);
+
+    ipcRenderer.send("event-occurred", {
+      id: eventTarget.id,
+      tagName: eventTarget.tagName,
+      tagIndex: eventTagIndex,
+      class: eventTargetClassInfo,
+      url: eventTargetUrl,
+      href: eventTarget.href,
+      method: method,
+      value: eventTarget.value,
+    });
+  };
+
   const getClassInfo = (eventTargetClassList, eventTarget) => {
     if (eventTargetClassList.length) {
       return eventTargetClassList.map((className) => {
@@ -21,6 +39,19 @@ try {
         };
       });
     }
+  };
+
+  const createTargetAlertCircle = () => {
+    const targetAlertCircle = document.createElement("div");
+    targetAlertCircle.id = "targetAlertCircle";
+    targetAlertCircle.style.position = "absolute";
+    targetAlertCircle.style.width = "20px";
+    targetAlertCircle.style.height = "20px";
+    targetAlertCircle.style.borderRadius = "100%";
+    targetAlertCircle.style.zIndex = "99999";
+    targetAlertCircle.style.display = "none";
+
+    return targetAlertCircle;
   };
 
   const sleep = (delay) => {
@@ -232,7 +263,6 @@ try {
       "click",
       (event) => {
         if (event.isTrusted) {
-          const eventTargetUrl = location.href;
           const aTag = event.target.closest("a");
           const buttonTag = event.target.closest("button");
           const iButtonTag = event.target.closest("input[type='button']");
@@ -250,48 +280,13 @@ try {
 
           lastEventTimestamp = currentTimestamp;
 
-          const eventTargetId = eventTarget.id;
-          const eventTagIndex = Array.from(document.querySelectorAll(eventTarget.tagName)).indexOf(eventTarget);
-          const eventTargetClassList = Array.from(eventTarget.classList);
-          const eventTargetClassInfo = getClassInfo(eventTargetClassList, eventTarget);
-
           if (aTag) {
             if (aTag.target === "_blank") {
               ipcRenderer.sendToHost("new-tab", aTag.href);
             }
-
-            ipcRenderer.send("event-occurred", {
-              id: eventTargetId,
-              tagName: eventTarget.tagName,
-              tagIndex: eventTagIndex,
-              class: eventTargetClassInfo,
-              href: aTag.href,
-              url: eventTargetUrl,
-              method: "CLICK",
-            });
           }
 
-          if (buttonTag) {
-            ipcRenderer.send("event-occurred", {
-              id: eventTargetId,
-              tagName: eventTarget.tagName,
-              tagIndex: eventTagIndex,
-              class: eventTargetClassInfo,
-              url: eventTargetUrl,
-              method: "CLICK",
-            });
-          }
-
-          if (iButtonTag) {
-            ipcRenderer.send("event-occurred", {
-              id: eventTargetId,
-              tagName: eventTarget.tagName,
-              tagIndex: eventTagIndex,
-              class: eventTargetClassInfo,
-              url: eventTargetUrl,
-              method: "CLICK",
-            });
-          }
+          sendTargetElementInfo(eventTarget, "CLICK");
         }
       },
       {capture: true}
@@ -310,21 +305,7 @@ try {
         }
 
         lastEventTimestamp = currentTimestamp;
-        const eventTarget = event.target;
-        const eventTargetUrl = location.href;
-        const eventTagIndex = Array.from(document.querySelectorAll(eventTarget.tagName)).indexOf(eventTarget);
-        const eventTargetClassList = Array.from(eventTarget.classList);
-        const eventTargetClassInfo = getClassInfo(eventTargetClassList, eventTarget);
-
-        ipcRenderer.send("event-occurred", {
-          id: eventTarget.id,
-          tagName: eventTarget.tagName,
-          tagIndex: eventTagIndex,
-          class: eventTargetClassInfo,
-          url: eventTargetUrl,
-          method: "KEYDOWN",
-          value: eventTarget.value,
-        });
+        sendTargetElementInfo(event.target, "KEYDOWN");
       },
       {capture: true}
     );
@@ -332,33 +313,12 @@ try {
     document.addEventListener(
       "change",
       (event) => {
-        const eventTarget = event.target;
-        const eventTargetUrl = location.href;
-        const eventTagIndex = Array.from(document.querySelectorAll(eventTarget.tagName)).indexOf(eventTarget);
-        const eventTargetClassList = Array.from(eventTarget.classList);
-        const eventTargetClassInfo = getClassInfo(eventTargetClassList, eventTarget);
-
-        ipcRenderer.send("event-occurred", {
-          id: eventTarget.id,
-          tagName: eventTarget.tagName,
-          tagIndex: eventTagIndex,
-          class: eventTargetClassInfo,
-          url: eventTargetUrl,
-          method: "CHANGE",
-          value: eventTarget.value,
-        });
+        sendTargetElementInfo(event.target, "CHANGE");
       },
       {capture: true}
     );
 
-    const targetAlertCircle = document.createElement("div");
-    targetAlertCircle.id = "targetAlertCircle";
-    targetAlertCircle.style.position = "absolute";
-    targetAlertCircle.style.width = "20px";
-    targetAlertCircle.style.height = "20px";
-    targetAlertCircle.style.borderRadius = "100%";
-    targetAlertCircle.style.zIndex = "999";
-    targetAlertCircle.style.display = "none";
+    const targetAlertCircle = createTargetAlertCircle();
     document.querySelector("body").appendChild(targetAlertCircle);
 
     document.addEventListener(

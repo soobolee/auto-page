@@ -88,7 +88,7 @@ ipcMain.handle("capture-page", async (_, webviewSize) => {
 
     return imageUrl || null;
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 });
 
