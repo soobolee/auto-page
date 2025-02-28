@@ -1,6 +1,7 @@
 import {app, BrowserWindow, ipcMain} from "electron";
 import {join} from "path";
 import fs from "fs";
+import crypto from "crypto";
 import {electronApp, optimizer, is} from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
 
@@ -37,6 +38,19 @@ const createWindow = () => {
   });
 };
 
+const createCryptKey = () => {
+  const keyPath = join(app.getPath("userData"), "CRYPT_KEY");
+  const ivPath = join(app.getPath("userData"), "CRYPT_IV");
+
+  const savedKey = fs.existsSync(keyPath);
+  const savedIv = fs.existsSync(ivPath);
+
+  if (!savedKey || !savedIv) {
+    fs.writeFileSync(keyPath, crypto.randomBytes(32));
+    fs.writeFileSync(ivPath, crypto.randomBytes(16));
+  }
+};
+
 app.whenReady().then(() => {
   electronApp.setAppUserModelId("com.electron");
 
@@ -45,6 +59,7 @@ app.whenReady().then(() => {
   });
 
   createWindow();
+  createCryptKey();
 
   app.on("activate", function () {
     if (BrowserWindow.getAllWindows().length === 0) {
@@ -113,6 +128,12 @@ const writeMacroInfoFile = (fileName, fileContent, contentType) => {
     }
 
     const filePath = getMacroFilePath(contentType, `${macroName}.json`);
+
+    fileContent.forEach((content) => {
+      if (content.value) {
+        content.value = encrypt(content.value);
+      }
+    });
 
     if (fs.existsSync(filePath)) {
       const beforeJson = fs.readFileSync(filePath);
@@ -183,6 +204,12 @@ const getMacroItemList = (contentType) => {
         const fileStat = fs.statSync(getMacroFilePath(contentType, macroName));
         const parseReadFile = JSON.parse(readFile);
 
+        parseReadFile.stageList.forEach((content) => {
+          if (content.value) {
+            content.value = decrypt(content.value);
+          }
+        });
+
         parseReadFile["macroName"] = macroName.replace(".json", "");
         parseReadFile["birthTime"] = fileStat.birthtime;
         parseReadFile["accessTime"] = fileStat.atime;
@@ -207,11 +234,43 @@ const getMacroItem = (contentType, fileName) => {
     const readFile = fs.readFileSync(getMacroFilePath(contentType, addedJsonFileName), {encoding: "utf8"});
     const parseReadFile = JSON.parse(readFile);
 
+    if (parseReadFile.stageList) {
+      parseReadFile.stageList.forEach((content) => {
+        if (content.value) {
+          content.value = decrypt(content.value);
+        }
+      });
+    }
+
     return parseReadFile;
   } catch (error) {
     console.error(error);
   }
 };
+
+function encrypt(text) {
+  const algorithm = "aes-256-cbc";
+  const key = fs.readFileSync(join(app.getPath("userData"), "CRYPT_KEY"));
+  const iv = fs.readFileSync(join(app.getPath("userData"), "CRYPT_IV"));
+
+  const cipher = crypto.createCipheriv(algorithm, key, iv);
+  let encrypted = cipher.update(text, "utf8", "hex");
+  encrypted += cipher.final("hex");
+
+  return encrypted;
+}
+
+function decrypt(encryptText) {
+  const algorithm = "aes-256-cbc";
+  const key = fs.readFileSync(join(app.getPath("userData"), "CRYPT_KEY"));
+  const iv = fs.readFileSync(join(app.getPath("userData"), "CRYPT_IV"));
+
+  const decipher = crypto.createDecipheriv(algorithm, key, iv);
+  let decrypted = decipher.update(encryptText, "hex", "utf8");
+  decrypted += decipher.final("utf8");
+
+  return decrypted;
+}
 
 const getCurrentTime = () => {
   const date = new Date();
