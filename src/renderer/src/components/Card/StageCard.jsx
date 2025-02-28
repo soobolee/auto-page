@@ -10,10 +10,10 @@ function StageCard({direction, stageInfo}) {
           {stageInfo.id && <PillCard cardText={stageInfo.id} />}
           <div>
             {stageInfo.class &&
-              stageInfo.class.map((stageClass) => (
+              stageInfo.class.map(({className}) => (
                 <div key={nanoid()}>
                   <p>
-                    <PillCard cardText={stageClass.className} />
+                    <PillCard cardText={className} />
                   </p>
                 </div>
               ))}

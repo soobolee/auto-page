@@ -56,7 +56,7 @@ try {
   const waitForGetElement = async (selector, classIndex = 0, stageInfo, restStageList) => {
     let targetElement = null;
 
-    if (stageInfo.url && location.href !== stageInfo.url && stageInfo.tageName !== "A") {
+    if (location.href !== stageInfo.url && stageInfo.tageName !== "A") {
       if (restStageList.length === 0) {
         ipcRenderer.sendToHost("macro-end");
       }
@@ -106,13 +106,16 @@ try {
     let beforeTarget = null;
     let macroBreak = false;
 
-    window.addEventListener("beforeunload", () => {
+    const unloadEvent = () => {
+      window.removeEventListener("beforeunload", unloadEvent);
       macroBreak = true;
       ipcRenderer.sendToHost("macro-stop", restStageList);
-    });
+    };
+
+    window.addEventListener("beforeunload", unloadEvent);
 
     for (const stageInfo of macroStageList) {
-      await sleep(200);
+      await sleep(500);
       let currentTargetIndex = 0;
 
       if (!macroBreak) {
@@ -129,11 +132,13 @@ try {
           return;
         }
 
-        let targetElementList = [];
+        const targetElementList = [];
 
         if (stageInfo.id) {
           const targetElement = await waitForGetElement(`#${stageInfo.id}`, null, stageInfo, restStageList);
-          targetElementList.push(targetElement);
+          if (targetElement) {
+            targetElementList.push(targetElement);
+          }
         }
 
         if (stageInfo.class) {
@@ -141,13 +146,17 @@ try {
 
           for (const classInfo of classList) {
             const targetElement = await waitForGetElement(`.${classInfo.className}`, classInfo.classIndex, stageInfo, restStageList);
-            targetElementList.push(targetElement);
+            if (targetElement) {
+              targetElementList.push(targetElement);
+            }
           }
         }
 
         if (stageInfo.tagName) {
           const targetElement = await waitForGetElement(stageInfo.tagName, stageInfo.tagIndex, stageInfo, restStageList);
-          targetElementList.push(targetElement);
+          if (targetElement) {
+            targetElementList.push(targetElement);
+          }
         }
 
         if (!targetElementList.length) {
@@ -160,27 +169,23 @@ try {
           break;
         }
 
-        targetElementList.filter((targetElement) => targetElement);
-
         const executeEvent = async () => {
+          beforeTarget = restStageList.shift();
+
           if (stageInfo.method === "CLICK") {
             targetElementList[currentTargetIndex].focus();
             targetElementList[currentTargetIndex].click();
-            beforeTarget = restStageList.shift();
           }
 
           if (stageInfo.method === "CHANGE" || stageInfo.method === "KEYDOWN") {
-            targetElementList[currentTargetIndex].click();
             targetElementList[currentTargetIndex].focus();
             targetElementList[currentTargetIndex].value = stageInfo.value;
             await waitEndOfIpc("input-paste");
 
             if (stageInfo.method === "KEYDOWN") {
-              targetElementList[currentTargetIndex].click();
               targetElementList[currentTargetIndex].focus();
               await waitEndOfIpc("input-enter");
             }
-            beforeTarget = restStageList.shift();
           }
         };
 
@@ -188,6 +193,7 @@ try {
           await executeEvent();
         } catch {
           currentTargetIndex += 1;
+          restStageList.unshift(beforeTarget);
 
           if (currentTargetIndex >= targetElementList.length) {
             ipcRenderer.sendToHost("macro-end");

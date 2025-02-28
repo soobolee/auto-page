@@ -48,16 +48,16 @@ function ContentCard({macroItem, onClick}) {
 
   const handleUpdate = async (event) => {
     event.stopPropagation();
-    const savedImageList = await window.electronAPI.getMacroItem("image", macroName);
-    const savedMacroList = await window.electronAPI.getMacroItem("stageList", macroName);
+    const imageList = await window.electronAPI.getMacroItem("image", macroName);
+    const macroList = await window.electronAPI.getMacroItem("stageList", macroName);
 
-    if (!savedImageList || !savedMacroList) {
-      openAlertModal(ALERT_ERROR_SAVE);
+    if (!imageList || !macroList) {
+      openAlertModal(ALERT_ERROR_LOAD);
     }
 
     setUpdateTargetMacroName(macroName);
-    setImageStageList(savedImageList.image);
-    setMacroStageList(savedMacroList.stageList);
+    setImageStageList(imageList.image);
+    setMacroStageList(macroList.stageList);
     setMenuMode(NAV_MENU.ADDMACRO);
   };
 
