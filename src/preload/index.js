@@ -350,6 +350,40 @@ try {
       },
       {capture: true}
     );
+
+    const targetAlertCircle = document.createElement("div");
+    targetAlertCircle.id = "targetAlertCircle";
+    targetAlertCircle.style.position = "absolute";
+    targetAlertCircle.style.width = "20px";
+    targetAlertCircle.style.height = "20px";
+    targetAlertCircle.style.borderRadius = "100%";
+    targetAlertCircle.style.zIndex = "999";
+    targetAlertCircle.style.display = "none";
+    document.querySelector("body").appendChild(targetAlertCircle);
+
+    document.addEventListener(
+      "mousemove",
+      (event) => {
+        const targetAlertCircle = document.querySelector("#targetAlertCircle");
+        targetAlertCircle.style.display = "block";
+        targetAlertCircle.style.top = `${event.clientY + window.scrollY}px`;
+        targetAlertCircle.style.left = `${event.clientX + 20}px`;
+
+        const aTag = event.target.closest("a");
+        const buttonTag = event.target.closest("button");
+        const iButtonTag = event.target.closest("input");
+
+        const eventTarget = aTag || buttonTag || iButtonTag;
+
+        if (!eventTarget) {
+          targetAlertCircle.style.backgroundColor = "red";
+          return;
+        } else {
+          targetAlertCircle.style.backgroundColor = "green";
+        }
+      },
+      {capture: true}
+    );
   });
 } catch (error) {
   console.error(error);
