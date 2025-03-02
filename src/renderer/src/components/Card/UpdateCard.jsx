@@ -5,7 +5,7 @@ import useMenuStore from "../../stores/useMenuStore";
 import useModalStore from "../../stores/useModalStore";
 import {ALERT_DELETE_STAGE, ALERT_ERROR_DELETE, ALERT_ERROR_SAVE, ALERT_SAVE_STAGE, NAV_MENU} from "../../constants/textConstants";
 
-function DirectInputCard({stageItem, index}) {
+function UpdateCard({stageItem, index}) {
   const [formData, setFormData] = useState(stageItem || {class: [{}]});
   const {macroStageList, macroImageList, updateTargetMacroName, setMacroStageList, setImageStageList} = useMacroStageStore();
   const {setMacroItemList} = useMacroItemStore();
@@ -72,13 +72,13 @@ function DirectInputCard({stageItem, index}) {
 
       const savedResult = await window.electronAPI.saveMacro(updateTargetMacroName, newList, "stageList");
 
-      if (!savedResult) {
+      closeModal();
+
+      if (savedResult) {
         setMacroStageList(newList);
       } else {
         openAlertModal(ALERT_ERROR_SAVE);
       }
-
-      closeModal();
     };
 
     openAlertModal(ALERT_SAVE_STAGE, clickSave);
@@ -192,4 +192,4 @@ function DirectInputCard({stageItem, index}) {
   );
 }
 
-export default DirectInputCard;
+export default UpdateCard;

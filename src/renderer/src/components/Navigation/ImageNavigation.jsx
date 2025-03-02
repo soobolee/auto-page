@@ -2,7 +2,7 @@ import {nanoid} from "nanoid";
 import useMacroStageStore from "../../stores/useMacroStageStore";
 import StageCard from "../Card/StageCard";
 
-function ImageStage() {
+function ImageNavigation() {
   const {macroImageList, isMacroRecording} = useMacroStageStore();
 
   return (
@@ -16,4 +16,4 @@ function ImageStage() {
   );
 }
 
-export default ImageStage;
+export default ImageNavigation;

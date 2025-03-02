@@ -1,7 +1,7 @@
 import useTabStore from "../../stores/useTabStore";
 import useMenuStore from "../../stores/useMenuStore";
-import ImageStage from "../RecordStage/ImageStage";
-import TextStage from "../RecordStage/TextStage";
+import ImageNavigation from "../Navigation/ImageNavigation";
+import TextNavigation from "../Navigation/TextNavigation";
 import useMacroStageStore from "../../stores/useMacroStageStore";
 import InputUrlContent from "./InputUrlContent";
 import WebView from "../WebView/WebView";
@@ -20,9 +20,9 @@ function MacroContent() {
           browserTabList.map((tab, index) => {
             return <WebView key={`${tab.tabUrl}-${index}`} url={tab.tabUrl} isHidden={tabFocusedIndex === index} index={index} />;
           })}
-        <ImageStage />
+        <ImageNavigation />
       </div>
-      {recordMode === "manual" && <TextStage />}
+      {recordMode === "manual" && <TextNavigation />}
     </>
   );
 }

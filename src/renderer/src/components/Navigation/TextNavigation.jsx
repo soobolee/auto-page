@@ -4,7 +4,7 @@ import useModalStore from "../../stores/useModalStore";
 import Button from "../Button/Button";
 import StageCard from "../Card/StageCard";
 
-function TextStage() {
+function TextNavigation() {
   const {macroStageList, startMacroRecord} = useMacroStageStore();
   const {openInputModal} = useModalStore();
 
@@ -31,4 +31,4 @@ function TextStage() {
   );
 }
 
-export default TextStage;
+export default TextNavigation;

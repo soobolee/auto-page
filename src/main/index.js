@@ -129,11 +129,13 @@ const writeMacroInfoFile = (fileName, fileContent, contentType) => {
 
     const filePath = getMacroFilePath(contentType, `${macroName}.json`);
 
-    fileContent.forEach((content) => {
-      if (content.value) {
-        content.value = encrypt(content.value);
-      }
-    });
+    if (contentType === "stageList") {
+      fileContent.forEach((content) => {
+        if (content.value) {
+          content.value = encrypt(content.value);
+        }
+      });
+    }
 
     if (fs.existsSync(filePath)) {
       const beforeJson = fs.readFileSync(filePath);

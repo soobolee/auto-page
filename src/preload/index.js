@@ -332,8 +332,9 @@ try {
         const aTag = event.target.closest("a");
         const buttonTag = event.target.closest("button");
         const iButtonTag = event.target.closest("input");
+        const textTag = event.target.closest("textarea");
 
-        const eventTarget = aTag || buttonTag || iButtonTag;
+        const eventTarget = aTag || buttonTag || iButtonTag || textTag;
 
         if (!eventTarget) {
           targetAlertCircle.style.backgroundColor = "red";

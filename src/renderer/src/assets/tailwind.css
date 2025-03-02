@@ -20,7 +20,7 @@
   transform: scale(1.3);
 }
 
-.hover-image:hover {
+.hover-image:active {
   transform: scale(2);
   position: relative;
   right: 50%;

@@ -10,7 +10,7 @@ import EmptyCard from "../Card/EmptyCard";
 import ContentCard from "../Card/ContentCard";
 import ShortCutCard from "../Card/ShortCutCard";
 import Navigation from "../Navigation/Navigation";
-import DirectInputCard from "../Card/DirectInputCard";
+import UpdateCard from "../Card/UpdateCard";
 import {ROUTER_ROUTE, NAV_MENU, MENU_TITLE, ALERT_ERROR_LOAD, ALERT_ERROR_SAVE} from "../../constants/textConstants";
 import useModalStore from "../../stores/useModalStore";
 
@@ -36,12 +36,12 @@ function MainContent() {
 
       const nameList = macroInfoList.map((macroInfo) => macroInfo.macroName);
 
-      setMacroNameList(["매크로 선택", ...nameList]);
+      setMacroNameList(nameList);
       setMacroItemList(macroInfoList);
     }
 
     getMacroItemList();
-  }, [setMacroItemList, menuMode, openAlertModal]);
+  }, [setMacroItemList, openAlertModal]);
 
   useEffect(() => {
     const handleShortCut = (event) => {
@@ -159,7 +159,7 @@ function MainContent() {
                     ))}
                 </select>
               </div>
-              {macroStageList && macroStageList.map((stageItem, index) => <DirectInputCard key={nanoid()} stageItem={stageItem} index={index} />)}
+              {macroStageList && macroStageList.map((stageItem, index) => <UpdateCard key={nanoid()} stageItem={stageItem} index={index} />)}
             </div>
           )}
           {menuMode === NAV_MENU.SHORTCUT && (
