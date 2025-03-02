@@ -85,7 +85,7 @@ try {
     executeMacro(macroStageList);
   });
 
-  const waitForGetElement = async (selector, classIndex = 0, stageInfo, restStageList) => {
+  const waitForGetElement = async (selector, index = 0, stageInfo, restStageList) => {
     let targetElement = null;
 
     if (location.href !== stageInfo.url && stageInfo.tageName !== "A") {
@@ -98,8 +98,8 @@ try {
       return;
     }
 
-    if (document.querySelectorAll(selector)[classIndex]) {
-      targetElement = document.querySelectorAll(selector)[classIndex];
+    if (document.querySelectorAll(selector)[index]) {
+      targetElement = document.querySelectorAll(selector)[index];
     }
 
     if (targetElement) {
@@ -107,7 +107,7 @@ try {
     }
 
     const observer = new MutationObserver(() => {
-      targetElement = document.querySelectorAll(selector)[classIndex];
+      targetElement = document.querySelectorAll(selector)[index];
       if (targetElement) {
         observer.disconnect();
         return targetElement;
@@ -123,8 +123,8 @@ try {
 
     const start = Date.now();
 
-    while (!targetElement && Date.now() - start < 1500) {
-      targetElement = document.querySelectorAll(selector)[classIndex];
+    while (!targetElement && Date.now() - start < 1000) {
+      targetElement = document.querySelectorAll(selector)[index];
       await sleep(100);
     }
 

@@ -15,7 +15,7 @@ const useMacroStageStore = create((set) => ({
   },
   stopMacroExecute: () => {
     set({isMacroExecuting: false, macroStageList: []});
-    window.electronAPI.clearSession(true);
+    window.electronAPI.clearSession(false);
   },
   startMacroRecord: () => set({isMacroRecording: true}),
   stopMacroRecord: () => set({isMacroRecording: false}),
