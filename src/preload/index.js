@@ -8,6 +8,7 @@ try {
     saveMacro: (fileName, fileContent, contentType) => ipcRenderer.invoke("save-macro", fileName, fileContent, contentType),
     saveImage: (fileName, fileContent) => ipcRenderer.invoke("save-image", fileName, fileContent),
     deleteMacroAndImage: (fileName, imageDeleteOption) => ipcRenderer.invoke("delete-macro-and-image", fileName, imageDeleteOption),
+    clearSession: (isMacroExecuting) => ipcRenderer.send("did-execute-macro", isMacroExecuting),
   });
 
   const sendTargetElementInfo = (eventTarget, method) => {

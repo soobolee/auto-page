@@ -6,6 +6,7 @@ import {electronApp, optimizer, is} from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
 
 let mainWindow = null;
+let didMacroExecute = false;
 
 const createWindow = () => {
   mainWindow = new BrowserWindow({
@@ -34,6 +35,11 @@ const createWindow = () => {
   }
 
   mainWindow.webContents.on("will-attach-webview", (_, webPreferences) => {
+    if (didMacroExecute) {
+      const partition = `persist:${crypto.randomBytes(16)}`;
+
+      webPreferences.partition = partition;
+    }
     webPreferences.preload = join(__dirname, "../preload/index.js");
   });
 };
@@ -72,6 +78,10 @@ app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
     app.quit();
   }
+});
+
+ipcMain.on("did-execute-macro", (_, isMacroExecuting) => {
+  didMacroExecute = isMacroExecuting;
 });
 
 ipcMain.on("event-occurred", (event, payload) => {

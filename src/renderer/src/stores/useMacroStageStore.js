@@ -9,8 +9,14 @@ const useMacroStageStore = create((set) => ({
   setMacroStageList: (newStageList) => set({macroStageList: newStageList}),
   setImageStageList: (newImageList) => set({macroImageList: newImageList}),
   resetStageList: () => set({macroStageList: [], macroImageList: [], isMacroRecording: false, isMacroExecuting: false}),
-  startMacroExecute: () => set({isMacroExecuting: true}),
-  stopMacroExecute: () => set({isMacroExecuting: false, macroStageList: []}),
+  startMacroExecute: () => {
+    set({isMacroExecuting: true});
+    window.electronAPI.clearSession(true);
+  },
+  stopMacroExecute: () => {
+    set({isMacroExecuting: false, macroStageList: []});
+    window.electronAPI.clearSession(true);
+  },
   startMacroRecord: () => set({isMacroRecording: true}),
   stopMacroRecord: () => set({isMacroRecording: false}),
   setUpdateTargetMacroName: (updateTargetName) => set({updateTargetMacroName: updateTargetName}),
