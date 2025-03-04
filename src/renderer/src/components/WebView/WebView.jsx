@@ -50,19 +50,19 @@ function WebView({url, isHidden, index}) {
 
       if (timerObject) {
         clearTimeout(timerObject);
-      } else {
-        timerObject = setTimeout(() => {
-          window.sessionStorage.setItem("isEvent", false);
-          capturePage();
-        }, 600);
       }
+
+      timerObject = setTimeout(() => {
+        window.sessionStorage.setItem("isEvent", false);
+        capturePage();
+      }, 500);
     };
 
     currentWebview.addEventListener("did-stop-loading", captureLoadedPage);
     return () => {
       currentWebview.removeEventListener("did-stop-loading", captureLoadedPage);
     };
-  }, [isMacroRecording, macroImageList, setImageStageList, capturePage]);
+  }, [isMacroRecording, capturePage]);
 
   useEffect(() => {
     const currentWebview = webViewRef.current;
@@ -151,7 +151,6 @@ function WebView({url, isHidden, index}) {
   }, [
     browserTabList,
     isMacroRecording,
-    macroImageList,
     macroStageList,
     stopMacroExecute,
     setBrowserTabList,
@@ -202,7 +201,7 @@ function WebView({url, isHidden, index}) {
     return () => {
       currentWebview.removeEventListener("dom-ready", handleDomReady);
     };
-  }, [browserTabList, index, isMacroExecuting, macroStageList, openAlertModal, setBrowserTabList]);
+  }, [browserTabList, index, isMacroExecuting, macroStageList, setBrowserTabList]);
 
   return <webview src={url} ref={webViewRef} className={`${!isHidden && "hidden"} bg-white w-full col-span-7`}></webview>;
 }
