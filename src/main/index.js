@@ -7,6 +7,7 @@ import icon from "../../resources/icon.png?asset";
 
 let mainWindow = null;
 let didMacroExecute = false;
+let webviewSession = `persist:${crypto.randomBytes(16)}`;
 
 const createWindow = () => {
   mainWindow = new BrowserWindow({
@@ -35,11 +36,7 @@ const createWindow = () => {
   }
 
   mainWindow.webContents.on("will-attach-webview", (_, webPreferences) => {
-    if (didMacroExecute) {
-      const partition = `persist:${crypto.randomBytes(16)}`;
-
-      webPreferences.partition = partition;
-    }
+    webPreferences.partition = webviewSession;
     webPreferences.preload = join(__dirname, "../preload/index.js");
   });
 };
@@ -82,6 +79,10 @@ app.on("window-all-closed", () => {
 
 ipcMain.on("did-execute-macro", (_, isMacroExecuting) => {
   didMacroExecute = isMacroExecuting;
+
+  if (didMacroExecute) {
+    webviewSession = `persist:${crypto.randomBytes(16)}`;
+  }
 });
 
 ipcMain.on("event-occurred", (event, payload) => {

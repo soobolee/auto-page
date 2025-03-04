@@ -11,11 +11,11 @@ const useMacroStageStore = create((set) => ({
   resetStageList: () => set({macroStageList: [], macroImageList: [], isMacroRecording: false, isMacroExecuting: false}),
   startMacroExecute: () => {
     set({isMacroExecuting: true});
-    window.electronAPI.clearSession(true);
+    window.electronAPI.changeSession(true);
   },
   stopMacroExecute: () => {
     set({isMacroExecuting: false, macroStageList: []});
-    window.electronAPI.clearSession(false);
+    window.electronAPI.changeSession(false);
   },
   startMacroRecord: () => set({isMacroRecording: true}),
   stopMacroRecord: () => set({isMacroRecording: false}),
