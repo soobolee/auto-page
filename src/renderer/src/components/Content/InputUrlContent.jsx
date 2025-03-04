@@ -74,14 +74,10 @@ function InputUrlContent() {
           placeholder={isUrlError ? "잘못된 URL을 입력했습니다." : "매크로 기록 URL 입력"}
         />
       </div>
-      <div className="flex justify-center w-[70%] overflow-x-scroll">
+      <div className="flex justify-center w-[70%] overflow-x-auto">
         {bookmarkUrlList.length > 0 &&
           bookmarkUrlList.map((bookmarkUrl) => (
-            <button
-              key={nanoid()}
-              className="w-40 h-10 mx-1 p-2 bg-white text-nowrap rounded-xl overflow-x-scroll"
-              onClick={() => handleBookmarkClick(bookmarkUrl)}
-            >
+            <button key={nanoid()} className="h-10 mx-1 p-2 bg-white text-nowrap rounded-xl" onClick={() => handleBookmarkClick(bookmarkUrl)}>
               {bookmarkUrl}
             </button>
           ))}

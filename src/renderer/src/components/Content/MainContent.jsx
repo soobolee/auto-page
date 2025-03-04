@@ -15,7 +15,6 @@ import {ROUTER_ROUTE, NAV_MENU, MENU_TITLE, ALERT_ERROR_LOAD, ALERT_ERROR_SAVE} 
 import useModalStore from "../../stores/useModalStore";
 
 function MainContent() {
-  const [macroNameList, setMacroNameList] = useState([]);
   const {menuMode} = useMenuStore();
   const {macroStageList, updateTargetMacroName, setMacroStageList, setImageStageList, startMacroExecute, setUpdateTargetMacroName} =
     useMacroStageStore();
@@ -34,9 +33,6 @@ function MainContent() {
         openAlertModal(ALERT_ERROR_LOAD);
       }
 
-      const nameList = macroInfoList.map((macroInfo) => macroInfo.macroName);
-
-      setMacroNameList(nameList);
       setMacroItemList(macroInfoList);
     }
 
@@ -106,7 +102,7 @@ function MainContent() {
         <div className="w-[90%] h-[90%] bg-sub rounded-xl flex justify-center items-center flex-col">
           <p className="mt-12 text-3xl text-white">{MENU_TITLE[menuMode]}</p>
           {menuMode === NAV_MENU.HOME && (
-            <div className="w-full h-full p-16 flex flex-row flex-wrap overflow-scroll">
+            <div className="w-full h-full p-16 flex flex-row flex-wrap overflow-auto">
               {macroItemList.length > 0 &&
                 macroItemList.map((item) => (
                   <ContentCard
@@ -148,13 +144,14 @@ function MainContent() {
             </div>
           )}
           {menuMode === NAV_MENU.ADDMACRO && (
-            <div className="w-full h-full p-16 flex flex-col items-center gap-10 overflow-scroll">
+            <div className="w-full h-full p-16 flex flex-col items-center gap-10 overflow-auto">
               <div>
-                <select value={updateTargetMacroName} onChange={handleUpdateSelect} className="w-100 p-4 bg-white text-lg rounded-xl">
-                  {macroNameList &&
-                    macroNameList.map((macroName) => (
-                      <option key={nanoid()} value={macroName}>
-                        {macroName}
+                <select value={updateTargetMacroName} onChange={handleUpdateSelect} className="w-100 p-4 bg-white text-lg rounded-xl" place>
+                  <option>매크로를 선택해 주세요.</option>
+                  {macroItemList &&
+                    macroItemList.map((macroItem) => (
+                      <option key={nanoid()} value={macroItem.macroName}>
+                        {macroItem.macroName}
                       </option>
                     ))}
                 </select>
@@ -163,7 +160,7 @@ function MainContent() {
             </div>
           )}
           {menuMode === NAV_MENU.SHORTCUT && (
-            <div className="w-full h-full p-16 flex flex-col items-center gap-10 overflow-scroll">
+            <div className="w-full h-full p-16 flex flex-col items-center gap-10 overflow-auto">
               {macroItemList.length > 0 ? (
                 macroItemList.map((item) => <ShortCutCard key={nanoid()} macroItem={item} />)
               ) : (

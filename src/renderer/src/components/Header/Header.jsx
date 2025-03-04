@@ -46,7 +46,7 @@ function Header() {
             <input
               type="text"
               value={browserTabList[tabFocusedIndex].tabUrl}
-              className="w-200 bg-white py-2 px-4 mx-auto overflow-scroll rounded-2xl whitespace-nowrap"
+              className="w-200 bg-white py-2 px-4 mx-auto overflow-auto rounded-2xl whitespace-nowrap"
               readOnly
             />
           ) : (
@@ -59,7 +59,7 @@ function Header() {
         </div>
         <div className="w-[15%] text-right px-3">{match && <Button buttonText={"나가기"} buttonColor={"bg-sub"} onClick={handleMainClick} />}</div>
       </div>
-      <div className="h-[40%] w-full flex items-end overflow-scroll">
+      <div className="h-[40%] w-full flex items-end overflow-auto">
         {browserTabList.length > 0 && (
           <>
             <CircleButton icon={faArrowLeft} onClick={focusedTabInfo.goBack} isActive={focusedTabInfo.canGoBack} />

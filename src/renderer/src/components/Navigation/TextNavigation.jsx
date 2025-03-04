@@ -21,7 +21,7 @@ function TextNavigation() {
   return (
     <aside className="w-full h-[15%] p-5 flex justify-between items-center flex-row border col-span-8">
       <Button buttonText={"시작"} buttonColor={"bg-green"} onClick={startRecord} />
-      <div className="w-[90%] h-full flex overflow-scroll">
+      <div className="w-[90%] h-full flex overflow-auto">
         {macroStageList.map((stageInfo) => (
           <StageCard key={nanoid()} direction={"row"} stageInfo={stageInfo} />
         ))}

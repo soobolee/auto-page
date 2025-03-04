@@ -1,7 +1,7 @@
 function PillCard({cardText}) {
   return (
     <label>
-      <div className="p-2 m-1 overflow-x-scroll font-bold whitespace-nowrap bg-sub rounded-4xl">{cardText}</div>
+      <p className="w-full p-2 m-1 overflow-ellipsis overflow-hidden font-bold whitespace-nowrap bg-sub rounded-4xl">{cardText}</p>
     </label>
   );
 }

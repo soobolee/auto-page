@@ -84,7 +84,7 @@ function ContentCard({macroItem, onClick}) {
         <IconMenuCard isBookmark={isBookmark} handleBookmark={handleBookmark} handleUpdate={handleUpdate} handleDelete={handleDelete} />
         <div className="relative">
           <p className="text-3xl mb-3">{macroName}</p>
-          <p className="overflow-x-scroll whitespace-nowrap">생성URL : {macroUrl}</p>
+          <p className="overflow-x-auto whitespace-nowrap">생성URL : {macroUrl}</p>
           <p>생성일 : {birthTime}</p>
           <p>사용일 : {accessTime}</p>
           <button

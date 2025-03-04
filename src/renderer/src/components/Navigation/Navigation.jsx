@@ -10,7 +10,7 @@ function Navigation() {
   const navIconKeyList = Object.keys(NAV_ICON);
 
   return (
-    <nav className="w-[10%] h-[100%] bg-sub border">
+    <nav className="w-[10%] h-[100%] bg-sub border overflow-y-auto">
       <ul className="my-3 p-4 text-white text-5xl">
         {navIconKeyList.map((key) => {
           return (

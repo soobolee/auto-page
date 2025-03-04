@@ -7,7 +7,7 @@ function ImageNavigation() {
 
   return (
     isMacroRecording && (
-      <aside className="w-full h-full p-5 border flex flex-col overflow-scroll">
+      <aside className="w-full h-full p-5 border flex flex-col overflow-auto">
         {macroImageList.map((stageInfo) => (
           <StageCard key={nanoid()} direction={"col"} stageInfo={stageInfo} />
         ))}
