@@ -86,51 +86,56 @@ try {
   });
 
   const waitForGetElement = async (selector, index = 0, stageInfo, restStageList) => {
-    let targetElement = null;
+    try {
+      let targetElement = null;
 
-    if (location.href !== stageInfo.url && stageInfo.tageName !== "A") {
-      if (restStageList.length === 0) {
-        ipcRenderer.sendToHost("macro-end");
+      if (location.href !== stageInfo.url && stageInfo.tageName !== "A") {
+        if (restStageList.length === 0) {
+          ipcRenderer.sendToHost("macro-end");
+        }
+
+        ipcRenderer.sendToHost("macro-stop", restStageList);
+        location.href = stageInfo.url;
+        return;
       }
 
-      ipcRenderer.sendToHost("macro-stop", restStageList);
-      location.href = stageInfo.url;
-      return;
-    }
+      if (document.querySelectorAll(selector)[index]) {
+        targetElement = document.querySelectorAll(selector)[index];
+      }
 
-    if (document.querySelectorAll(selector)[index]) {
-      targetElement = document.querySelectorAll(selector)[index];
-    }
-
-    if (targetElement) {
-      return targetElement;
-    }
-
-    const observer = new MutationObserver(() => {
-      targetElement = document.querySelectorAll(selector)[index];
       if (targetElement) {
-        observer.disconnect();
         return targetElement;
       }
-    });
 
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      characterData: true,
-    });
+      const observer = new MutationObserver(() => {
+        targetElement = document.querySelectorAll(selector)[index];
+        if (targetElement) {
+          observer.disconnect();
+          return targetElement;
+        }
+      });
 
-    const start = Date.now();
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        characterData: true,
+      });
 
-    while (!targetElement && Date.now() - start < 1000) {
-      targetElement = document.querySelectorAll(selector)[index];
-      await sleep(100);
+      const start = Date.now();
+
+      while (!targetElement && Date.now() - start < 1000) {
+        targetElement = document.querySelectorAll(selector)[index];
+        await sleep(100);
+      }
+
+      observer.disconnect();
+
+      return targetElement || null;
+    } catch (error) {
+      console.error(error);
+      return null;
     }
-
-    observer.disconnect();
-
-    return targetElement || null;
   };
 
   const executeMacro = async (macroStageList) => {
@@ -250,11 +255,10 @@ try {
 
     const observer = new MutationObserver(() => {
       const iframe = document.getElementsByTagName("iframe");
+
       if (iframe) {
         Array.from(iframe).forEach((frame) => {
-          if (frame.src) {
-            frame.remove();
-          }
+          frame.remove();
         });
       }
     });
