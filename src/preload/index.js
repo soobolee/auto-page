@@ -8,7 +8,7 @@ try {
     saveMacro: (fileName, fileContent, contentType) => ipcRenderer.invoke("save-macro", fileName, fileContent, contentType),
     saveImage: (fileName, fileContent) => ipcRenderer.invoke("save-image", fileName, fileContent),
     deleteMacroAndImage: (fileName, imageDeleteOption) => ipcRenderer.invoke("delete-macro-and-image", fileName, imageDeleteOption),
-    clearSession: (isMacroExecuting) => ipcRenderer.send("did-execute-macro", isMacroExecuting),
+    changeSession: (isMacroExecuting) => ipcRenderer.send("did-execute-macro", isMacroExecuting),
   });
 
   const sendTargetElementInfo = (eventTarget, method) => {
@@ -151,19 +151,6 @@ try {
       let currentTargetIndex = 0;
 
       if (!macroBreak) {
-        if (stageInfo.href && location.href !== stageInfo.href && stageInfo.tagName === "A") {
-          beforeTarget = restStageList.shift();
-
-          if (restStageList.length === 0) {
-            ipcRenderer.sendToHost("macro-end");
-          }
-
-          macroBreak = true;
-          ipcRenderer.sendToHost("macro-stop", restStageList);
-          location.href = stageInfo.href;
-          return;
-        }
-
         const targetElementList = [];
 
         if (stageInfo.id) {
@@ -194,6 +181,19 @@ try {
         if (!targetElementList.length) {
           if (beforeTarget.method === "KEYDOWN") {
             break;
+          }
+
+          if (stageInfo.href && location.href !== stageInfo.href && stageInfo.tagName === "A") {
+            beforeTarget = restStageList.shift();
+
+            if (restStageList.length === 0) {
+              ipcRenderer.sendToHost("macro-end");
+            }
+
+            macroBreak = true;
+            ipcRenderer.sendToHost("macro-stop", restStageList);
+            location.href = stageInfo.href;
+            return;
           }
 
           ipcRenderer.sendToHost("macro-end");
@@ -250,9 +250,13 @@ try {
 
     const observer = new MutationObserver(() => {
       const iframe = document.getElementsByTagName("iframe");
-      Array.from(iframe).forEach((frame) => {
-        frame.remove();
-      });
+      if (iframe) {
+        Array.from(iframe).forEach((frame) => {
+          if (frame.src) {
+            frame.remove();
+          }
+        });
+      }
     });
 
     observer.observe(document.body, {
