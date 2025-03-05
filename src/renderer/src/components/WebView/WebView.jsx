@@ -16,7 +16,7 @@ function WebView({url, isHidden, index}) {
     const webviewSize = window.sessionStorage.getItem("webviewSize");
     const capturedPage = await window.electronAPI.capturePage(webviewSize);
 
-    if (!capturePage) {
+    if (!capturedPage) {
       openAlertModal(ALERT_ERROR_SAVE);
     } else {
       macroImageList.push(capturedPage);
@@ -37,7 +37,9 @@ function WebView({url, isHidden, index}) {
       height: rectInfo.height,
     };
 
-    window.sessionStorage.setItem("webviewSize", JSON.stringify(webviewSize));
+    if (rectInfo.width && rectInfo.height) {
+      window.sessionStorage.setItem("webviewSize", JSON.stringify(webviewSize));
+    }
 
     const captureLoadedPage = () => {
       const isEvent = window.sessionStorage.getItem("isEvent");
