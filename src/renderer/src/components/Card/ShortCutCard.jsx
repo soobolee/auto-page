@@ -1,7 +1,9 @@
 import {useState} from "react";
 import useMenuStore from "../../stores/useMenuStore";
+import useModalStore from "../../stores/useModalStore";
+import useMacroItemStore from "../../stores/useMacroItemStore";
 import Button from "../Button/Button";
-import {NAV_MENU} from "../../constants/textConstants";
+import {NAV_MENU, ALERT_DUPLICATED_URL} from "../../constants/textConstants";
 
 function ShortCutCard({macroItem}) {
   const macroName = macroItem.macroName;
@@ -11,6 +13,8 @@ function ShortCutCard({macroItem}) {
   const [secondKeyUnit, setSecondKeyUnit] = useState(shortCutItem.secondKeyUnit);
   const [isSaveError, setIsSaveError] = useState(false);
   const {setMenuMode} = useMenuStore();
+  const {openAlertModal} = useModalStore();
+  const {setMacroItemList} = useMacroItemStore();
 
   const saveShortCut = async () => {
     if (!firstKeyUnit && !secondKeyUnit) {
@@ -27,12 +31,16 @@ function ShortCutCard({macroItem}) {
 
     if (!isDuplicated) {
       const saveResult = await window.electronAPI.saveMacro(macroName, {firstKeyUnit, secondKeyUnit}, "shortCut");
+      const macroItemList = await window.electronAPI.getMacroItemList();
 
       if (saveResult) {
+        setMacroItemList(macroItemList);
         setMenuMode(NAV_MENU.HOME);
       } else {
         setIsSaveError(true);
       }
+    } else {
+      openAlertModal(ALERT_DUPLICATED_URL);
     }
   };
 

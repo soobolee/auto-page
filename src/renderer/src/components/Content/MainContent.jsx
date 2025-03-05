@@ -1,5 +1,5 @@
 import {nanoid} from "nanoid";
-import {useState, useEffect} from "react";
+import {useEffect} from "react";
 import {useNavigate} from "react-router";
 import useMacroStageStore from "../../stores/useMacroStageStore";
 import useMacroItemStore from "../../stores/useMacroItemStore";

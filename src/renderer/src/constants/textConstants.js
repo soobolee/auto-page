@@ -107,6 +107,12 @@ export const ALERT_ERROR_URL = {
   ICON: faCircleExclamation,
 };
 
+export const ALERT_DUPLICATED_URL = {
+  TITLE: "입력값이 이미 저장되어 있습니다.",
+  TEXT: "중복되는 입력인지 확인하세요.",
+  ICON: faCircleExclamation,
+};
+
 Object.freeze(ROUTER_ROUTE);
 Object.freeze(NAV_ICON);
 Object.freeze(NAV_MENU);
@@ -120,3 +126,4 @@ Object.freeze(ALERT_ERROR_SAVE);
 Object.freeze(ALERT_ERROR_DELETE);
 Object.freeze(ALERT_ERROR_LOAD);
 Object.freeze(ALERT_ERROR_URL);
+Object.freeze(ALERT_DUPLICATED_URL);
