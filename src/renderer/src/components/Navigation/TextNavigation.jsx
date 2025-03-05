@@ -5,7 +5,7 @@ import Button from "../Button/Button";
 import StageCard from "../Card/StageCard";
 
 function TextNavigation() {
-  const {macroStageList, startMacroRecord} = useMacroStageStore();
+  const {macroStageList, startMacroRecord, isMacroRecording} = useMacroStageStore();
   const {openInputModal} = useModalStore();
 
   const startRecord = () => {
@@ -26,7 +26,7 @@ function TextNavigation() {
           <StageCard key={nanoid()} direction={"row"} stageInfo={stageInfo} />
         ))}
       </div>
-      <Button buttonText={"정지"} buttonColor={"bg-red"} onClick={finishRecord} />
+      {isMacroRecording && <Button buttonText={"정지"} buttonColor={"bg-red"} onClick={finishRecord} />}
     </aside>
   );
 }

@@ -25,7 +25,7 @@ function NameModal() {
       openAlertModal(ALERT_ERROR_SAVE);
     }
 
-    setRecordMode(RECORD_MODE.AUTO);
+    setRecordMode(RECORD_MODE.STOP);
     resetStageList();
     resetTabInfo();
     navigate(ROUTER_ROUTE.MAIN);

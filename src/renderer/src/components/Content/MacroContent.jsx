@@ -14,7 +14,7 @@ function MacroContent() {
 
   return (
     <>
-      <div className={`${recordMode === RECORD_MODE.AUTO ? "h-[90%]" : "h-[75%]"} w-full grid ${isMacroRecording && "grid-cols-8"}`}>
+      <div className={`${recordMode === RECORD_MODE.STOP ? "h-[90%]" : "h-[75%]"} w-full grid ${isMacroRecording && "grid-cols-8"}`}>
         {browserTabList.length <= 0 && <InputUrlContent />}
         {browserTabList.length > 0 &&
           browserTabList.map((tab, index) => {
@@ -22,7 +22,7 @@ function MacroContent() {
           })}
         <ImageNavigation />
       </div>
-      {recordMode === "manual" && <TextNavigation />}
+      {recordMode === RECORD_MODE.START && <TextNavigation />}
     </>
   );
 }

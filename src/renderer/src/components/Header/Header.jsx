@@ -4,7 +4,6 @@ import {useNavigate, useMatch} from "react-router";
 import {faArrowLeft, faArrowRight, faRotateRight, faFan} from "@fortawesome/free-solid-svg-icons";
 import useTabStore from "../../stores/useTabStore";
 import useMacroStageStore from "../../stores/useMacroStageStore";
-import useModalStore from "../../stores/useModalStore";
 import useMenuStore from "../../stores/useMenuStore";
 import WindowTab from "../Tab/WindowTab";
 import Button from "../Button/Button";
@@ -18,8 +17,7 @@ function Header() {
   const navigate = useNavigate();
 
   const {browserTabList, resetTabInfo, tabFocusedIndex, setBrowserTabList} = useTabStore();
-  const {macroStageList, resetStageList, isMacroRecording, isMacroExecuting} = useMacroStageStore();
-  const {openInputModal} = useModalStore();
+  const {resetStageList, isMacroRecording, isMacroExecuting} = useMacroStageStore();
   const {setRecordMode} = useMenuStore();
   const match = useMatch(ROUTER_ROUTE.MACRO);
 
@@ -36,18 +34,11 @@ function Header() {
   };
 
   const handleMainClick = () => {
-    if (isMacroExecuting) {
-      return;
-    }
-
-    if (macroStageList.length > 1) {
-      openInputModal();
-    } else {
-      setRecordMode(RECORD_MODE.AUTO);
-      resetStageList();
-      resetTabInfo();
-      navigate(ROUTER_ROUTE.MAIN);
-    }
+    setRecordMode(RECORD_MODE.STOP);
+    resetStageList();
+    resetTabInfo();
+    navigate(ROUTER_ROUTE.MAIN);
+    window.sessionStorage.removeItem("resumeMacroList");
   };
 
   const validationHttpsUrl = (urlString) => {

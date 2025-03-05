@@ -44,8 +44,8 @@ export const MENU_TITLE = {
 };
 
 export const RECORD_MODE = {
-  AUTO: "auto",
-  MANUAL: "manual",
+  STOP: "stop",
+  START: "START",
 };
 
 export const RECORD_AUTO_START = {
