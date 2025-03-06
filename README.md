@@ -278,19 +278,19 @@ timerObject = setTimeout(() => {
 <br />
 
 ### 5-4. **BrowserRouter와 HashRouter의 차이**
-Electron은 기본적으로 html파일을 로드할 때 Main 프로세스 Node.js환경에서 파일 프로토콜[```fiel://```]을 사용하여 Renderer 프로세스에 HTML을 로드하는 정적 서버를 구성하고 있습니다, 라우팅을 사용하지 않았던 초기 개발에선 이를 중요하게 생각하지 않았기 때문에, BrowserRouter를 사용하였지만 빌드 과정에서 흰 화면이 뜨는 이슈가 발생했고, 라우팅 문제라고 생각되어서 라우팅에 대해 깊이 공부해 봤습니다.<br /><br />
+Electron은 기본적으로 html파일을 로드할 때 Main 프로세스 Node.js환경에서 파일 프로토콜[```file://```]을 사용하여 Renderer 프로세스에 HTML을 로드하는 정적 서버를 구성하고 있습니다, 라우팅을 사용하지 않았던 초기 개발에선 이를 중요하게 생각하지 않았기 때문에, BrowserRouter를 사용하였지만 빌드 과정에서 흰 화면이 뜨는 이슈가 발생했고, 라우팅 문제라고 생각되어서 라우팅에 대해 깊이 공부해 봤습니다.<br /><br />
 BrowserRouter는 history API를 사용하여 URL을 관리하고, 클라이언트 측 이동이 발생했을 때 history에 들어있는 URL 경로를 통해 요청한 컴포넌트의 경로를 요청하기 때문에 Electron 앱애서 BrowserRouter를 통한 라우팅을 사용하면 다음과 같은 상황이 벌어집니다.<br />
-Electron은 파일 프로토콜[```fiel://```]을 사용하기 때문에 BrowserRouter는 사용자의 로컬 환경에서 ```index.html/macro```라는 파일을 찾으려고 시도할 것입니다.
+Electron은 파일 프로토콜[```file://```]을 사용하기 때문에 BrowserRouter는 사용자의 로컬 환경에서 ```index.html/macro```라는 파일을 찾으려고 시도할 것입니다.
 ```js
 "file://localhost:3000/index.html/macro";
 ```
-Electron이 파일 프로토콜[```fiel://```]을 사용한다는 것을 인지한 상태로 다른 대안을 찾아 봐야 했습니다.<br />
+Electron이 파일 프로토콜[```file://```]을 사용한다는 것을 인지한 상태로 다른 대안을 찾아 봐야 했습니다.<br />
 
-그렇게 찾은 대안으로는 HashRouter가 있습니다, Hash Router는 라우팅 처리 시 아래 처럼 URL의 해시 부분을 기준으로 라우팅을 처리합니다.<br />
+그렇게 찾은 대안으로는 HashRouter가 있었습니다, Hash Router는 라우팅 처리 시 아래 처럼 URL의 해시 부분을 기준으로 라우팅을 처리합니다.<br />
 ```js
 "file://localhost:3000/#/index.html/macro";
 ```
-```#```을 통해 요청이 서버로 전달되지 않게 됩니다. 따라서, 파일 프로토콜을 사용한다고 해도 사용자 로컬에서 파일을 찾아 404를 반환하지 않을 수 있었고, HashRouter를 통해 클라이언트 환경에서 라우팅을 처리해 라우팅 문제를 해결했습니다.
+HashRouter의 경우 ```#```을 통해 요청이 서버로 전달되지 않게 됩니다. 따라서, 파일 프로토콜을 사용한다고 해도 사용자 로컬에서 파일을 찾아 404를 반환하지 않을 수 있었고, HashRouter를 통해 클라이언트 환경에서 라우팅을 처리해 라우팅 문제를 해결했습니다.
 
 ## 6. 일정
 ### 프로젝트 기간: 2025년 2월 1일 ~ 진행 중
