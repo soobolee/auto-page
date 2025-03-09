@@ -1,7 +1,7 @@
 # 🤖 Auto Page - Copy Cat your Web Surfing
 <div align="center">
-  
-  ![icon](https://github.com/user-attachments/assets/0862acdb-ea22-4319-9d16-ca15a04b4fbd)
+
+  ![icon](https://github.com/user-attachments/assets/f6121f9a-bcd0-4bec-978e-7eb5c3a69d15)
   <br />
   📸 [시연 영상 보러가기](https://youtu.be/OHQtxUwDZ5Q) | 
   📦 [다운로드 바로가기](https://www.auto-page.site)
@@ -53,14 +53,26 @@ Auto Page는 사용자의 웹 서핑 기록을 기억하고, 그 기록을 매�
 
 ## 2. 기능
 <div align="center">
-  
-
-| ![기능1](https://github.com/user-attachments/assets/174ef1dc-72c1-4204-9723-91a98716bb7e) | 기존 브라우저와 비슷한 환경 제공 <br /> 앞으로 가기/ 뒤로 가기 및 새로고침을 구현되어 있습니다. |
-| ---------- | ---------------------------------------------- |
-| ![기능2](https://github.com/user-attachments/assets/1d5e6a10-8856-434f-8d4c-76714ac4936a) | 사용자 상호작용 기록 <br /> 사용자의 클릭, 입력 요소에 대해 tagName, id, class, url을 기록하고, 이벤트 후의 변경사항이 반영된 화면을 캡쳐하여 저장합니다. |
-| ![기능3](https://github.com/user-attachments/assets/6fcd87a9-4181-486a-b8c5-b900a0581830) | 기록된 매크로를 실행 <br /> DOM이 다시 로드 되거나, 페이지가 이동해도 순서는 보장됩니다. |
-
-
+  <table>
+    <tr>
+      <td width="60%">
+        <img src="https://github.com/user-attachments/assets/b03ad453-5173-4624-b5e0-0802bae66412" />
+      </td>
+      <td width="40%">기존 브라우저와 비슷한 환경 제공 <br /> 앞으로 가기/ 뒤로 가기 및 새로고침을 구현되어 있습니다.</td>
+    </tr>
+    <tr>
+      <td>
+        <img src="https://github.com/user-attachments/assets/dc68ffc6-465d-4594-8860-1707675cba53" />
+      </td>
+      <td>사용자 상호작용 기록 <br /> 사용자의 클릭, 입력 요소에 대해 tagName, id, class, url을 기록하고, 이벤트 후의 변경사항이 반영된 화면을 캡쳐하여 저장합니다.</td>
+    </tr>
+    <tr>
+      <td>
+        <img src="https://github.com/user-attachments/assets/ca5d6d86-a21c-4979-95c5-a3cb5252f0d9" />
+      </td>
+      <td>기록된 매크로를 실행 <br /> DOM이 다시 로드 되거나, 페이지가 이동해도 순서는 보장됩니다.</td>
+    </tr>
+  </table>
 </div>
 
 <br />
@@ -98,7 +110,7 @@ Electron은 main 및 renderer라는 두 가지 유형의 독립된 프로세스�
 3. 이벤트 감지 및 전달: preload를 ```webview```에 주입해 renderer프로세스에서 이벤트를 감지하고 main 프로세스로 전달하기 용이했습니다.  
 <div align="center">
   
-![스크린샷 2025-03-01 오후 7 44 17](https://github.com/user-attachments/assets/b8057adc-58c7-4a09-a062-595a1c88b6ba)
+![스크린샷 2025-03-01 오후 7 44 17](https://github.com/user-attachments/assets/db8e3ffc-d2f8-478b-b237-9451cfd8e2a7)
 
 </div>
 
@@ -154,8 +166,8 @@ const observer = new MutationObserver(() => {
 
 #### 5-1-3. 정말 사용자와 상호작용해서 발생한 이벤트일까?
 <div align="center">
-  
-  <img width="551" alt="스크린샷 2025-03-02 오후 9 18 31" src="https://github.com/user-attachments/assets/ef246f85-f932-4831-bf64-280006ccc222" />
+
+  <img width="551" src="https://github.com/user-attachments/assets/e2816144-8c2a-453a-9d5c-5a35cbcee8c6" />
 
 </div>
 
@@ -254,7 +266,7 @@ Auto Page에서는 사용자가 매크로를 기록하거나 수정할 때 해�
 클릭이나, 입력 등 현재 페이지 내에서 일어나는 이벤트의 발생 직후는 캐치하기 쉬웠지만, 이벤트가 페이지 전환을 유발하거나 새로운 페이지를 띄울 때는 페이지 로딩 시간과 캡쳐 시점의 문제로 빈 화면이 캡쳐되는 이슈가 있었습니다.
 
 <div align="center">
-  <img width="174" alt="스크린샷 2025-03-03 오전 4 40 00" src="https://github.com/user-attachments/assets/59f5102f-bcd9-4c2e-bbb1-ab9140bc49b3" />
+  <img width="174" alt="스크린샷 2025-03-03 오전 4 40 00" src="https://github.com/user-attachments/assets/da9c4eb0-54a8-462c-930b-a4449aed3e57" />
 </div>
 
 이 문제를 해결하기 위해 ```did-stop-loading``` 리스너를 사용해 페이지가 로드된 시점을 감지하고, 그 후에 이미지를 캡처하도록 했습니다.
