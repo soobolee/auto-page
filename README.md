@@ -1,7 +1,16 @@
 # 🤖 Auto Page - Copy Cat your Web Surfing
+
+# 수정할거 에러모달 이미지? 모달 코드? 추가
+# 두괄식
+# 첫 번째 시도 -> 문구 변경
+# 왜 Electron 사용했는지 조금 수정 사진 위치도 위로 올리면 좋을 듯 또한 사진을 설명하면 좋갰음
+# 본문과 소제목이 내용 차이가 조금 씩 있음
+# 설명이 이상하거나 부족한 것들이 있음 다시 읽어 봐야 함
+
+
 <div align="center">
-  
-  ![icon](https://github.com/user-attachments/assets/0862acdb-ea22-4319-9d16-ca15a04b4fbd)
+
+  ![icon](https://github.com/user-attachments/assets/f6121f9a-bcd0-4bec-978e-7eb5c3a69d15)
   <br />
   📸 [시연 영상 보러가기](https://youtu.be/OHQtxUwDZ5Q) | 
   📦 [다운로드 바로가기](https://www.auto-page.site)
@@ -16,51 +25,67 @@ Auto Page는 사용자의 웹 서핑 기록을 기억하고, 그 기록을 매�
 <br />
 
 ## 목차
-- [1. 개발 동기](#1-개발-동기)<br />
-- [2. 기능](#2-기능)<br />
-- [3. 기술 스택](#3-기술-스택)<br />
-- [4. 기술 스택에 대한 이해](#4-기술-스택에-대한-이해)<br />
-  - [4-1. 왜 Electron인가?](#4-1-왜-electron인가)<br />
-    - [4-1-1. 첫 시도](#4-1-1-첫-시도)<br />
-    - [4-1-2. 두 번째 시도](#4-1-2-두-번째-시도)<br />
-    - [4-1-3. 세 번째 시도](#4-1-3-세-번째-시도)<br />
-  - [4-2. 전역 상태는 왜 사용했나?](#4-2-전역-상태는-왜-사용했나)<br />
-- [5. 개발 중 문제 해결](#5-개발-중-문제-해결)<br />
-  - [5-1. DOM 이벤트를 어떻게 기록할까?](#5-1-dom-이벤트를-어떻게-기록할까)<br />
-    - [5-1-1. iframe CORS 문제](#5-1-1-iframe-cors-문제)<br />
-    - [5-1-2. 이벤트 캡쳐링, 버블링 대응](#5-1-2-이벤트-캡쳐링-버블링-대응)<br />
-    - [5-1-3. 정말 사용자와 상호작용해서 발생한 이벤트일까?](#5-1-3-정말-사용자와-상호작용해서-발생한-이벤트일까)<br />
-    - [5-1-4. 이벤트를 감지했으니, 이제 어떻게 기록해야 할까?](#5-1-4-이벤트를-감지했으니-이제-어떻게-기록해야-할까)<br />
-  - [5-2. 기록한 매크로를 어떻게 다시 실행시킬까?](#5-2-기록한-매크로를-어떻게-다시-실행시킬까)<br />
-    - [5-2-1. SPA일 경우 어떻게 동적으로 DOM요소를 찾을까?](#5-2-1-spa일-경우-어떻게-동적으로-dom요소를-찾을까)<br />
-    - [5-2-2. 페이지가 변경될 때마다 preload스크립트가 재실행되는데 어떻게 실행을 이어서 할까?](#5-2-2-페이지가-변경될-때마다-preload스크립트가-재실행되는데-어떻게-실행을-이어서-할까)<br />
-    - [5-3. 이벤트 발생 직후의 이미지 캡쳐](#5-3-이벤트-발생-직후의-이미지-캡쳐)<br />
-    - [5-4. BrowserRouter와 HashRouter의 차이](#5-4-browserrouter와-hashrouter의-차이)<br />
-- [6. 일정](#6-일정)<br />
+<!-- toc -->
 
 <br />
 
 ## 1. 개발 동기
 매번 같은 작업을 반복하고 있나요?
 
-평상 시 웹 서핑을 하다 보면 반복되는 작업을 매번 진행해야 하는 불편함이 존재합니다, Auto Page는 이러한 불편함을 개선해 시간을 절약해 보자 라는 생각으로 시작된 프로젝트입니다.
+평상 시 웹 서핑을 하다 보면 반복되는 업무 메일 확인, 출석체크 이벤트 등의 작업을 매번 진행해야 하는 불편함이 존재합니다. Auto Page는 이러한 반복적인 작업의 불편함을 개선해 시간을 절약해 보자 라는 생각으로 시작된 프로젝트입니다.
 
-[시중에 매크로 프로그램은 많이 배포](https://kmong.com/search?type=gigs&keyword=%EB%A7%A4%ED%81%AC%EB%A1%9C+%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%A8)되어 있습니다. 하지만 특수 목적으로 제작 된 매크로들과, 일반 사용자가 설명서 없이 사용하기에는 어려운 매크로 등록, 또한 주문 제작을 통한 가격의 상승 등 이미 시중에 있는 프로그램들도 충분한 개선사항이 존재한다는 것을 알게 되었고, 이런 개선사항을 하나 씩 해결하다 보면 자연스럽게 브라우저와 DOM의 이해, 비동기 순서제어, 다양한 예외 케이스 처리 능력 등 개발 실력도 같이 증가 시킬 수 있을 것 같다는 생각이 들었습니다.
+[시중에 매크로 프로그램은 많이 배포](https://kmong.com/search?type=gigs&keyword=%EB%A7%A4%ED%81%AC%EB%A1%9C+%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%A8)되고 있습니다. 하지만 특수 목적으로 제작 된 매크로들과, 일반 사용자가 설명서 없이 사용하기에는 어려운 매크로 등록, 또한 주문 제작을 통한 가격의 상승 등 이미 시중에 있는 프로그램들도 충분한 개선사항이 존재한다는 것을 알게 되었고, 이런 개선사항을 하나 씩 해결하다 보면 자연스럽게 브라우저와 DOM의 이해, 비동기 순서제어, 다양한 예외 케이스 처리 능력 등 개발 실력도 같이 증가 시킬 수 있을 것 같다는 생각이 들었습니다.
 
-“웹 서핑 하듯 사용하세요! Auto Page가 기록하고 실행해 줄게요.” 를 목표로 최대한 기존 브라우저와 비슷한 환경에서 사용자가 매크로를 기록하고, 실행하기 위해 개발을 시작하게 되었습니다.
+"웹 서핑 하듯 사용하세요! Auto Page가 기록하고 실행해 줄게요." 를 목표로 최대한 기존 브라우저와 비슷한 환경에서 사용자가 매크로를 기록하고, 실행하기 위해 개발을 시작하게 되었습니다.
 
 <br />
 
 ## 2. 기능
 <div align="center">
-  
-
-| ![기능1](https://github.com/user-attachments/assets/174ef1dc-72c1-4204-9723-91a98716bb7e) | 기존 브라우저와 비슷한 환경 제공 <br /> 앞으로 가기/ 뒤로 가기 및 새로고침을 구현되어 있습니다. |
-| ---------- | ---------------------------------------------- |
-| ![기능2](https://github.com/user-attachments/assets/1d5e6a10-8856-434f-8d4c-76714ac4936a) | 사용자 상호작용 기록 <br /> 사용자의 클릭, 입력 요소에 대해 tagName, id, class, url을 기록하고, 이벤트 후의 변경사항이 반영된 화면을 캡쳐하여 저장합니다. |
-| ![기능3](https://github.com/user-attachments/assets/6fcd87a9-4181-486a-b8c5-b900a0581830) | 기록된 매크로를 실행 <br /> DOM이 다시 로드 되거나, 페이지가 이동해도 순서는 보장됩니다. |
-
-
+  <table>
+    <tr>
+      <td width="60%">
+        <img src="https://github.com/user-attachments/assets/b03ad453-5173-4624-b5e0-0802bae66412" />
+      </td>
+      <td width="40%">
+        &#8251; 기존 브라우저와 비슷한 환경 제공 <br /><br />
+        사용자가 매크로를 기록함에 어색함이 없도록 앞으로 가기/ 뒤로 가기 및 새로고침을 구현해 기존 브라우저와 비슷한 환경을 제공합니다.
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <img src="https://github.com/user-attachments/assets/dc68ffc6-465d-4594-8860-1707675cba53" />
+      </td>
+      <td>
+        &#8251; 사용자 상호작용 기록 <br /><br />
+        사용자의 클릭, 입력 요소에 대해 tagName, id  , class, url, href를 기록합니다.<br /><hr />
+        &#8251; 이벤트 후 시점 캡처 <br /><br />
+        사용자가 이해하기 쉽도록 이벤트 후의 변경사항이 반영된 화면을 캡쳐해 저장합니다.
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <img src="https://github.com/user-attachments/assets/ca5d6d86-a21c-4979-95c5-a3cb5252f0d9" />
+      </td>
+      <td>
+        &#8251; 기록된 매크로를 실행 <br /><br />
+        DOM이 다시 로드 되거나, 페이지가 이동해도 실행 순서는 보장됩니다.
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <img src="https://github.com/user-attachments/assets/2b3e2332-dd40-49eb-9797-b6e4a0b33a16" />
+      </td>
+      <td>
+        &#8251; 매크로 북마크 지정 <br /><br />
+        자주 사용하는 매크로를 북마크로 지정하여 모아볼 수 있습니다.<br /><hr />
+        &#8251; 매크로 수정 및 삭제 <br /><br />
+        매크로 각 단계 별로 타겟 요소를 수정 및 삭제할 수 있습니다.<br /><hr />
+        &#8251; 매크로 단축키 등록 <br /><br />
+        매크로에 단축키를 지정할 수 있고 빠른 실행이 가능합니다.
+      </td>
+    </tr>
+  </table>
 </div>
 
 <br />
@@ -70,58 +95,67 @@ Auto Page는 사용자의 웹 서핑 기록을 기억하고, 그 기록을 매�
   
 | 프레임워크 | 프론트엔드 | 빌드 | 테스트 | 배포 |
 | ---------- | ---------------------------------------------- | ---------------------------------------------- | ---------------------------------------------- | ---------------------------------------------- | 
-| <img src="https://img.shields.io/badge/Electron-3B4250?style=flat-square&logo=Electron&logoColor=#47848F"/> | <img src="https://img.shields.io/badge/React-3B4250?style=flat-square&logo=React&logoColor=#61DAFB"/> <br /> <img src="https://img.shields.io/badge/Zustand-3B4250?style=flat-square&logo=React&logoColor=#3B4250"/> <br /> <img src="https://img.shields.io/badge/Tailwind-3B4250?style=flat-square&logo=tailwindcss&logoColor=#06B6D4"/> | <img src="https://img.shields.io/badge/Vite-3B4250?style=flat-square&logo=vite&logoColor=#646CFF"/> | <img src="https://img.shields.io/badge/Vitest-3B4250?style=flat-square&logo=vitest&logoColor=#6E9F18"/> | <img src="https://img.shields.io/badge/Netlify-3B4250?style=flat-square&logo=netlify&logoColor=#00C7B7"/> <br /> <img src="https://img.shields.io/badge/Electron Builder-3B4250?style=flat-square&logo=electronbuilder&logoColor=#000000"/> |
+| [<img src="https://img.shields.io/badge/Electron-47848F?style=for-the-badge&logo=Electron&logoColor=white&"/>](https://www.electronjs.org/) | [<img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white"/>](https://ko.react.dev/) <br /> [<img src="https://img.shields.io/badge/Tailwind-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white"/>](https://tailwindcss.com/) <br /> [<img src="https://img.shields.io/badge/Zustand-F56D2E?style=for-the-badge&logo=foodpanda&logoColor=white"/>](https://zustand-demo.pmnd.rs/) | [<img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white"/>](link=https://ko.vite.dev/) | [<img src="https://img.shields.io/badge/Vitest-6E9F18?style=for-the-badge&logo=vitest&logoColor=white"/>](https://vitest.dev/) | [<img src="https://img.shields.io/badge/Netlify-00C7B7?style=for-the-badge&logo=netlify&logoColor=white"/>](https://www.netlify.com/) <br /> [<img src="https://img.shields.io/badge/Electron Builder-3B4250?style=for-the-badge&logo=electronbuilder&logoColor=white"/>](https://www.electron.build/) |
 
 </div>
 
 <br />
 
 ## 4. 기술 스택에 대한 이해
-### 4-1. 왜 Electron인가?
-사용자가 클릭한 요소, 입력한 값에 대해서는 사용자가 발생시키는 이벤트에 접근할 수 있어야 했고, 매크로를 실행하기 위해서 외부의 DOM을 조작해야 했습니다. <br /><br />
+### 4-1. Electron을 선택한 이유
+Electron은 Chromium 프로젝트의 다중 프로세스 아키텍처를 상속 받아 node환경인 main프로세스와 webContents 환경인 renderer 프로세스를 사용합니다. 이 구조는 크롬과 같은 웹 브라우저와 작동 방식이 구조적으로 매우 유사하다고 생각이 들었습니다. 따라서 웹 브라우저와 구조적으로 비슷하다면 사용자가 클릭한 요소, 입력한 값 등  사용자가 발생시키는 이벤트에 접근할 수 있고, 매크로를 실행하기 위해 외부의 DOM에 접근할 수 있겠다는 생각이 Electron을 선택하는 계기가 되었습니다.
 
-#### 4-1-1. 첫 시도
-처음은 iframe을 통한 접근이었습니다. ```iframeElement.contentWindow``` 를 통해 iframe 속 외부 DOM에서 사용자의 이벤트를 감지하려 했지만
-간과한 부분은 CORS에러로 사용자가 원하는 도메인을 띄울 수 없기 때문에 다시 방향을 틀어보고자 하였습니다. <br />
+<div align="center">
+  <img width="800" src="https://github.com/user-attachments/assets/9aaf08c1-7a66-467f-a2a5-ca4d84a298c4">
+</div>
 
-#### 4-1-2. 두 번째 시도
+#### 4-1-1. iframe을 이용한 접근 실패
+처음은 iframe을 통한 접근을 시도 했었습니다. ```iframeElement.contentWindow``` 를 통해 iframe 속 외부 DOM에서 사용자의 이벤트를 감지하려 했지만 간과한 부분은 CORS에러로 사용자가 원하는 도메인을 띄울 수 없기 때문에 다시 방향을 틀어보고자 하였습니다. <br />
+
+#### 4-1-2. 크롤링을 이용한 접근 실패
 프록시 서버를 사용해 CORS를 우회하고자 하였습니다. ```Express.js```를 통해 크롤링 서버를 구축하였고,
 크롤링을 통해 사용자가 요청한 도메인의 DOM이 로드 되면 해당 DOM을 문자열 형태로 반환받아 화면단에 뿌려주는 것을 목표로 하였고 CORS를 우회하여 사용자가 원했던 도메인을 호출하는데에 성공했습니다. <br />
 하지만 이 방법의 한계로 사용자가 다음 페이지로 넘어가거나, 페이지 전환 시마다 요청을 막고 크롤링 서버로 보내다 보니 응답을 기다리는 시간이 길어졌고 사용자 친화적이지 않다는 생각을 하게 되었습니다.
 
-#### 4-1-3. 세 번째 시도
-앞의 방법들을 시도해 보면서 CORS, 사용자 친화성, 이벤트 감지 및 전달이 최우선이라고 느꼈고, 문제들을 해결하기 위해 Electron이 최적이라고 생각했습니다.<br />
+#### 4-1-3. Electron을 이용한 접근 성공
+앞의 방법들을 시도해 보면서 CORS, 사용자 친화성, 이벤트 감지 및 전달이 최우선이라고 느꼈고, 문제들을 해결하기 위해 다중 프로세스인 Electron이 최적이라고 생각했습니다.<br />
 Electron은 main 및 renderer라는 두 가지 유형의 독립된 프로세스가 있고, renderer프로세스에 preload라는 node스크립트를 주입해 두 프로세스를 연결합니다.<br />
-이를 통해 외부 DOM을 직접 조작하고, 사용자의 이벤트를 감지하는 것이 가능해졌고 즉, Electron을 선택한 이유는 다음과 같습니다.<br />
-1. CORS 문제 해결: Electron은 브라우저 환경에서 실행되지만, Node.js의 기능을 활용할 수 있어 CORS 문제를 우회할 수 있었습니다.
+main 프로세스를 통해 외부 HTML을 호출하고 preload 스크립트를 통해 외부 DOM을 직접 조작하고, 사용자의 이벤트를 감지하는 것이 가능해졌습니다. 즉, Electron을 선택한 이유는 다음과 같습니다.<br />
+1. CORS 문제 해결: 웹 브라우저 환경이 아닌 Electron에서 웹 컨텐츠를 호출 할 때 node.js인 main프로세스를 거쳐 호출되고 이는 서버 간의 호출이기 때문에 CORS 문제를 우회할 수 있었습니다.
 2. 사용자 친화성: 페이지 전환 시 크롤링과는 다르게 기다릴 필요가 없고 Electron의 ```webview```태그를 통해 기존 브라우저와 같은 환경을 제공할 수 있었습니다.
-3. 이벤트 감지 및 전달: preload를 ```webview```에 주입해 renderer프로세스에서 이벤트를 감지하고 main 프로세스로 전달하기 용이했습니다.  
+3. 이벤트 감지 및 전달: preload를 ```webview```태그로 불러온 HTML에 주입해 이벤트를 감지하고 그 결과를 main 프로세스와 renderer 프로세스로 전달하기 용이했습니다.
+
 <div align="center">
-  
-![스크린샷 2025-03-01 오후 7 44 17](https://github.com/user-attachments/assets/b8057adc-58c7-4a09-a062-595a1c88b6ba)
+
+  <img width="800" src="https://github.com/user-attachments/assets/6ce19fbe-4946-4aa2-a7cc-aec893b2baaa">
 
 </div>
 
-### 4-2. 전역 상태는 왜 사용했나?
-Electron은 main, renderer 두 개의 프로세스가 존재하고, 두 프로세스 간 ipc[Inter-Process Communication] 통신을 사용합니다.<br />
-통신 채널을 설정하고 이벤트 리스너로 등록 시켜놓으면 양방향 통신이 가능해지는데, 이 때 특정 이벤트끼리의 순서가 보장되어야 하는 의존성이 생깁니다, 따라서 의존성이 생긴 이벤트들의 순서를 보장해 주기 위해선 "부모 컨트롤러"가 존재해야 한다는 생각이 들었습니다.<br />
-다만, Auto Page프로젝트에서는 의존성이 생긴 이벤트들이 프로젝트의 중심 기능이고 모든 이벤트의 흐름을 파악하고 이벤트에 맞는 다음 로직을 이어나가야 했어서 "부모 컨트롤러"로써 전역상태를 쓰기로 마음 먹었습니다.<br />
-Auto Page에서는 전역상태를 이용해 모든 이벤트의 결과를 수집하고 그 결과에 따라 화면 캡쳐, 에러 팝업, 매크로 실행 등 앱의 흐름을 관리합니다.
+### 4-2. 전역 상태를 선택한 이유
+Auto Page프로젝트에서는 의존성이 생긴 각 이벤트들이 프로젝트의 중심 기능과 연결되어 있고 모든 이벤트의 흐름을 파악하고 이벤트 순서에 맞는 다음 로직을 이어나가야 했어서 "이벤트의 순서를 제어하는 부모 컨트롤러"로써 전역상태를 선택하는 계기가 되었습니다.<br /><br />
+Electron은 main, renderer 두 개의 프로세스가 존재하고, ipc[Inter-Process Communication] 통신을 사용합니다.<br />
+통신 채널을 설정하고 이벤트 리스너로 등록 시켜놓으면 두 프로세스 간 양방향 통신이 가능해지는데, 이 때 특정 이벤트끼리의 순서가 보장되어야 하는 의존성이 생깁니다, 따라서 의존성이 생긴 이벤트들의 순서를 보장해 주기 위해선 "부모 컨트롤러"가 존재해야 한다는 생각이 들었습니다.<br />
+Auto Page에서는 전역상태를 부모 컨트롤러로써 이용해 모든 이벤트의 결과를 수집하고 이벤트 순서를 통제하며 이벤트 결과에 따라 화면 캡쳐, 에러 팝업, 매크로 실행 등 앱의 흐름을 관리합니다.
 ```js
+// useMacroStore.js
 startMacroExecute: () => {
   set({isMacroExecuting: true});
-  window.electronAPI.clearSession(true); // 매크로가 시작됨과 동시에 Main프로세스에 event를 전달하는 IPC통신
+
+   // 매크로가 시작 이벤트와 동시에 main프로세스에 이벤트를 전달하는 IPC통신
+  window.electronAPI.changeSession(true);
 },
 ```
 
 <br />
 
-## 5. 개발 중 문제 해결
+## 5. 구현 사항
 
-### 5-1. DOM 이벤트를 어떻게 기록할까?
-사용자의 웹 서핑 흐름을 방해하지 않고 클릭, 입력, URL이동 등 사용자가 웹 페이지에서 진행하는 이벤트들을 정확히 기록해야 했습니다. 만약 이를 제대로 처리하지 않는다면 매크로 실행에 큰 오류를 야기할 수 있기 때문입니다.<br />
-우선 DOM에서 사용자와 상호작용할 수 있는 요소를 찾았습니다. button, textarea, select, input, a 요소들이 있고 요소들의 이벤트를 감지해야 했습니다.<br />
-다양한 예외를 처리해야 했기 때문에 하나하나 테스트 해보며 태그들이 어떤 이벤트에 반응하는지 찾았고, 이벤트를 감지하기 위해서는 총 3개 "CLICK", "CHANGE", "KEYDOWN" 이벤트가 필요했습니다.
+### 5-1. 사용자 이벤트 기록하기
+document에 캡처링 방향으로 등록해 놓은 ```click```, ```change```, ```keydown``` 이벤트 리스너를 preload 스크립트에 작성 후 각 ```webview``` 태그에 이 preload 스크립트를 주입하는 방법으로 사용자의 이벤트를 감지하고 기록했습니다.<br /><br />
+
+사용자의 웹 서핑 흐름을 방해하지 않으면서 사용자의 클릭, 입력, URL이동 등의 이벤트를 정확히 감지해내는 것은 매우 중요했습니다. 만약 이벤트 감지를 제대로 하지 못한다면 기록된 이벤트를 재현하는 매크로 실행에 큰 오류를 야기할 수 있기 때문입니다.<br /><br />
+우선 DOM에서 사용자와 상호작용할 수 있는 태그 요소를 찾았습니다. button, textarea, select, input, a 태그들이 있었고 해당 태그에서 발생하는 이벤트들을 감지해야 했습니다.<br />
+다양한 예외를 처리해야 했기 때문에 [mdn 문서](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/change_event)를 참고하며, 하나하나 테스트를 통해 태그들이 어떤 이벤트에 반응하는지 찾았고, 이벤트를 감지하기 위해서는 총 3개 "CLICK", "CHANGE", "KEYDOWN" 이벤트가 필요했습니다.
 <div align="center">
   
 | 이벤트 | 감지되는 태그 |
@@ -134,28 +168,14 @@ startMacroExecute: () => {
 
 위 표와 같이 대부분의 이벤트는 CLICK, CHANGE로 잡아낼 수 있었으며, 보통 Enter키 이벤트가 걸려있는 검색창들은 KEYDOWN으로 대응했습니다.
 
-#### 5-1-1. iframe CORS 문제<br />
-아쉽게도 아무리 웹뷰를 사용해 CORS를 회피했다고 하더라도, 웹뷰 속 iframe까지의 CORS를 피하기에는 한계가 있다는 것을 알게됐습니다.
-Electron의 preload스크립트를 웹뷰에 주입했지만 그 스크립트가 웹뷰 속 iframe까지 전해지는 것이 아니었습니다. 따라서 iframe속 내용은 이벤트를 수집할 수 없었고, 사용자 오인을 방지하기 위해 iframe을 지워야 할 필요가 있었습니다.<br />
-사용자가 웹 페이지를 사용할 수 있기 전 부터 iframe을 볼 수 없어야 했기 때문에 MutationObserver를 활용하여 동적으로 로드되는 iframe을 모두 삭제해 사용자가 iframe과 상호작용할 수 없도록 막았습니다.
-```js
-const observer = new MutationObserver(() => {
-  const iframe = document.getElementsByTagName("iframe");
-  Array.from(iframe).forEach((frame) => {
-    frame.remove();
-  });
-});
-```
-<br />
-
-#### 5-1-2. 이벤트 캡쳐링, 버블링 대응
+#### 5-1-1. 이벤트 캡쳐링, 버블링 대응
 일부 요소들은 자체적으로 클릭 이벤트 핸들러를 가지고 있을 수 있고, 이 핸들러에서 event.stopPropagation()을 사용해서 이벤트 버블링을 중단시킬 수 있기 떄문에 document에 이벤트를 걸어 target을 가져오는 방법에 막히는 부분이 있었습니다, 이 경우, document까지 이벤트가 전달되지 않습니다.<br />
 때문에 이벤트를 감지할 때 캡쳐링을 사용하였습니다. 기존 버블링 이벤트 흐름에서 캡쳐링을 통해 위에서 아래로 이벤트를 흐르게 하고, ```event.closest```를 사용해서 정확히 이벤트가 발생한 ```button```, ```a``` 요소들을 수집할 수 있었습니다.
 
-#### 5-1-3. 정말 사용자와 상호작용해서 발생한 이벤트일까?
+#### 5-1-2. 스크립트에 의한 이벤트 구별
 <div align="center">
-  
-  <img width="551" alt="스크린샷 2025-03-02 오후 9 18 31" src="https://github.com/user-attachments/assets/ef246f85-f932-4831-bf64-280006ccc222" />
+
+  <img width="551" src="https://github.com/user-attachments/assets/e2816144-8c2a-453a-9d5c-5a35cbcee8c6" />
 
 </div>
 
@@ -163,7 +183,22 @@ const observer = new MutationObserver(() => {
 이런 측면에서 사용자에 의해 발생한 이벤트만 기록을 해야 했기 때문에, Event의 [isTrusted](https://dom.spec.whatwg.org/#dom-event-istrusted) 속성을 활용하여 사용자가 직접 발생시킨 이벤트만을 기록했습니다.<br />
 다만 [isTrusted](https://dom.spec.whatwg.org/#dom-event-istrusted)의 공식 명세를 확인했을 때 click()메서드는 판별할 수 없고, 타임스탬프 기준으로 사용자 이벤트를 판별하는 것이라, 이러한 예외에 대응하기 위해 사용자의 직전 이벤트와 현재 이벤트의 시간을 비교하여 0.5초 이내로 발생 시 사람이 아닌 스크립트에 의한 이벤트라고 판별하여 기록하지 않기로 했고, 스크립트가 자동으로 해주는 이벤트들에 대해 기록하지 않을 수 있었습니다.
 
-#### 5-1-4. 이벤트를 감지했으니, 이제 어떻게 기록해야 할까?<br />
+#### 5-1-3. 이벤트 감지할 수 없는 iframe 삭제<br />
+아쉽게도 main 프로세스를 통해 ```webview```를 띄우는 서버 간 요청으로 CORS에러를 회피했다고 하더라도, ```webview``` 속 iframe까지 CORS를 피하기에는 한계가 있다는 것을 알게됐습니다.<br />
+Electron의 preload스크립트를 웹뷰에 주입했지만 그 스크립트가 웹뷰 속 iframe까지 전해지는 것이 아니었습니다. 따라서 iframe속 내용은 이벤트를 수집할 수 없었고, 사용자 오인을 방지하기 위해 iframe을 지워야 할 필요가 있었습니다.<br />
+사용자가 웹 페이지를 사용할 수 있기 전 부터 iframe을 볼 수 없어야 했기 때문에 MutationObserver를 활용하여 동적으로 로드되는 iframe을 모두 삭제해 사용자가 iframe과 상호작용할 수 없도록 막았습니다.
+```js
+const observer = new MutationObserver(() => {
+  const iframe = document.getElementsByTagName("iframe");
+
+  Array.from(iframe).forEach((frame) => {
+    frame.remove();
+  });
+});
+```
+<br />
+
+#### 5-1-4. 감지한 이벤트 기록하기<br />
 각 요소 별로 중복되지 않는 Id가 하나씩 할당되어 있다면, 정말 편하겠지만 현실은 그렇지 않았습니다. Id가 없는 경우, Class가 중복되는 경우 등 다양한 예외가 존재할 수 있어 이벤트 요소에 대해 많은 것을 수집해야 했습니다.<br />
 DOM 상에서 위치를 기반으로 하는 xPath의 경우 DOM의 구조가 변경되면 매크로 실행에 있어 치명적일 수 있지만 Id, Class, TagName같은 경우 이름이 의미하는 바가 있기 때문에 구조가 변경되더라도, 비교적 더 안정적일 수 있어 매크로 실행에 유연성을 제공할 것이라고 판단했고, 이벤트명, 이벤트가 발생한 url, href, 입력값을 포함하여 이벤트에 대한 추가정보를 수집해 JSON형태로 저장했습니다.
 ```js
@@ -182,13 +217,41 @@ DOM 상에서 위치를 기반으로 하는 xPath의 경우 DOM의 구조가 변
 ```
 <br />
 
-### 5-2. 기록한 매크로를 어떻게 다시 실행시킬까?<br />
-이벤트를 다시 재현하기 위해선 이벤트의 타겟 요소를 찾아야 합니다. 이전에 저장해 놨던, Id, Class, TagName을 인덱스와 조합하여 셀렉터로써 사용했습니다.<br />
+### 5-2. 사용자 이벤트를 기록한 매크로 실행하기<br />
+이벤트를 다시 재현하기 위해선 이벤트가 발생 했던 타겟 요소를 찾아야 합니다. 이전에 사용자 이벤트를 감지해 기록해 놨던, Id, Class, TagName을 중복 요소의 순번을 나타내는 index와 조합하여 셀렉터로써 사용하고, 이벤트의 종류에 따라 맞는 이벤트를 실해해 주었습니다.<br />
+<div align="center">
+  <table>
+    <tr>
+      <th>이벤트</th>
+      <th>이벤트 재현 방식</th>
+    </tr>
+    <tr>
+      <th>CLICK</th>
+      <td>HTMLElement.click();</td>
+    </tr>
+    <tr>
+      <th>CHANGE</th>
+      <td>HTMLElement.value = value;</td>
+    </tr>
+    <tr>
+      <th>KEYDOWN</th>
+      <td>HTMLElement.focus();<br />webviewElement.sendInputEvent({type: "keyDown", keyCode: "Enter"});<br />webviewElement.sendInputEvent({type: "char", keyCode: "Enter"});<br />webviewElement.sendInputEvent({type: "keyUp", keyCode: "Enter"});</td>
+    </tr>
+  </table>
+</div>
+
+- CLICK 이벤트<br />
+  click() 메서드를 사용했습니다.
+- CHANGE 이벤트<br />
+  input 타입의 변경이 일어난 것으로 value의 변경된 값을 할당했습니다.
+- KEYDOWN 이벤트<br />
+  Enter를 입력한 것으로 Electron의 sendInputEvent()를 사용해 실제 키보드를 통해 이벤트가 발생한 것처럼 Enter 키 코드를 보내고 사용자가 직접 입력한 것처럼 모방 봇 감지를 피할 수 있었습니다.
+
 초기에는 기록된 매크로를 순회하며 타겟 요소를 찾고 저장한 이벤트를 그대로 다시 실행시켜주는 방식의 구현이었지만 테스트를 해보며 요소를 찾지 못하거나, 매크로가 일찍 종료되거나, 순서가 보장되지 않는 등 예상과는 다르게 동작하는 것을 발견했습니다.<br />
 SPA페이지일 경우 ```dom-ready```리스너에 감지되고나서 컨텐츠들이 동적으로 생기며 구조가 변경될 수 있고, ```a tag```를 통해 페이지가 전환되면 실행 중인 preload스크립트가 재실행되었습니다.<br />
 이를 해결하기 위해 기록된 매크로 요소를 DOM에서 동적으로 찾아 실행하고, 실행 중이던 preload스크립트가 초기화 되더라도 중단된 부분부터 순서를 보장해, 다시 실행시켜야 했습니다.
 
-#### 5-2-1. SPA일 경우 어떻게 동적으로 DOM요소를 찾을까?
+#### 5-2-1. SPA의 동적 렌더링 DOM 요소 찾기
 기존에는 ```dom-ready``` 리스너를 사용해서 dom이 로드가 완료 되었을 시 이벤트에 해당하는 요소를 찾아 실행했지만 SPA는 ```dom-ready```이후 동적으로 DOM이 다시 구성되기 때문에 DOM이 구성되기 전에는 찾을 수 없었습니다.<br />
 이를 위해 DOM변화가 감지되면 이벤트에 대상이 되는 타겟을 찾도록 ```MutationObserver```로 SPA 페이지에서 동적 요소들을 감지해낼 수 있었지만, 구성 속도에 따라 무한대기 해야하는 이슈가 생겼습니다.<br />
 그래서 사용자가 불편함을 느낄만한 시간대를 직접 체크해 봤고, 크롬 개발자 페이지에서 [최대 로드 시간 2.5초 이내가 사용자에게 좋은 경험을 줄 수 있다](https://developers.google.com/speed/docs/insights/v5/about?hl=ko)는 것을 알게되었고, 1초의 제한시간을 두고 쓰레드를 점유하고, 타겟 요소를 찾는 while문을 구현했고, 요소가 동적으로 추가되는 시간을 고려하여 100ms 간격으로 반복하도록 했습니다. Id, Class, TagName을 모두 사용하여 타겟 요소를 찾고 Id, Class가 없는 경우도 존재하기 때문에 평균적으로 사용자가 동적 요소를 찾는데 까지의 시간은 2초가 소요 됩니다.
@@ -202,7 +265,7 @@ while (!targetElement && Date.now() - start < 1500) {
 ```
 <br />
   
-#### 5-2-2. 페이지가 변경될 때마다 preload스크립트가 재실행되는데 어떻게 실행을 이어서 할까?
+#### 5-2-2. 페이지 변경 시 preload 스크립트 초기화와 매크로 중지 문제?
 매크로 실행 중 ```a```태그로 인해 페이지가 변경 될 경우 웹뷰에 주입해 놓았던 preload가 재실행 되면서 진행 중이던 매크로가 끊기게 되고 React의 매크로가 실행 중인지를 판별하는 상태는 업데이트가 되지 않아 두 프로세스 간 서로 상태 동기화가 되지 않는 문제가 있었습니다.<br />
 그래서 preload와 renderer프로세스의 React 상태를 동기화 시켜줄 필요가 있다고 생각했습니다. 페이지가 변경될 수 있는 preload에는 배열을 순회할 때마다 ```restStageList.shift();```를 통해 이미 실행된 매크로를 제거해주었고, ```beforeunload```리스너를 걸어 해당 리스너가 감지되면, 매크로 실행을 멈추고, IPC통신으로 renderer프로세스로 매크로가 중지된 시점의 배열인 ```restStageList```를 보내주었습니다.
 ```js
@@ -248,13 +311,35 @@ const handleDomReady = () => {
 };
 ```
 
+### 5-3. **다양한 에러 발생에 대한 처리**
+Auto Page 프로젝트는 사용자의 행동을 기반으로 웹 서핑을 기록하고, 재실행하는 기능을 제공하고 기록을 File System에 저장 및 삭제 그리고 불러오기 기능을 제공하기 때문에 다양햔 사용자의 입력과 환경에 변화에 의해 여러가지 에러가 발생할 가능성이 있다고 생각됐습니다.<br />
+예를 들어 파일 저장/삭제 중 에러, 매크로 실행 중 에러 등 다양한 에러가 발생할 수 있다고 생각됐습니다.
 
-### 5-3. **이벤트 발생 직후의 이미지 캡쳐**
+발생할 수 있는 에러의 종류가 많기 때문에 각 컴포넌트 별로 각 에러에 대한 문구 및 처리 방법을 정해 놓으면 매번 해당 문구를 어디에 적어 놓았는지 찾아야 하기 때문에 유지보수적으로 좋지 않다고 생각 되었습니다.
+따라서, 각 에러 처리에 대한 문구를 한 번에 관리하고 저장할 수 있는 상수 파일을 하나 생성했고 각각의 상수가 특정한 에러를 나타내고 코드 내에서 객체의 형태로 일관되게 처리될 수 있는 ENUM 개념을 적용하고 추후 상수의 데이터 불변성을 유지하기 위해 ```freeze``` 메서드를 통해 상수의 값을 수정할 수 없도록 했습니다.
+```js
+export const ALERT_ERROR_LOAD = {
+  TITLE: "매크로를 불러오는 중 오류가 발생했습니다.",
+  TEXT: "앱을 다시 실행해 주세요.",
+  ICON: faCircleExclamation,
+};
+
+export const ALERT_ERROR_URL = {
+  TITLE: "URL을 불러오는 중 실패했습니다.",
+  TEXT: "정확한 URL인지 다시 확인해주세요.",
+  ICON: faCircleExclamation,
+};
+
+Object.freeze(ALERT_ERROR_LOAD);
+Object.freeze(ALERT_ERROR_URL);
+```
+
+### 5-4. **이벤트 발생 직후 시점 감지 및 이미지 캡쳐**
 Auto Page에서는 사용자가 매크로를 기록하거나 수정할 때 해당 이벤트로 화면에 어떤 변화가 있었는지 쉽게 기억할 수 있도록 이벤트 직후 시점을 이미지로 남겨야 했습니다. 따라서, 이벤트가 발생한 후의 시점을 정확히 감지해야 했습니다.<br />
 클릭이나, 입력 등 현재 페이지 내에서 일어나는 이벤트의 발생 직후는 캐치하기 쉬웠지만, 이벤트가 페이지 전환을 유발하거나 새로운 페이지를 띄울 때는 페이지 로딩 시간과 캡쳐 시점의 문제로 빈 화면이 캡쳐되는 이슈가 있었습니다.
 
 <div align="center">
-  <img width="174" alt="스크린샷 2025-03-03 오전 4 40 00" src="https://github.com/user-attachments/assets/59f5102f-bcd9-4c2e-bbb1-ab9140bc49b3" />
+  <img width="174" alt="스크린샷 2025-03-03 오전 4 40 00" src="https://github.com/user-attachments/assets/da9c4eb0-54a8-462c-930b-a4449aed3e57" />
 </div>
 
 이 문제를 해결하기 위해 ```did-stop-loading``` 리스너를 사용해 페이지가 로드된 시점을 감지하고, 그 후에 이미지를 캡처하도록 했습니다.
@@ -277,7 +362,7 @@ timerObject = setTimeout(() => {
 
 <br />
 
-### 5-4. **BrowserRouter와 HashRouter의 차이**
+### 5-5. **BrowserRouter와 HashRouter의 차이**
 Electron은 기본적으로 html파일을 로드할 때 Main 프로세스 Node.js환경에서 파일 프로토콜[```file://```]을 사용하여 Renderer 프로세스에 HTML을 로드하는 정적 서버를 구성하고 있습니다, 라우팅을 사용하지 않았던 초기 개발에선 이를 중요하게 생각하지 않았기 때문에, BrowserRouter를 사용하였지만 빌드 과정에서 흰 화면이 뜨는 이슈가 발생했고, 라우팅 문제라고 생각되어서 라우팅에 대해 깊이 공부해 봤습니다.<br /><br />
 BrowserRouter는 history API를 사용하여 URL을 관리하고, 클라이언트 측 이동이 발생했을 때 history에 들어있는 URL 경로를 통해 요청한 컴포넌트의 경로를 요청하기 때문에 Electron 앱애서 BrowserRouter를 통한 라우팅을 사용하면 다음과 같은 상황이 벌어집니다.<br />
 Electron은 파일 프로토콜[```file://```]을 사용하기 때문에 BrowserRouter는 사용자의 로컬 환경에서 ```index.html/macro```라는 파일을 찾으려고 시도할 것입니다.
@@ -292,7 +377,35 @@ Electron이 파일 프로토콜[```file://```]을 사용한다는 것을 인지�
 ```
 HashRouter의 경우 ```#```을 통해 요청이 서버로 전달되지 않게 됩니다. 따라서, 파일 프로토콜을 사용한다고 해도 사용자 로컬에서 파일을 찾아 404를 반환하지 않을 수 있었고, HashRouter를 통해 클라이언트 환경에서 라우팅을 처리해 라우팅 문제를 해결했습니다.
 
-## 6. 일정
+### 5-6. **입력값에 대한 암호화 처리**
+Auto Page 프로젝트에서는 기록된 매크로를 재실행할 때 사용자의 입력값(Input)도 함께 기록해야만 이벤트 실행의 정확성을 보장할 수 있었습니다. 이러한 입력값에는 사용자의 ID와 비밀번호와 같은 민감한 정보가 포함될 수 있기 때문에, 모든 입력값을 암호화할 필요가 있었습니다. ID와 비밀번호를 판별할 수 없기 때문에 모든 입력값에 대해 암호화를 적용하기로 결정했습니다.<br /><br />
+
+암호화 방식은 양방향 암호화(AES-256-CBC)를 사용하여 암호화와 복호화가 가능하게 했고, 암호화에 필요한 키와 초기화 벡터(IV)는 사용자 로컬에 저장하였습니다. 키를 사용자 로컬에 저장한 이유는 Auto Page가 일렉트론 앱으로 사용자 컴퓨터에서 작동하며, 암호화와 복호화가 Node.js 환경에서만 이루어지기 때문에 키를 로컬에 저장해도 안전성을 보장할 수 있다고 판단했기 때문입니다.<br />
+```js
+function encrypt(text) {
+  const algorithm = "aes-256-cbc";
+  const key = fs.readFileSync(join(app.getPath("userData"), "CRYPT_KEY"));
+  const iv = fs.readFileSync(join(app.getPath("userData"), "CRYPT_IV"));
+
+  const cipher = crypto.createCipheriv(algorithm, key, iv);
+  let encrypted = cipher.update(text, "utf8", "hex");
+  encrypted += cipher.final("hex");
+
+  return encrypted;
+}
+```
+1. 먼저 AES-256-CBC 알고리즘을 설정하고, 키와 IV를 사용자 데이터 디렉터리에서 읽어옵니다.
+2. 그런 다음 crypto.createCipheriv 함수를 사용하여 암호화 객체를 생성하고, 주어진 텍스트를 암호화한 후 hex 형식으로 변환하여 반환합니다.
+3. 복호화 과정도 비슷하게 진행되며, ```AES-256-CBC``` 알고리즘을 설정하고, 키와 IV를 사용자 디렉토리에서 읽어온 후 ```crypto.createDecipheriv``` 메서드를 사용하여 복호화 객체를 생성합니다.
+ > AES-256-CBC 방식을 선택한 이유로 대칭키 알고리즘 중 DES의 상위 버전으로 안전한 축에 속하고, 256비트 키를 사용하고, CBC모드를 통해 암호화 블록이 각 의존성을 제공하기 때문에 앞 블록이 IV에 의해 랜덤하게 변경 될 경우 안정성을 제공할 수 있습니다.<br /><br />
+ > IV는 초기화 백터의 약자로 매번 같은 키로 암호화를 진행 시 결과가 항상 같아 복호화에 대한 실마리를 제공하지만, 랜덤한 IV를 통해 매번 다른 초기 블록 암호화를 진행하고 복호화하기 때문에 암호화 시 안정성을 높여줄 수 있습니다.<br /><br />
+ > IV는 암호키와 같은 방식으로 사용자 컴퓨터 내 Auto Page 경로에 암호키와 함께 저장하고 있습니다.   
+4. 암호화된 텍스트를 복호화하여 원래의 utf8 형식으로 변환하고 반환합니다.
+
+## 6. 회고
+
+
+## 7. 일정
 ### 프로젝트 기간: 2025년 2월 1일 ~ 진행 중
 > 2월 1일 ~ 2월 8일
 > - PoC 진행
