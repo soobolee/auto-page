@@ -1,13 +1,15 @@
-import {ipcRenderer, contextBridge} from "electron";
+import {contextBridge, ipcRenderer} from "electron";
 
 try {
   contextBridge.exposeInMainWorld("electronAPI", {
     getMacroItemList: () => ipcRenderer.invoke("get-macro-item-list"),
     getMacroItem: (contentType, fileName) => ipcRenderer.invoke("get-macro-item", contentType, fileName),
     capturePage: (webviewSize) => ipcRenderer.invoke("capture-page", webviewSize),
-    saveMacro: (fileName, fileContent, contentType) => ipcRenderer.invoke("save-macro", fileName, fileContent, contentType),
+    saveMacro: (fileName, fileContent, contentType) =>
+      ipcRenderer.invoke("save-macro", fileName, fileContent, contentType),
     saveImage: (fileName, fileContent) => ipcRenderer.invoke("save-image", fileName, fileContent),
-    deleteMacroAndImage: (fileName, imageDeleteOption) => ipcRenderer.invoke("delete-macro-and-image", fileName, imageDeleteOption),
+    deleteMacroAndImage: (fileName, imageDeleteOption) =>
+      ipcRenderer.invoke("delete-macro-and-image", fileName, imageDeleteOption),
     changeSession: (isMacroExecuting) => ipcRenderer.send("did-execute-macro", isMacroExecuting),
   });
 
@@ -169,7 +171,12 @@ try {
           const classList = stageInfo.class;
 
           for (const classInfo of classList) {
-            const targetElement = await waitForGetElement(`.${classInfo.className}`, classInfo.classIndex, stageInfo, restStageList);
+            const targetElement = await waitForGetElement(
+              `.${classInfo.className}`,
+              classInfo.classIndex,
+              stageInfo,
+              restStageList
+            );
             if (targetElement) {
               targetElementList.push(targetElement);
             }
@@ -177,7 +184,12 @@ try {
         }
 
         if (stageInfo.tagName) {
-          const targetElement = await waitForGetElement(stageInfo.tagName, stageInfo.tagIndex, stageInfo, restStageList);
+          const targetElement = await waitForGetElement(
+            stageInfo.tagName,
+            stageInfo.tagIndex,
+            stageInfo,
+            restStageList
+          );
           if (targetElement) {
             targetElementList.push(targetElement);
           }

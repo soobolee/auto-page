@@ -1,23 +1,30 @@
 import {nanoid} from "nanoid";
 import {useEffect} from "react";
 import {useNavigate} from "react-router";
-import useMacroStageStore from "../../stores/useMacroStageStore";
+
+import {ALERT_ERROR_LOAD, ALERT_ERROR_SAVE, MENU_TITLE, NAV_MENU, ROUTER_ROUTE} from "../../constants/textConstants";
 import useMacroItemStore from "../../stores/useMacroItemStore";
-import useShortCutStore from "../../stores/useShortCutStore";
+import useMacroStageStore from "../../stores/useMacroStageStore";
 import useMenuStore from "../../stores/useMenuStore";
-import useTabStore from "../../stores/useTabStore";
-import EmptyCard from "../Card/EmptyCard";
-import ContentCard from "../Card/ContentCard";
-import ShortCutCard from "../Card/ShortCutCard";
-import Navigation from "../Navigation/Navigation";
-import UpdateCard from "../Card/UpdateCard";
-import {ROUTER_ROUTE, NAV_MENU, MENU_TITLE, ALERT_ERROR_LOAD, ALERT_ERROR_SAVE} from "../../constants/textConstants";
 import useModalStore from "../../stores/useModalStore";
+import useShortCutStore from "../../stores/useShortCutStore";
+import useTabStore from "../../stores/useTabStore";
+import ContentCard from "../Card/ContentCard";
+import EmptyCard from "../Card/EmptyCard";
+import ShortCutCard from "../Card/ShortCutCard";
+import UpdateCard from "../Card/UpdateCard";
+import Navigation from "../Navigation/Navigation";
 
 function MainContent() {
   const {menuMode} = useMenuStore();
-  const {macroStageList, updateTargetMacroName, setMacroStageList, setImageStageList, startMacroExecute, setUpdateTargetMacroName} =
-    useMacroStageStore();
+  const {
+    macroStageList,
+    updateTargetMacroName,
+    setMacroStageList,
+    setImageStageList,
+    startMacroExecute,
+    setUpdateTargetMacroName,
+  } = useMacroStageStore();
   const {shortCutUnitList, setShortCutUnitList} = useShortCutStore();
   const {macroItemList, setMacroItemList} = useMacroItemStore();
   const {openAlertModal} = useModalStore();
@@ -50,7 +57,9 @@ function MainContent() {
       if (shortCutUnitList.length === 1) {
         const macroInfo = macroItemList.find((macroItem) => {
           if (macroItem.shortCut) {
-            return macroItem.shortCut.firstKeyUnit === shortCutUnitList[0] && macroItem.shortCut.secondKeyUnit === event.key;
+            return (
+              macroItem.shortCut.firstKeyUnit === shortCutUnitList[0] && macroItem.shortCut.secondKeyUnit === event.key
+            );
           }
         });
 
@@ -80,7 +89,16 @@ function MainContent() {
       document.removeEventListener("keydown", handleShortCut);
       document.removeEventListener("keyup", handleKeyup);
     };
-  }, [macroItemList, menuMode, navigate, setBrowserTabList, setMacroStageList, setShortCutUnitList, shortCutUnitList, startMacroExecute]);
+  }, [
+    macroItemList,
+    menuMode,
+    navigate,
+    setBrowserTabList,
+    setMacroStageList,
+    setShortCutUnitList,
+    shortCutUnitList,
+    startMacroExecute,
+  ]);
 
   const handleUpdateSelect = async (event) => {
     setUpdateTargetMacroName(event.target.value);
@@ -146,7 +164,12 @@ function MainContent() {
           {menuMode === NAV_MENU.ADDMACRO && (
             <div className="w-full h-full p-16 flex flex-col items-center gap-10 overflow-auto">
               <div>
-                <select value={updateTargetMacroName} onChange={handleUpdateSelect} className="w-100 p-4 bg-white text-lg rounded-xl" place>
+                <select
+                  value={updateTargetMacroName}
+                  onChange={handleUpdateSelect}
+                  className="w-100 p-4 bg-white text-lg rounded-xl"
+                  place
+                >
                   <option>매크로를 선택해 주세요.</option>
                   {macroItemList &&
                     macroItemList.map((macroItem) => (
@@ -156,7 +179,10 @@ function MainContent() {
                     ))}
                 </select>
               </div>
-              {macroStageList && macroStageList.map((stageItem, index) => <UpdateCard key={nanoid()} stageItem={stageItem} index={index} />)}
+              {macroStageList &&
+                macroStageList.map((stageItem, index) => (
+                  <UpdateCard key={nanoid()} stageItem={stageItem} index={index} />
+                ))}
             </div>
           )}
           {menuMode === NAV_MENU.SHORTCUT && (

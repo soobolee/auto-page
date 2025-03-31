@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 @theme {
-  --color-main: #3B4250;
-  --color-sub: #5F5E6E;
+  --color-main: #3b4250;
+  --color-sub: #5f5e6e;
   --color-subsub: #897272;
-  --color-tab: #8499AC;
-  --color-white: #EBEDEE;
-  --color-green: #3CB371;
-  --color-red: #B82132;
+  --color-tab: #8499ac;
+  --color-white: #ebedee;
+  --color-green: #3cb371;
+  --color-red: #b82132;
 }
 
 .hover-small:hover {
@@ -24,7 +24,7 @@
   transform: scale(2);
   position: relative;
   right: 50%;
-  border: 3px solid #3CB371;
+  border: 3px solid #3cb371;
   z-index: 1;
 }
 
@@ -33,16 +33,19 @@
   position: absolute;
   right: -20%;
   top: 0%;
-  border: 8px solid #3CB371;
+  border: 8px solid #3cb371;
   z-index: 1;
 }
 
-.click-action:active, button:active {
+.click-action:active,
+button:active {
   transform: scale(0.8);
   transition: transform 0.1s;
 }
 
-html, body, #root {
+html,
+body,
+#root {
   margin: 0;
   padding: 0;
   width: 100%;

@@ -1,5 +1,5 @@
+import {faBookBookmark, faCircleXmark, faGear} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faBookBookmark, faGear, faCircleXmark} from "@fortawesome/free-solid-svg-icons";
 
 function IconMenuCard({isBookmark, handleBookmark, handleUpdate, handleDelete}) {
   return (

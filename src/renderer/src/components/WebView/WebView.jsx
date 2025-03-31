@@ -1,14 +1,22 @@
-import {useEffect, useCallback, useRef} from "react";
-import useTabStore from "../../stores/useTabStore";
+import {useCallback, useEffect, useRef} from "react";
+
+import {ALERT_ERROR_SAVE} from "../../constants/textConstants";
 import useMacroStageStore from "../../stores/useMacroStageStore";
 import useModalStore from "../../stores/useModalStore";
-import {ALERT_ERROR_SAVE} from "../../constants/textConstants";
+import useTabStore from "../../stores/useTabStore";
 
 function WebView({url, isHidden, index}) {
   const {browserTabList, setBrowserTabList, setTabFocusedIndex} = useTabStore();
   const {openAlertModal} = useModalStore();
-  const {macroStageList, macroImageList, isMacroExecuting, stopMacroExecute, isMacroRecording, setMacroStageList, setImageStageList} =
-    useMacroStageStore();
+  const {
+    macroStageList,
+    macroImageList,
+    isMacroExecuting,
+    stopMacroExecute,
+    isMacroRecording,
+    setMacroStageList,
+    setImageStageList,
+  } = useMacroStageStore();
 
   const webViewRef = useRef(null);
 
@@ -205,7 +213,9 @@ function WebView({url, isHidden, index}) {
     };
   }, [browserTabList, index, isMacroExecuting, macroStageList, setBrowserTabList]);
 
-  return <webview src={url} ref={webViewRef} className={`${!isHidden && "hidden"} bg-white w-full col-span-7`}></webview>;
+  return (
+    <webview src={url} ref={webViewRef} className={`${!isHidden && "hidden"} bg-white w-full col-span-7`}></webview>
+  );
 }
 
 export default WebView;

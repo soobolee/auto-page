@@ -1,15 +1,16 @@
-import {useEffect, useState} from "react";
+import {faArrowLeft, faArrowRight, faFan, faRotateRight} from "@fortawesome/free-solid-svg-icons";
 import {nanoid} from "nanoid";
-import {useNavigate, useMatch} from "react-router";
-import {faArrowLeft, faArrowRight, faRotateRight, faFan} from "@fortawesome/free-solid-svg-icons";
-import useTabStore from "../../stores/useTabStore";
+import {useEffect, useState} from "react";
+import {useMatch, useNavigate} from "react-router";
+
+import {RECORD_MODE, ROUTER_ROUTE} from "../../constants/textConstants";
 import useMacroStageStore from "../../stores/useMacroStageStore";
 import useMenuStore from "../../stores/useMenuStore";
-import WindowTab from "../Tab/WindowTab";
+import useTabStore from "../../stores/useTabStore";
 import Button from "../Button/Button";
 import CircleButton from "../Button/CircleButton";
 import LoadingCard from "../Card/LoadingCard";
-import {ROUTER_ROUTE, RECORD_MODE} from "../../constants/textConstants";
+import WindowTab from "../Tab/WindowTab";
 
 function Header() {
   const [inputUrl, setInputUrl] = useState("");
@@ -94,18 +95,26 @@ function Header() {
           {isMacroRecording && <LoadingCard shape="ping" text="매크로 기록 중" />}
           {isMacroExecuting && <LoadingCard shape="spin" icon={faFan} text="매크로 실행 중" />}
         </div>
-        <div className="w-[15%] text-right px-3">{match && <Button buttonText={"나가기"} buttonColor={"bg-sub"} onClick={handleMainClick} />}</div>
+        <div className="w-[15%] text-right px-3">
+          {match && <Button buttonText={"나가기"} buttonColor={"bg-sub"} onClick={handleMainClick} />}
+        </div>
       </div>
       <div className="h-[40%] w-full flex items-end overflow-auto">
         {browserTabList.length > 0 && (
           <>
             <CircleButton icon={faArrowLeft} onClick={focusedTabInfo.goBack} isActive={focusedTabInfo.canGoBack} />
-            <CircleButton icon={faArrowRight} onClick={focusedTabInfo.goForward} isActive={focusedTabInfo.canGoForward} />
+            <CircleButton
+              icon={faArrowRight}
+              onClick={focusedTabInfo.goForward}
+              isActive={focusedTabInfo.canGoForward}
+            />
             <CircleButton icon={faRotateRight} onClick={focusedTabInfo.goReload} isActive={true} />
           </>
         )}
         {browserTabList.length > 0 &&
-          browserTabList.map((tab, index) => <WindowTab key={nanoid()} title={tab.title} index={index} isHidden={tabFocusedIndex === index} />)}
+          browserTabList.map((tab, index) => (
+            <WindowTab key={nanoid()} title={tab.title} index={index} isHidden={tabFocusedIndex === index} />
+          ))}
       </div>
     </header>
   );

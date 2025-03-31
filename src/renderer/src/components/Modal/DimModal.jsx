@@ -1,6 +1,6 @@
+import useModalStore from "../../stores/useModalStore";
 import AlertModal from "./AlertModal";
 import InputModal from "./InputModal";
-import useModalStore from "../../stores/useModalStore";
 
 function DimModal() {
   const {isShowInputModal, isShowAlertModal} = useModalStore();
@@ -10,7 +10,10 @@ function DimModal() {
   };
 
   return (
-    <div className="absolute top-0 left-0 w-full h-full bg-sub/50 flex justify-center items-center" onClick={handleEvent}>
+    <div
+      className="absolute top-0 left-0 w-full h-full bg-sub/50 flex justify-center items-center"
+      onClick={handleEvent}
+    >
       {isShowAlertModal && <AlertModal />}
       {isShowInputModal && <InputModal />}
     </div>

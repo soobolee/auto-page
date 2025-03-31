@@ -1,9 +1,16 @@
 import {useState} from "react";
+
+import {
+  ALERT_DELETE_MACRO,
+  ALERT_ERROR_DELETE,
+  ALERT_ERROR_LOAD,
+  ALERT_ERROR_SAVE,
+  NAV_MENU,
+} from "../../constants/textConstants";
 import useMacroItemStore from "../../stores/useMacroItemStore";
 import useMacroStageStore from "../../stores/useMacroStageStore";
-import useModalStore from "../../stores/useModalStore";
 import useMenuStore from "../../stores/useMenuStore";
-import {NAV_MENU, ALERT_DELETE_MACRO, ALERT_ERROR_SAVE, ALERT_ERROR_LOAD, ALERT_ERROR_DELETE} from "../../constants/textConstants";
+import useModalStore from "../../stores/useModalStore";
 import IconMenuCard from "./IconMenuCard";
 
 function ContentCard({macroItem, onClick}) {
@@ -81,7 +88,12 @@ function ContentCard({macroItem, onClick}) {
   return (
     <div className="group relative w-95 h-48 m-5 p-3 bg-white rounded-2xl">
       <div className="h-full w-full flex flex-col">
-        <IconMenuCard isBookmark={isBookmark} handleBookmark={handleBookmark} handleUpdate={handleUpdate} handleDelete={handleDelete} />
+        <IconMenuCard
+          isBookmark={isBookmark}
+          handleBookmark={handleBookmark}
+          handleUpdate={handleUpdate}
+          handleDelete={handleDelete}
+        />
         <div className="relative">
           <p className="text-3xl mb-3">{macroName}</p>
           <p className="overflow-x-auto whitespace-nowrap">생성URL : {macroUrl}</p>

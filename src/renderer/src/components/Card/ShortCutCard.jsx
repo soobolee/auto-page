@@ -1,9 +1,10 @@
 import {useState} from "react";
+
+import {ALERT_DUPLICATED_URL, NAV_MENU} from "../../constants/textConstants";
+import useMacroItemStore from "../../stores/useMacroItemStore";
 import useMenuStore from "../../stores/useMenuStore";
 import useModalStore from "../../stores/useModalStore";
-import useMacroItemStore from "../../stores/useMacroItemStore";
 import Button from "../Button/Button";
-import {NAV_MENU, ALERT_DUPLICATED_URL} from "../../constants/textConstants";
 
 function ShortCutCard({macroItem}) {
   const macroName = macroItem.macroName;

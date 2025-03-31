@@ -1,11 +1,11 @@
-import useTabStore from "../../stores/useTabStore";
+import {RECORD_MODE} from "../../constants/textConstants";
+import useMacroStageStore from "../../stores/useMacroStageStore";
 import useMenuStore from "../../stores/useMenuStore";
+import useTabStore from "../../stores/useTabStore";
 import ImageNavigation from "../Navigation/ImageNavigation";
 import TextNavigation from "../Navigation/TextNavigation";
-import useMacroStageStore from "../../stores/useMacroStageStore";
-import InputUrlContent from "./InputUrlContent";
 import WebView from "../WebView/WebView";
-import {RECORD_MODE} from "../../constants/textConstants";
+import InputUrlContent from "./InputUrlContent";
 
 function MacroContent() {
   const {browserTabList, tabFocusedIndex} = useTabStore();
@@ -14,11 +14,20 @@ function MacroContent() {
 
   return (
     <>
-      <div className={`${recordMode === RECORD_MODE.STOP ? "h-[90%]" : "h-[75%]"} w-full grid ${isMacroRecording && "grid-cols-8"}`}>
+      <div
+        className={`${recordMode === RECORD_MODE.STOP ? "h-[90%]" : "h-[75%]"} w-full grid ${isMacroRecording && "grid-cols-8"}`}
+      >
         {browserTabList.length <= 0 && <InputUrlContent />}
         {browserTabList.length > 0 &&
           browserTabList.map((tab, index) => {
-            return <WebView key={`${tab.tabUrl}-${index}`} url={tab.tabUrl} isHidden={tabFocusedIndex === index} index={index} />;
+            return (
+              <WebView
+                key={`${tab.tabUrl}-${index}`}
+                url={tab.tabUrl}
+                isHidden={tabFocusedIndex === index}
+                index={index}
+              />
+            );
           })}
         <ImageNavigation />
       </div>

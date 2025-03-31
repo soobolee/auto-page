@@ -1,6 +1,7 @@
-import {useEffect, useState} from "react";
-import useTabStore from "../../stores/useTabStore";
 import {nanoid} from "nanoid";
+import {useEffect, useState} from "react";
+
+import useTabStore from "../../stores/useTabStore";
 
 function InputUrlContent() {
   const [inputUrl, setInputUrl] = useState("");
@@ -77,7 +78,11 @@ function InputUrlContent() {
       <div className="flex justify-center w-[70%] overflow-x-auto">
         {bookmarkUrlList.length > 0 &&
           bookmarkUrlList.map((bookmarkUrl) => (
-            <button key={nanoid()} className="h-10 mx-1 p-2 bg-white text-nowrap rounded-xl" onClick={() => handleBookmarkClick(bookmarkUrl)}>
+            <button
+              key={nanoid()}
+              className="h-10 mx-1 p-2 bg-white text-nowrap rounded-xl"
+              onClick={() => handleBookmarkClick(bookmarkUrl)}
+            >
               {bookmarkUrl}
             </button>
           ))}

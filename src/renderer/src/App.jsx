@@ -1,7 +1,8 @@
 import {Outlet} from "react-router";
-import useModalStore from "./stores/useModalStore";
+
 import Header from "./components/Header/Header";
 import DimModal from "./components/Modal/DimModal";
+import useModalStore from "./stores/useModalStore";
 
 function App() {
   const {isShowInputModal, isShowAlertModal} = useModalStore();

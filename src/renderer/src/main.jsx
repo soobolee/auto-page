@@ -1,9 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import {HashRouter, Route, Routes} from "react-router";
+
 import App from "./App";
-import MainContent from "./components/Content/MainContent";
 import MacroContent from "./components/Content/MacroContent";
+import MainContent from "./components/Content/MainContent";
 import {ROUTER_ROUTE} from "./constants/textConstants";
 
 ReactDOM.createRoot(document.getElementById("root")).render(

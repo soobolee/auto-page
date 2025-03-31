@@ -1,4 +1,5 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+
 import useModalStore from "../../stores/useModalStore";
 import Button from "../Button/Button";
 
@@ -17,7 +18,9 @@ function AlertModal() {
         <FontAwesomeIcon icon={modalContent.ICON} />
       </span>
       <div>
-        {modalContent.BUTTON && <Button buttonText={modalContent.BUTTON} buttonColor={"bg-green"} onClick={buttonClick} />}
+        {modalContent.BUTTON && (
+          <Button buttonText={modalContent.BUTTON} buttonColor={"bg-green"} onClick={buttonClick} />
+        )}
         <Button buttonText={"닫기"} buttonColor={"bg-red"} onClick={clickModalClose} />
       </div>
     </div>

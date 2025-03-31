@@ -1,13 +1,21 @@
 import {useState} from "react";
-import useMacroStageStore from "../../stores/useMacroStageStore";
+
+import {
+  ALERT_DELETE_STAGE,
+  ALERT_ERROR_DELETE,
+  ALERT_ERROR_SAVE,
+  ALERT_SAVE_STAGE,
+  NAV_MENU,
+} from "../../constants/textConstants";
 import useMacroItemStore from "../../stores/useMacroItemStore";
+import useMacroStageStore from "../../stores/useMacroStageStore";
 import useMenuStore from "../../stores/useMenuStore";
 import useModalStore from "../../stores/useModalStore";
-import {ALERT_DELETE_STAGE, ALERT_ERROR_DELETE, ALERT_ERROR_SAVE, ALERT_SAVE_STAGE, NAV_MENU} from "../../constants/textConstants";
 
 function UpdateCard({stageItem, index}) {
   const [formData, setFormData] = useState(stageItem || {class: [{}]});
-  const {macroStageList, macroImageList, updateTargetMacroName, setMacroStageList, setImageStageList} = useMacroStageStore();
+  const {macroStageList, macroImageList, updateTargetMacroName, setMacroStageList, setImageStageList} =
+    useMacroStageStore();
   const {setMacroItemList} = useMacroItemStore();
   const {setMenuMode} = useMenuStore();
   const {openAlertModal, closeModal} = useModalStore();
@@ -186,7 +194,12 @@ function UpdateCard({stageItem, index}) {
         >
           저장
         </button>
-        {macroImageList && <img src={macroImageList[index]} className={`${!macroImageList[index] && "invisible"} w-full h-full hover-image`} />}
+        {macroImageList && (
+          <img
+            src={macroImageList[index]}
+            className={`${!macroImageList[index] && "invisible"} w-full h-full hover-image`}
+          />
+        )}
       </div>
     </form>
   );

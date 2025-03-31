@@ -1,4 +1,5 @@
 import {nanoid} from "nanoid";
+
 import PillCard from "./PillCard";
 
 function StageCard({direction, stageInfo}) {

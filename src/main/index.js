@@ -1,8 +1,9 @@
-import {app, BrowserWindow, ipcMain} from "electron";
-import {join} from "path";
-import fs from "fs";
+import {electronApp, is, optimizer} from "@electron-toolkit/utils";
 import crypto from "crypto";
-import {electronApp, optimizer, is} from "@electron-toolkit/utils";
+import {BrowserWindow, app, ipcMain} from "electron";
+import fs from "fs";
+import {join} from "path";
+
 import icon from "../../resources/icon.png?asset";
 
 let mainWindow = null;
@@ -218,7 +219,9 @@ const getMacroItemList = (contentType) => {
 
     const macroItemList = macroItemNameList.map((macroName) => {
       if (macroName.includes("json")) {
-        const readFile = fs.readFileSync(getMacroFilePath(contentType, macroName), {encoding: "utf8"});
+        const readFile = fs.readFileSync(getMacroFilePath(contentType, macroName), {
+          encoding: "utf8",
+        });
         const fileStat = fs.statSync(getMacroFilePath(contentType, macroName));
         const parseReadFile = JSON.parse(readFile);
 
@@ -249,7 +252,9 @@ const getMacroItem = (contentType, fileName) => {
     if (!fs.existsSync(getMacroFilePath(contentType, addedJsonFileName))) {
       return [];
     }
-    const readFile = fs.readFileSync(getMacroFilePath(contentType, addedJsonFileName), {encoding: "utf8"});
+    const readFile = fs.readFileSync(getMacroFilePath(contentType, addedJsonFileName), {
+      encoding: "utf8",
+    });
     const parseReadFile = JSON.parse(readFile);
 
     if (parseReadFile.stageList) {

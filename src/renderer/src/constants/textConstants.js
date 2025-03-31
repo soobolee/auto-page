@@ -1,13 +1,13 @@
 import {
-  faHome,
   faBookmark,
-  faGear,
-  faKeyboard,
   faCamera,
   faCameraRotate,
-  faTrash,
-  faFileArrowDown,
   faCircleExclamation,
+  faFileArrowDown,
+  faGear,
+  faHome,
+  faKeyboard,
+  faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 
 export const ROUTER_ROUTE = {

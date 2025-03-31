@@ -1,11 +1,12 @@
 import {useState} from "react";
 import {useNavigate} from "react-router";
-import useModalStore from "../../stores/useModalStore";
+
+import {ALERT_ERROR_SAVE, RECORD_MODE, ROUTER_ROUTE} from "../../constants/textConstants";
 import useMacroStageStore from "../../stores/useMacroStageStore";
+import useMenuStore from "../../stores/useMenuStore";
+import useModalStore from "../../stores/useModalStore";
 import useTabStore from "../../stores/useTabStore";
 import Button from "../Button/Button";
-import useMenuStore from "../../stores/useMenuStore";
-import {ROUTER_ROUTE, RECORD_MODE, ALERT_ERROR_SAVE} from "../../constants/textConstants";
 
 function NameModal() {
   const navigate = useNavigate();
