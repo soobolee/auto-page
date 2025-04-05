@@ -19,7 +19,10 @@ export const writeMacroInfoFile = (fileName, fileContent, contentType) => {
     if (contentType === "stageList") {
       fileContent.forEach((content) => {
         if (content.value) {
-          content.value = inputValueEncrypt(content.value);
+          const key = fs.readFileSync(join(app.getPath("userData"), "CRYPT_KEY"));
+          const iv = fs.readFileSync(join(app.getPath("userData"), "CRYPT_IV"));
+
+          content.value = inputValueEncrypt(content.value, key, iv);
         }
       });
     }
@@ -97,7 +100,10 @@ export const getMacroItemList = (contentType) => {
 
         parseReadFile.stageList.forEach((content) => {
           if (content.value) {
-            content.value = inputValueDecrypt(content.value);
+            const key = fs.readFileSync(join(app.getPath("userData"), "CRYPT_KEY"));
+            const iv = fs.readFileSync(join(app.getPath("userData"), "CRYPT_IV"));
+
+            content.value = inputValueDecrypt(content.value, key, iv);
           }
         });
 
@@ -130,7 +136,10 @@ export const getMacroItem = (contentType, fileName) => {
     if (parseReadFile.stageList) {
       parseReadFile.stageList.forEach((content) => {
         if (content.value) {
-          content.value = inputValueDecrypt(content.value);
+          const key = fs.readFileSync(join(app.getPath("userData"), "CRYPT_KEY"));
+          const iv = fs.readFileSync(join(app.getPath("userData"), "CRYPT_IV"));
+
+          content.value = inputValueDecrypt(content.value, key, iv);
         }
       });
     }
