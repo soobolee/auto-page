@@ -1,5 +1,8 @@
 import {contextBridge, ipcRenderer} from "electron";
 
+import {sleep} from "../main/commonUtils";
+import {createTargetAlertCircle, getClassInfo} from "./domUtils";
+
 try {
   contextBridge.exposeInMainWorld("electronAPI", {
     getMacroItemList: () => ipcRenderer.invoke("get-macro-item-list"),
@@ -29,36 +32,6 @@ try {
       method: method,
       value: eventTarget.value,
     });
-  };
-
-  const getClassInfo = (eventTargetClassList, eventTarget) => {
-    if (eventTargetClassList.length) {
-      return eventTargetClassList.map((className) => {
-        const duplicatedClassList = Array.from(document.getElementsByClassName(className));
-
-        return {
-          className: className,
-          classIndex: duplicatedClassList.indexOf(eventTarget),
-        };
-      });
-    }
-  };
-
-  const createTargetAlertCircle = () => {
-    const targetAlertCircle = document.createElement("div");
-    targetAlertCircle.id = "targetAlertCircle";
-    targetAlertCircle.style.position = "absolute";
-    targetAlertCircle.style.width = "20px";
-    targetAlertCircle.style.height = "20px";
-    targetAlertCircle.style.borderRadius = "100%";
-    targetAlertCircle.style.zIndex = "99999";
-    targetAlertCircle.style.display = "none";
-
-    return targetAlertCircle;
-  };
-
-  const sleep = (delay) => {
-    return new Promise((resolve) => setTimeout(resolve, delay));
   };
 
   let endOfInput = false;
