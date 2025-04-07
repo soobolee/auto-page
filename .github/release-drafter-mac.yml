@@ -38,6 +38,7 @@ template: |
 change-template: "- $TITLE (#$NUMBER)"
 
 version-resolver:
+  tag-pattern: "^v\\d+\\.\\d+\\.\\d+-mac$"
   major:
     labels:
       - "major"
@@ -52,4 +53,3 @@ version-resolver:
     major: '^BREAKING CHANGE:'
     minor: '^feat:'
     patch: '^fix:|^test:|^design:|^build:|^refactor:'
-    tag-pattern: "^v\\d+\\.\\d+\\.\\d+-mac$"
