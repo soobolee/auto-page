@@ -52,3 +52,4 @@ version-resolver:
     major: '^BREAKING CHANGE:'
     minor: '^feat:'
     patch: '^fix:|^test:|^design:|^build:|^refactor:'
+    tag-pattern: "^v\\d+\\.\\d+\\.\\d+-mac$"
