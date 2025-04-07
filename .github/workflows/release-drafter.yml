@@ -9,11 +9,20 @@ permissions:
     contents: write
 
 jobs:
-    update_release_draft:
-        permissions:
-            contents: write
-        runs-on: ubuntu-latest
-        steps:
-            - uses: release-drafter/release-drafter@v6.1.0
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  draft_release_mac:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: release-drafter/release-drafter@v6.1.0
+        with:
+          config-name: release-drafter-mac.yml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  draft_release_windows:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: release-drafter/release-drafter@v6.1.0
+        with:
+          config-name: release-drafter-window.yml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
