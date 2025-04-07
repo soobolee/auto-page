@@ -1,5 +1,6 @@
 name-template: "v$RESOLVED_VERSION for window x64"
 tag-template: "v$RESOLVED_VERSION-window"
+include-merged-pull-requests: false
 
 template: |
   ## Electron.js 로 개발한 매크로 프로젝트입니다. - for window x64

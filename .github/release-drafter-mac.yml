@@ -1,5 +1,6 @@
 name-template: "v$RESOLVED_VERSION for mac arm64"
 tag-template: "v$RESOLVED_VERSION-mac"
+include-merged-pull-requests: false
 
 template: |
   ## Electron.js 로 개발한 매크로 프로젝트입니다. - for mac arm64
