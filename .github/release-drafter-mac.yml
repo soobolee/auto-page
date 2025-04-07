@@ -52,4 +52,4 @@ version-resolver:
   commit-message:
     major: '^BREAKING CHANGE:'
     minor: '^feat:'
-    patch: '^fix:|^test:|^design:|^build:|^refactor:'
+    patch: '^fix:|^build:'
