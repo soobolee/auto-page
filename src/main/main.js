@@ -22,7 +22,7 @@ const createWindow = () => {
     ...(process.platform === "linux" ? {icon} : {}),
     icon: icon,
     webPreferences: {
-      preload: join(__dirname, "../preload/index.js"),
+      preload: join(__dirname, "../preload/preload.js"),
       webviewTag: true,
     },
   });
@@ -40,7 +40,7 @@ const createWindow = () => {
 
   mainWindow.webContents.on("will-attach-webview", (_, webPreferences) => {
     webPreferences.partition = webviewSession;
-    webPreferences.preload = join(__dirname, "../preload/index.js");
+    webPreferences.preload = join(__dirname, "../preload/preload.js");
   });
 };
 
