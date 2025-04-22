@@ -447,7 +447,7 @@ Electron이 파일 프로토콜[```file://```]을 사용한다는 것을 인지�
 
 그렇게 찾은 대안으로는 HashRouter가 있었습니다, Hash Router는 라우팅 처리 시 아래 처럼 URL의 해시 부분을 기준으로 라우팅을 처리합니다.<br />
 ```js
-"file://localhost:3000/#/index.html/macro";
+"file://localhost:3000/index.html#/macro";
 ```
 HashRouter의 경우 ```#```을 통해 요청이 서버로 전달되지 않게 됩니다. 따라서, 파일 프로토콜을 사용한다고 해도 사용자 로컬에서 파일을 찾아 404를 반환하지 않을 수 있었고, HashRouter를 통해 클라이언트 환경에서 라우팅을 처리해 라우팅 문제를 해결했습니다.
 
