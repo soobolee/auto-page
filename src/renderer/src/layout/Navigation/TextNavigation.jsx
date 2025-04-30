@@ -2,11 +2,11 @@ import {nanoid} from "nanoid";
 
 import Button from "../../shared/Button/Button";
 import StageCard from "../../shared/Card/StageCard";
-import useMacroStageStore from "../../stores/macro/useMacroStageStore";
+import useMacroStore from "../../stores/macro/useMacroStore";
 import useModalStore from "../../stores/modal/useModalStore";
 
 function TextNavigation() {
-  const {macroStageList, startMacroRecord, isMacroRecording} = useMacroStageStore();
+  const {macroStageList, startMacroRecord, isMacroRecording} = useMacroStore();
   const {openInputModal} = useModalStore();
 
   const startRecord = () => {

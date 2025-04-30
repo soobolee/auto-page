@@ -8,7 +8,7 @@ import WindowTab from "../../features/tab/WindowTab";
 import Button from "../../shared/Button/Button";
 import CircleButton from "../../shared/Button/CircleButton";
 import LoadingCard from "../../shared/Card/LoadingCard";
-import useMacroStageStore from "../../stores/macro/useMacroStageStore";
+import useMacroStore from "../../stores/macro/useMacroStore";
 import useMenuStore from "../../stores/menu/useMenuStore";
 import useTabStore from "../../stores/tab/useTabStore";
 
@@ -18,7 +18,7 @@ function Header() {
   const navigate = useNavigate();
 
   const {browserTabList, resetTabInfo, tabFocusedIndex, setBrowserTabList} = useTabStore();
-  const {resetStageList, isMacroRecording, isMacroExecuting} = useMacroStageStore();
+  const {resetStageList, isMacroRecording, isMacroExecuting} = useMacroStore();
   const {setRecordMode} = useMenuStore();
   const match = useMatch(ROUTER_ROUTE.MACRO);
 

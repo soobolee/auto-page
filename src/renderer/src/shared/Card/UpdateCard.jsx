@@ -7,16 +7,20 @@ import {
   ALERT_SAVE_STAGE,
   NAV_MENU,
 } from "../../constants/textConstants";
-import useMacroItemStore from "../../stores/macro/useMacroItemStore";
-import useMacroStageStore from "../../stores/macro/useMacroStageStore";
+import useMacroStore from "../../stores/macro/useMacroStore";
 import useMenuStore from "../../stores/menu/useMenuStore";
 import useModalStore from "../../stores/modal/useModalStore";
 
 function UpdateCard({stageItem, index}) {
   const [formData, setFormData] = useState(stageItem || {class: [{}]});
-  const {macroStageList, macroImageList, updateTargetMacroName, setMacroStageList, setImageStageList} =
-    useMacroStageStore();
-  const {setMacroItemList} = useMacroItemStore();
+  const {
+    macroStageList,
+    macroImageList,
+    updateTargetMacroName,
+    setMacroStageList,
+    setMacroImageList,
+    setMacroItemList,
+  } = useMacroStore();
   const {setMenuMode} = useMenuStore();
   const {openAlertModal, closeModal} = useModalStore();
 
@@ -61,7 +65,7 @@ function UpdateCard({stageItem, index}) {
 
         if (savedStageResult && savedImageResult) {
           setMacroStageList(newStageList);
-          setImageStageList(newImageList);
+          setMacroImageList(newImageList);
         } else {
           openAlertModal(ALERT_ERROR_SAVE);
         }

@@ -7,16 +7,15 @@ import {
   ALERT_ERROR_SAVE,
   NAV_MENU,
 } from "../../constants/textConstants";
-import useMacroItemStore from "../../stores/macro/useMacroItemStore";
-import useMacroStageStore from "../../stores/macro/useMacroStageStore";
+import useMacroStore from "../../stores/macro/useMacroStore";
 import useMenuStore from "../../stores/menu/useMenuStore";
 import useModalStore from "../../stores/modal/useModalStore";
 import IconMenuCard from "./IconMenuCard";
 
 function ContentCard({macroItem, onClick}) {
   const [isBookmark, setIsBookmark] = useState(macroItem.bookmark);
-  const {setMacroItemList} = useMacroItemStore();
-  const {setMacroStageList, setImageStageList, setUpdateTargetMacroName} = useMacroStageStore();
+  const {setMacroItemList} = useMacroStore();
+  const {setMacroStageList, setMacroImageList, setUpdateTargetMacroName} = useMacroStore();
   const {openAlertModal, closeModal} = useModalStore();
   const {setMenuMode} = useMenuStore();
 
@@ -63,7 +62,7 @@ function ContentCard({macroItem, onClick}) {
     }
 
     setUpdateTargetMacroName(macroName);
-    setImageStageList(imageList.image);
+    setMacroImageList(imageList.image);
     setMacroStageList(macroList.stageList);
     setMenuMode(NAV_MENU.ADDMACRO);
   };

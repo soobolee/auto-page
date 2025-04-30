@@ -8,8 +8,7 @@ import ContentCard from "../../shared/Card/ContentCard";
 import EmptyCard from "../../shared/Card/EmptyCard";
 import ShortCutCard from "../../shared/Card/ShortCutCard";
 import UpdateCard from "../../shared/Card/UpdateCard";
-import useMacroItemStore from "../../stores/macro/useMacroItemStore";
-import useMacroStageStore from "../../stores/macro/useMacroStageStore";
+import useMacroStore from "../../stores/macro/useMacroStore";
 import useMenuStore from "../../stores/menu/useMenuStore";
 import useShortCutStore from "../../stores/menu/useShortCutStore";
 import useModalStore from "../../stores/modal/useModalStore";
@@ -19,14 +18,14 @@ function MainContent() {
   const {menuMode} = useMenuStore();
   const {
     macroStageList,
-    updateTargetMacroName,
-    setMacroStageList,
-    setImageStageList,
     startMacroExecute,
+    setMacroStageList,
+    setMacroImageList,
+    updateTargetMacroName,
     setUpdateTargetMacroName,
-  } = useMacroStageStore();
+  } = useMacroStore();
   const {shortCutUnitList, setShortCutUnitList} = useShortCutStore();
-  const {macroItemList, setMacroItemList} = useMacroItemStore();
+  const {macroItemList, setMacroItemList} = useMacroStore();
   const {openAlertModal} = useModalStore();
   const {setBrowserTabList} = useTabStore();
 
@@ -109,7 +108,7 @@ function MainContent() {
       openAlertModal(ALERT_ERROR_SAVE);
     }
 
-    setImageStageList(savedImageList.image);
+    setMacroImageList(savedImageList.image);
     setMacroStageList(savedMacroList.stageList);
   };
 

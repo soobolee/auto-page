@@ -1,7 +1,7 @@
 import {useState} from "react";
 
 import {ALERT_DUPLICATED_URL, NAV_MENU} from "../../constants/textConstants";
-import useMacroItemStore from "../../stores/macro/useMacroItemStore";
+import useMacroStore from "../../stores/macro/useMacroStore";
 import useMenuStore from "../../stores/menu/useMenuStore";
 import useModalStore from "../../stores/modal/useModalStore";
 import Button from "../Button/Button";
@@ -15,7 +15,7 @@ function ShortCutCard({macroItem}) {
   const [isSaveError, setIsSaveError] = useState(false);
   const {setMenuMode} = useMenuStore();
   const {openAlertModal} = useModalStore();
-  const {setMacroItemList} = useMacroItemStore();
+  const {setMacroItemList} = useMacroStore();
 
   const saveShortCut = async () => {
     if (!firstKeyUnit && !secondKeyUnit) {

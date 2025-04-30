@@ -1,7 +1,7 @@
 import {RECORD_MODE} from "../../constants/textConstants";
 import ImageNavigation from "../../layout/Navigation/ImageNavigation";
 import TextNavigation from "../../layout/Navigation/TextNavigation";
-import useMacroStageStore from "../../stores/macro/useMacroStageStore";
+import useMacroStore from "../../stores/macro/useMacroStore";
 import useMenuStore from "../../stores/menu/useMenuStore";
 import useTabStore from "../../stores/tab/useTabStore";
 import WebView from "../webview/WebView";
@@ -9,7 +9,7 @@ import InputUrlContent from "./InputUrlContent";
 
 function MacroContent() {
   const {browserTabList, tabFocusedIndex} = useTabStore();
-  const {isMacroRecording} = useMacroStageStore();
+  const {isMacroRecording} = useMacroStore();
   const {recordMode} = useMenuStore();
 
   return (

@@ -3,13 +3,13 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {useNavigate} from "react-router";
 
 import {RECORD_MANUAL_START, RECORD_MODE, ROUTER_ROUTE} from "../../constants/textConstants";
-import useMacroStageStore from "../../stores/macro/useMacroStageStore";
+import useMacroStore from "../../stores/macro/useMacroStore";
 import useMenuStore from "../../stores/menu/useMenuStore";
 import useModalStore from "../../stores/modal/useModalStore";
 
 function EmptyCard() {
   const navigate = useNavigate();
-  const {stopMacroRecord, resetStageList} = useMacroStageStore();
+  const {stopMacroRecord, resetStageList} = useMacroStore();
   const {setRecordMode} = useMenuStore();
   const {openAlertModal, closeModal} = useModalStore();
 

@@ -2,7 +2,7 @@ import {useState} from "react";
 import {useNavigate} from "react-router";
 
 import {ALERT_ERROR_SAVE, RECORD_MODE, ROUTER_ROUTE} from "../../constants/textConstants";
-import useMacroStageStore from "../../stores/macro/useMacroStageStore";
+import useMacroStore from "../../stores/macro/useMacroStore";
 import useMenuStore from "../../stores/menu/useMenuStore";
 import useModalStore from "../../stores/modal/useModalStore";
 import useTabStore from "../../stores/tab/useTabStore";
@@ -13,7 +13,7 @@ function NameModal() {
   const [inputValue, setInputValue] = useState("");
   const {openAlertModal, closeModal} = useModalStore();
   const {resetTabInfo} = useTabStore();
-  const {macroStageList, macroImageList, resetStageList, stopMacroRecord} = useMacroStageStore();
+  const {macroStageList, macroImageList, resetStageList, stopMacroRecord} = useMacroStore();
   const {setRecordMode} = useMenuStore();
 
   const clickModalSave = () => {

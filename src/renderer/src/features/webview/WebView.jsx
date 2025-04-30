@@ -1,22 +1,15 @@
 import {useCallback, useEffect, useRef} from "react";
 
 import {ALERT_ERROR_SAVE} from "../../constants/textConstants";
-import useMacroStageStore from "../../stores/macro/useMacroStageStore";
+import useMacroStore from "../../stores/macro/useMacroStore";
 import useModalStore from "../../stores/modal/useModalStore";
 import useTabStore from "../../stores/tab/useTabStore";
 
 function WebView({url, isHidden, index}) {
   const {browserTabList, setBrowserTabList, setTabFocusedIndex} = useTabStore();
   const {openAlertModal} = useModalStore();
-  const {
-    macroStageList,
-    macroImageList,
-    isMacroExecuting,
-    stopMacroExecute,
-    isMacroRecording,
-    setMacroStageList,
-    setImageStageList,
-  } = useMacroStageStore();
+  const {macroStageList, macroImageList, isMacroRecording, isMacroExecuting, stopMacroExecute, resetStageList} =
+    useMacroStore();
 
   const webViewRef = useRef(null);
 
@@ -30,8 +23,8 @@ function WebView({url, isHidden, index}) {
       macroImageList.push(capturedPage);
     }
 
-    setImageStageList([...macroImageList]);
-  }, [macroImageList, openAlertModal, setImageStageList]);
+    resetStageList([...macroImageList]);
+  }, [macroImageList, openAlertModal, resetStageList]);
 
   useEffect(() => {
     const currentWebview = webViewRef.current;
@@ -101,7 +94,7 @@ function WebView({url, isHidden, index}) {
 
       if (event.channel === "macro-end") {
         stopMacroExecute();
-        setMacroStageList([]);
+        resetStageList([]);
         window.sessionStorage.removeItem("resumeMacroList");
       }
 
@@ -143,7 +136,7 @@ function WebView({url, isHidden, index}) {
         }
 
         if (!isDuplicate) {
-          setMacroStageList([...macroStageList, stageList]);
+          resetStageList([...macroStageList, stageList]);
 
           if (stageList.tagName !== "A" || stageList.href.includes("#")) {
             window.sessionStorage.setItem("isEvent", false);
@@ -164,8 +157,7 @@ function WebView({url, isHidden, index}) {
     macroStageList,
     stopMacroExecute,
     setBrowserTabList,
-    setImageStageList,
-    setMacroStageList,
+    resetStageList,
     setTabFocusedIndex,
     capturePage,
   ]);
