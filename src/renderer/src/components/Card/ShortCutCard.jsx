@@ -47,11 +47,11 @@ function ShortCutCard({macroItem}) {
 
   return (
     <>
-      <div className="w-[75%] h-25 p-5 bg-white flex justify-between">
+      <div className="w-[75%] h-25 p-5 bg-white flex justify-between rounded-2xl">
         <input
           type="text"
           readOnly
-          className="w-30 border-2 h-full bg-tab text-3xl"
+          className="w-30 border-2 h-full text-center bg-gray-400 text-3xl rounded-2xl"
           value={firstKeyUnit}
           onKeyDown={(event) => {
             setFirstKeyUnit(event.key === "Backspace" ? "" : event.key);
@@ -61,14 +61,14 @@ function ShortCutCard({macroItem}) {
         <input
           type="text"
           readOnly
-          className="w-30 border-2 h-full bg-tab text-3xl"
+          className="w-30 border-2 h-full text-center bg-gray-400 text-3xl rounded-2xl"
           value={secondKeyUnit}
           onKeyDown={(event) => {
             setSecondKeyUnit(event.key === "Backspace" ? "" : event.key);
           }}
         />
         <div className="flex justify-center items-center text-7xl"> = </div>
-        <input type="text" defaultValue={macroName} className="w-70 border-2 h-full bg-tab text-3xl" />
+        <input type="text" defaultValue={macroName} className="w-70 border-2 h-full p-3 bg-tab text-3xl rounded-2xl" />
         {!isSaveError && <Button buttonText={"저장"} buttonColor={"bg-green"} onClick={saveShortCut} />}
         {isSaveError && <Button buttonText={"재시도"} buttonColor={"bg-red"} onClick={saveShortCut} />}
       </div>
