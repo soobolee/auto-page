@@ -1,7 +1,7 @@
 import {nanoid} from "nanoid";
 
-import useMacroStageStore from "../../stores/useMacroStageStore";
-import StageCard from "../Card/StageCard";
+import StageCard from "../../shared/Card/StageCard";
+import useMacroStageStore from "../../stores/macro/useMacroStageStore";
 
 function ImageNavigation() {
   const {macroImageList, isMacroRecording} = useMacroStageStore();

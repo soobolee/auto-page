@@ -2,10 +2,10 @@ import {useState} from "react";
 import {useNavigate} from "react-router";
 
 import {ALERT_ERROR_SAVE, RECORD_MODE, ROUTER_ROUTE} from "../../constants/textConstants";
-import useMacroStageStore from "../../stores/useMacroStageStore";
-import useMenuStore from "../../stores/useMenuStore";
-import useModalStore from "../../stores/useModalStore";
-import useTabStore from "../../stores/useTabStore";
+import useMacroStageStore from "../../stores/macro/useMacroStageStore";
+import useMenuStore from "../../stores/menu/useMenuStore";
+import useModalStore from "../../stores/modal/useModalStore";
+import useTabStore from "../../stores/tab/useTabStore";
 import Button from "../Button/Button";
 
 function NameModal() {

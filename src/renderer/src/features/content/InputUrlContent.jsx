@@ -1,7 +1,7 @@
 import {nanoid} from "nanoid";
 import {useEffect, useState} from "react";
 
-import useTabStore from "../../stores/useTabStore";
+import useTabStore from "../../stores/tab/useTabStore";
 
 function InputUrlContent() {
   const [inputUrl, setInputUrl] = useState("");

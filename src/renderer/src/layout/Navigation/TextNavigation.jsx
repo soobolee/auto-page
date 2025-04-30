@@ -1,9 +1,9 @@
 import {nanoid} from "nanoid";
 
-import useMacroStageStore from "../../stores/useMacroStageStore";
-import useModalStore from "../../stores/useModalStore";
-import Button from "../Button/Button";
-import StageCard from "../Card/StageCard";
+import Button from "../../shared/Button/Button";
+import StageCard from "../../shared/Card/StageCard";
+import useMacroStageStore from "../../stores/macro/useMacroStageStore";
+import useModalStore from "../../stores/modal/useModalStore";
 
 function TextNavigation() {
   const {macroStageList, startMacroRecord, isMacroRecording} = useMacroStageStore();

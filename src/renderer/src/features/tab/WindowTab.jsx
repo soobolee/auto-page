@@ -1,5 +1,5 @@
-import useMacroStageStore from "../../stores/useMacroStageStore";
-import useTabStore from "../../stores/useTabStore";
+import useMacroStageStore from "../../stores/macro/useMacroStageStore";
+import useTabStore from "../../stores/tab/useTabStore";
 
 function WindowTab({index, title, isHidden}) {
   const {browserTabList, tabFocusedIndex, setBrowserTabList, setTabFocusedIndex} = useTabStore();

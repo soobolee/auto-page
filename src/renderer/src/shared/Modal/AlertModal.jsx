@@ -1,6 +1,6 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
-import useModalStore from "../../stores/useModalStore";
+import useModalStore from "../../stores/modal/useModalStore";
 import Button from "../Button/Button";
 
 function AlertModal() {

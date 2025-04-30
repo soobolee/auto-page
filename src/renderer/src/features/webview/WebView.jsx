@@ -1,9 +1,9 @@
 import {useCallback, useEffect, useRef} from "react";
 
 import {ALERT_ERROR_SAVE} from "../../constants/textConstants";
-import useMacroStageStore from "../../stores/useMacroStageStore";
-import useModalStore from "../../stores/useModalStore";
-import useTabStore from "../../stores/useTabStore";
+import useMacroStageStore from "../../stores/macro/useMacroStageStore";
+import useModalStore from "../../stores/modal/useModalStore";
+import useTabStore from "../../stores/tab/useTabStore";
 
 function WebView({url, isHidden, index}) {
   const {browserTabList, setBrowserTabList, setTabFocusedIndex} = useTabStore();

@@ -1,10 +1,10 @@
 import {RECORD_MODE} from "../../constants/textConstants";
-import useMacroStageStore from "../../stores/useMacroStageStore";
-import useMenuStore from "../../stores/useMenuStore";
-import useTabStore from "../../stores/useTabStore";
-import ImageNavigation from "../Navigation/ImageNavigation";
-import TextNavigation from "../Navigation/TextNavigation";
-import WebView from "../WebView/WebView";
+import ImageNavigation from "../../layout/Navigation/ImageNavigation";
+import TextNavigation from "../../layout/Navigation/TextNavigation";
+import useMacroStageStore from "../../stores/macro/useMacroStageStore";
+import useMenuStore from "../../stores/menu/useMenuStore";
+import useTabStore from "../../stores/tab/useTabStore";
+import WebView from "../webview/WebView";
 import InputUrlContent from "./InputUrlContent";
 
 function MacroContent() {

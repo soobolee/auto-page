@@ -7,10 +7,10 @@ import {
   ALERT_ERROR_SAVE,
   NAV_MENU,
 } from "../../constants/textConstants";
-import useMacroItemStore from "../../stores/useMacroItemStore";
-import useMacroStageStore from "../../stores/useMacroStageStore";
-import useMenuStore from "../../stores/useMenuStore";
-import useModalStore from "../../stores/useModalStore";
+import useMacroItemStore from "../../stores/macro/useMacroItemStore";
+import useMacroStageStore from "../../stores/macro/useMacroStageStore";
+import useMenuStore from "../../stores/menu/useMenuStore";
+import useModalStore from "../../stores/modal/useModalStore";
 import IconMenuCard from "./IconMenuCard";
 
 function ContentCard({macroItem, onClick}) {

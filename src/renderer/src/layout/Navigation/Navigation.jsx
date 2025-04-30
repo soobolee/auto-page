@@ -2,8 +2,8 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {nanoid} from "nanoid";
 
 import {NAV_DESCRIPTION, NAV_ICON, NAV_MENU} from "../../constants/textConstants";
-import useMacroStageStore from "../../stores/useMacroStageStore";
-import useMenuStore from "../../stores/useMenuStore";
+import useMacroStageStore from "../../stores/macro/useMacroStageStore";
+import useMenuStore from "../../stores/menu/useMenuStore";
 
 function Navigation() {
   const {menuMode, setMenuMode} = useMenuStore();

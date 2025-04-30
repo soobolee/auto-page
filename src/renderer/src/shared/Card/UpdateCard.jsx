@@ -7,10 +7,10 @@ import {
   ALERT_SAVE_STAGE,
   NAV_MENU,
 } from "../../constants/textConstants";
-import useMacroItemStore from "../../stores/useMacroItemStore";
-import useMacroStageStore from "../../stores/useMacroStageStore";
-import useMenuStore from "../../stores/useMenuStore";
-import useModalStore from "../../stores/useModalStore";
+import useMacroItemStore from "../../stores/macro/useMacroItemStore";
+import useMacroStageStore from "../../stores/macro/useMacroStageStore";
+import useMenuStore from "../../stores/menu/useMenuStore";
+import useModalStore from "../../stores/modal/useModalStore";
 
 function UpdateCard({stageItem, index}) {
   const [formData, setFormData] = useState(stageItem || {class: [{}]});

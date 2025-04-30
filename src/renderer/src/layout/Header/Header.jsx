@@ -4,13 +4,13 @@ import {useEffect, useState} from "react";
 import {useMatch, useNavigate} from "react-router";
 
 import {RECORD_MODE, ROUTER_ROUTE} from "../../constants/textConstants";
-import useMacroStageStore from "../../stores/useMacroStageStore";
-import useMenuStore from "../../stores/useMenuStore";
-import useTabStore from "../../stores/useTabStore";
-import Button from "../Button/Button";
-import CircleButton from "../Button/CircleButton";
-import LoadingCard from "../Card/LoadingCard";
-import WindowTab from "../Tab/WindowTab";
+import WindowTab from "../../features/tab/WindowTab";
+import Button from "../../shared/Button/Button";
+import CircleButton from "../../shared/Button/CircleButton";
+import LoadingCard from "../../shared/Card/LoadingCard";
+import useMacroStageStore from "../../stores/macro/useMacroStageStore";
+import useMenuStore from "../../stores/menu/useMenuStore";
+import useTabStore from "../../stores/tab/useTabStore";
 
 function Header() {
   const [inputUrl, setInputUrl] = useState("");

@@ -1,4 +1,4 @@
-import useModalStore from "../../stores/useModalStore";
+import useModalStore from "../../stores/modal/useModalStore";
 import AlertModal from "./AlertModal";
 import InputModal from "./InputModal";
 

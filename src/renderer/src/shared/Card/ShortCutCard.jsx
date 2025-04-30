@@ -1,9 +1,9 @@
 import {useState} from "react";
 
 import {ALERT_DUPLICATED_URL, NAV_MENU} from "../../constants/textConstants";
-import useMacroItemStore from "../../stores/useMacroItemStore";
-import useMenuStore from "../../stores/useMenuStore";
-import useModalStore from "../../stores/useModalStore";
+import useMacroItemStore from "../../stores/macro/useMacroItemStore";
+import useMenuStore from "../../stores/menu/useMenuStore";
+import useModalStore from "../../stores/modal/useModalStore";
 import Button from "../Button/Button";
 
 function ShortCutCard({macroItem}) {

@@ -3,9 +3,9 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {useNavigate} from "react-router";
 
 import {RECORD_MANUAL_START, RECORD_MODE, ROUTER_ROUTE} from "../../constants/textConstants";
-import useMacroStageStore from "../../stores/useMacroStageStore";
-import useMenuStore from "../../stores/useMenuStore";
-import useModalStore from "../../stores/useModalStore";
+import useMacroStageStore from "../../stores/macro/useMacroStageStore";
+import useMenuStore from "../../stores/menu/useMenuStore";
+import useModalStore from "../../stores/modal/useModalStore";
 
 function EmptyCard() {
   const navigate = useNavigate();

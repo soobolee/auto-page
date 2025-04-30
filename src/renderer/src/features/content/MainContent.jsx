@@ -3,17 +3,17 @@ import {useEffect} from "react";
 import {useNavigate} from "react-router";
 
 import {ALERT_ERROR_LOAD, ALERT_ERROR_SAVE, MENU_TITLE, NAV_MENU, ROUTER_ROUTE} from "../../constants/textConstants";
-import useMacroItemStore from "../../stores/useMacroItemStore";
-import useMacroStageStore from "../../stores/useMacroStageStore";
-import useMenuStore from "../../stores/useMenuStore";
-import useModalStore from "../../stores/useModalStore";
-import useShortCutStore from "../../stores/useShortCutStore";
-import useTabStore from "../../stores/useTabStore";
-import ContentCard from "../Card/ContentCard";
-import EmptyCard from "../Card/EmptyCard";
-import ShortCutCard from "../Card/ShortCutCard";
-import UpdateCard from "../Card/UpdateCard";
-import Navigation from "../Navigation/Navigation";
+import Navigation from "../../layout/Navigation/Navigation";
+import ContentCard from "../../shared/Card/ContentCard";
+import EmptyCard from "../../shared/Card/EmptyCard";
+import ShortCutCard from "../../shared/Card/ShortCutCard";
+import UpdateCard from "../../shared/Card/UpdateCard";
+import useMacroItemStore from "../../stores/macro/useMacroItemStore";
+import useMacroStageStore from "../../stores/macro/useMacroStageStore";
+import useMenuStore from "../../stores/menu/useMenuStore";
+import useShortCutStore from "../../stores/menu/useShortCutStore";
+import useModalStore from "../../stores/modal/useModalStore";
+import useTabStore from "../../stores/tab/useTabStore";
 
 function MainContent() {
   const {menuMode} = useMenuStore();
@@ -168,7 +168,6 @@ function MainContent() {
                   value={updateTargetMacroName}
                   onChange={handleUpdateSelect}
                   className="w-100 p-4 bg-white text-lg rounded-xl"
-                  place
                 >
                   <option>매크로를 선택해 주세요.</option>
                   {macroItemList &&
