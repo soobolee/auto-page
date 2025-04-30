@@ -1,6 +1,6 @@
 import {describe, expect, test, vi} from "vitest";
 
-import {deleteFile, getMacroItem, getMacroItemList, writeMacroInfoFile} from "../fileUtils";
+import {deleteFile, getMacroItem, getMacroItemList, writeMacroInfoFile} from "../utils/fileUtils";
 
 vi.mock("electron", () => ({
   app: {

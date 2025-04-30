@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import {describe, expect, test} from "vitest";
 
-import {inputValueDecrypt, inputValueEncrypt} from "../cryptUtils";
+import {inputValueDecrypt, inputValueEncrypt} from "../utils/cryptUtils";
 
 const testText = "test를 위한 문자열 입니다.";
 

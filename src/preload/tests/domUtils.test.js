@@ -1,6 +1,6 @@
 import {beforeEach, describe, expect, test} from "vitest";
 
-import {createTargetAlertCircle, getClassInfo} from "../domUtils";
+import {createTargetAlertCircle, getClassInfo} from "../utils/domUtils";
 
 describe("createTargetAlertCircle", () => {
   test("alertCircle은 의도한 모양대로 만들어져야 합니다.", () => {

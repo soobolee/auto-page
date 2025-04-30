@@ -1,6 +1,6 @@
 import {describe, expect, test} from "vitest";
 
-import {addFrontZero, getCurrentTime, sleep} from "../commonUtils";
+import {addFrontZero, getCurrentTime, sleep} from "../utils/commonUtils";
 
 describe("addFrontZero", () => {
   test("10 미만의 수가 들어오면 앞에 0을 붙여 반환해야 합니다.", () => {
