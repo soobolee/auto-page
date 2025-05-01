@@ -5,8 +5,8 @@ import fs from "fs";
 import {join} from "path";
 
 import icon from "../../resources/icon.png?asset";
-import {sleep} from "./commonUtils";
-import {deleteFile, getMacroItem, getMacroItemList, writeMacroInfoFile} from "./fileUtils";
+import {sleep} from "./utils/commonUtils";
+import {deleteFile, getMacroItem, getMacroItemList, writeMacroInfoFile} from "./utils/fileUtils";
 
 let mainWindow = null;
 let didMacroExecute = false;

@@ -1,7 +1,7 @@
 import {contextBridge, ipcRenderer} from "electron";
 
-import {sleep} from "../main/commonUtils";
-import {createTargetAlertCircle, getClassInfo} from "./domUtils";
+import {sleep} from "../main/utils/commonUtils";
+import {createTargetAlertCircle, getClassInfo} from "./utils/domUtils";
 
 try {
   contextBridge.exposeInMainWorld("electronAPI", {
