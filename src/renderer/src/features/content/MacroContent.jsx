@@ -4,7 +4,7 @@ import TextNavigation from "../../layout/Navigation/TextNavigation";
 import useMacroStore from "../../stores/macro/useMacroStore";
 import useMenuStore from "../../stores/menu/useMenuStore";
 import useTabStore from "../../stores/tab/useTabStore";
-import WebView from "../webview/WebView";
+import WebView from "../Webview/WebView";
 import InputUrlContent from "./InputUrlContent";
 
 function MacroContent() {

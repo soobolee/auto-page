@@ -4,8 +4,8 @@ import {HashRouter, Route, Routes} from "react-router";
 
 import App from "./App";
 import {ROUTER_ROUTE} from "./constants/textConstants";
-import MacroContent from "./features/content/MacroContent";
-import MainContent from "./features/content/MainContent";
+import MacroContent from "./features/Content/MacroContent";
+import MainContent from "./features/Content/MainContent";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

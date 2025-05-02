@@ -1,38 +1,26 @@
 import {faArrowLeft, faArrowRight, faFan, faRotateRight} from "@fortawesome/free-solid-svg-icons";
 import {nanoid} from "nanoid";
-import {useEffect, useState} from "react";
 import {useMatch, useNavigate} from "react-router";
 
 import {RECORD_MODE, ROUTER_ROUTE} from "../../constants/textConstants";
-import WindowTab from "../../features/tab/WindowTab";
+import WindowTab from "../../features/Tab/WindowTab";
 import Button from "../../shared/Button/Button";
 import CircleButton from "../../shared/Button/CircleButton";
 import LoadingCard from "../../shared/Card/LoadingCard";
+import UrlInput from "../../shared/Input/UrlInput";
 import useMacroStore from "../../stores/macro/useMacroStore";
 import useMenuStore from "../../stores/menu/useMenuStore";
 import useTabStore from "../../stores/tab/useTabStore";
 
 function Header() {
-  const [inputUrl, setInputUrl] = useState("");
-  const [isUrlError, setIsUrlError] = useState("");
   const navigate = useNavigate();
 
-  const {browserTabList, resetTabInfo, tabFocusedIndex, setBrowserTabList} = useTabStore();
+  const {browserTabList, resetTabInfo, tabFocusedIndex} = useTabStore();
   const {resetStageList, isMacroRecording, isMacroExecuting} = useMacroStore();
   const {setRecordMode} = useMenuStore();
   const match = useMatch(ROUTER_ROUTE.MACRO);
 
   const focusedTabInfo = browserTabList[tabFocusedIndex] || {};
-
-  useEffect(() => {
-    if (browserTabList[tabFocusedIndex]) {
-      setInputUrl(browserTabList[tabFocusedIndex].tabUrl);
-    }
-  }, [browserTabList, tabFocusedIndex]);
-
-  const handleInput = (event) => {
-    setInputUrl(event.target.value);
-  };
 
   const handleMainClick = () => {
     setRecordMode(RECORD_MODE.STOP);
@@ -42,51 +30,13 @@ function Header() {
     window.sessionStorage.removeItem("resumeMacroList");
   };
 
-  const validationHttpsUrl = (urlString) => {
-    try {
-      const url = new URL(urlString);
-
-      if (url.protocol === "https:" || url.protocol === "http:") {
-        return true;
-      }
-
-      return false;
-    } catch {
-      return false;
-    }
-  };
-
-  const handleInputEnter = (event) => {
-    if (event.key === "Enter") {
-      const isUrl = validationHttpsUrl(inputUrl);
-
-      if (isUrl) {
-        const newBrowserTabList = [...browserTabList];
-        newBrowserTabList[tabFocusedIndex] = {tabUrl: inputUrl};
-
-        setIsUrlError(false);
-        setBrowserTabList(newBrowserTabList);
-      } else {
-        setInputUrl("");
-        setIsUrlError(true);
-      }
-    }
-  };
-
   return (
     <header className="h-[10%] flex flex-col justify-around border">
       <div className="h-[15%] w-full" style={{WebkitAppRegion: "drag"}}></div>
       <div className="h-[35%] w-full flex justify-center">
         <div className="w-[70%] text-right px-10">
           {browserTabList[tabFocusedIndex] ? (
-            <input
-              type="text"
-              value={inputUrl}
-              onChange={handleInput}
-              onKeyDown={handleInputEnter}
-              className="w-200 bg-white py-2 px-4 mx-auto overflow-auto rounded-2xl whitespace-nowrap"
-              placeholder={isUrlError ? "잘못된 URL을 입력했습니다." : "매크로 기록 URL 입력"}
-            />
+            <UrlInput />
           ) : (
             <span className="mx-50 text-white text-2xl">Auto Page</span>
           )}
