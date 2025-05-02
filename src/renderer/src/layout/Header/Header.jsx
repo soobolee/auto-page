@@ -5,7 +5,6 @@ import {useMatch, useNavigate} from "react-router";
 import {RECORD_MODE, ROUTER_ROUTE} from "../../constants/textConstants";
 import WindowTab from "../../features/Tab/WindowTab";
 import Button from "../../shared/Button/Button";
-import CircleButton from "../../shared/Button/CircleButton";
 import LoadingCard from "../../shared/Card/LoadingCard";
 import UrlInput from "../../shared/Input/UrlInput";
 import useMacroStore from "../../stores/macro/useMacroStore";
@@ -46,19 +45,37 @@ function Header() {
           {isMacroExecuting && <LoadingCard shape="spin" icon={faFan} text="매크로 실행 중" />}
         </div>
         <div className="w-[15%] text-right px-3">
-          {match && <Button buttonText={"나가기"} buttonColor={"bg-sub"} onClick={handleMainClick} />}
+          {match && (
+            <Button color="red" onClick={handleMainClick}>
+              나가기
+            </Button>
+          )}
         </div>
       </div>
       <div className="h-[40%] w-full flex items-end overflow-auto">
         {browserTabList.length > 0 && (
           <>
-            <CircleButton icon={faArrowLeft} onClick={focusedTabInfo.goBack} isActive={focusedTabInfo.canGoBack} />
-            <CircleButton
+            <Button
+              variant="circle"
+              size="small"
+              icon={faArrowLeft}
+              onClick={focusedTabInfo.goBack}
+              isActive={focusedTabInfo.canGoBack}
+            />
+            <Button
+              variant="circle"
+              size="small"
               icon={faArrowRight}
               onClick={focusedTabInfo.goForward}
               isActive={focusedTabInfo.canGoForward}
             />
-            <CircleButton icon={faRotateRight} onClick={focusedTabInfo.goReload} isActive={true} />
+            <Button
+              variant="circle"
+              size="small"
+              icon={faRotateRight}
+              onClick={focusedTabInfo.goReload}
+              isActive={true}
+            />
           </>
         )}
         {browserTabList.length > 0 &&

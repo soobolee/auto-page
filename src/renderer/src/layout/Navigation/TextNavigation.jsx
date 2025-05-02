@@ -21,13 +21,19 @@ function TextNavigation() {
 
   return (
     <aside className="w-full h-[15%] p-5 flex justify-between items-center flex-row border col-span-8">
-      <Button buttonText={"시작"} buttonColor={"bg-green"} onClick={startRecord} />
+      <Button color="green" onClick={startRecord}>
+        시작
+      </Button>
       <div className="w-[90%] h-full flex overflow-auto">
         {macroStageList.map((stageInfo) => (
           <StageCard key={nanoid()} direction={"row"} stageInfo={stageInfo} />
         ))}
       </div>
-      {isMacroRecording && <Button buttonText={"정지"} buttonColor={"bg-red"} onClick={finishRecord} />}
+      {isMacroRecording && (
+        <Button color="red" onClick={finishRecord}>
+          정지
+        </Button>
+      )}
     </aside>
   );
 }

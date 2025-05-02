@@ -51,8 +51,12 @@ function NameModal() {
         placeholder="기억하기 쉬운 이름을 적어 주면 좋아요"
       />
       <div>
-        <Button buttonText={"저장"} buttonColor={"bg-green"} onClick={clickModalSave} />
-        <Button buttonText={"취소"} buttonColor={"bg-red"} onClick={clickModalClose} />
+        <Button color="green" onClick={clickModalSave}>
+          저장
+        </Button>
+        <Button color="red" onClick={clickModalClose}>
+          취소
+        </Button>
       </div>
     </div>
   );

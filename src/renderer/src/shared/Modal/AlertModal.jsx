@@ -19,9 +19,13 @@ function AlertModal() {
       </span>
       <div>
         {modalContent.BUTTON && (
-          <Button buttonText={modalContent.BUTTON} buttonColor={"bg-green"} onClick={buttonClick} />
+          <Button color="green" onClick={buttonClick}>
+            {modalContent.BUTTON}
+          </Button>
         )}
-        <Button buttonText={"닫기"} buttonColor={"bg-red"} onClick={clickModalClose} />
+        <Button color="red" onClick={clickModalClose}>
+          닫기
+        </Button>
       </div>
     </div>
   );

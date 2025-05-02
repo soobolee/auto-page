@@ -1,10 +1,11 @@
 import {nanoid} from "nanoid";
 
+import Card from "./Card";
 import PillCard from "./PillCard";
 
 function StageCard({direction, stageInfo}) {
   return (
-    <div className={`${direction === "row" ? "w-50 h-full mx-2" : "w-full h-29 my-2"} shrink-0 border text-white`}>
+    <Card variant="stage" className={`${direction === "row" ? "w-50 h-full mx-2" : "w-full h-29 my-2"}`}>
       {direction === "row" && (
         <div className="w-full h-full p-2 overflow-auto">
           <PillCard cardText={`${stageInfo.tagName} ${stageInfo.method}`} />
@@ -23,7 +24,7 @@ function StageCard({direction, stageInfo}) {
         </div>
       )}
       {direction === "col" && <img className="w-full h-full active-stage" src={stageInfo} />}
-    </div>
+    </Card>
   );
 }
 

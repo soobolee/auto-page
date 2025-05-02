@@ -8,8 +8,15 @@ import useTabStore from "../../stores/tab/useTabStore";
 function WebView({url, isHidden, index}) {
   const {browserTabList, setBrowserTabList, setTabFocusedIndex} = useTabStore();
   const {openAlertModal} = useModalStore();
-  const {macroStageList, macroImageList, isMacroRecording, isMacroExecuting, stopMacroExecute, resetStageList} =
-    useMacroStore();
+  const {
+    macroStageList,
+    macroImageList,
+    isMacroRecording,
+    isMacroExecuting,
+    stopMacroExecute,
+    setMacroStageList,
+    setMacroImageList,
+  } = useMacroStore();
 
   const webViewRef = useRef(null);
 
@@ -23,8 +30,8 @@ function WebView({url, isHidden, index}) {
       macroImageList.push(capturedPage);
     }
 
-    resetStageList([...macroImageList]);
-  }, [macroImageList, openAlertModal, resetStageList]);
+    setMacroImageList([...macroImageList]);
+  }, [macroImageList, openAlertModal, setMacroImageList]);
 
   useEffect(() => {
     const currentWebview = webViewRef.current;
@@ -94,7 +101,7 @@ function WebView({url, isHidden, index}) {
 
       if (event.channel === "macro-end") {
         stopMacroExecute();
-        resetStageList([]);
+        setMacroStageList([]);
         window.sessionStorage.removeItem("resumeMacroList");
       }
 
@@ -136,7 +143,7 @@ function WebView({url, isHidden, index}) {
         }
 
         if (!isDuplicate) {
-          resetStageList([...macroStageList, stageList]);
+          setMacroStageList([...macroStageList, stageList]);
 
           if (stageList.tagName !== "A" || stageList.href.includes("#")) {
             window.sessionStorage.setItem("isEvent", false);
@@ -157,9 +164,9 @@ function WebView({url, isHidden, index}) {
     macroStageList,
     stopMacroExecute,
     setBrowserTabList,
-    resetStageList,
     setTabFocusedIndex,
     capturePage,
+    setMacroStageList,
   ]);
 
   useEffect(() => {

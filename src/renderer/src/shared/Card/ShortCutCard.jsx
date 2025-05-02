@@ -69,8 +69,16 @@ function ShortCutCard({macroItem}) {
         />
         <div className="flex justify-center items-center text-7xl"> = </div>
         <input type="text" defaultValue={macroName} className="w-70 border-2 h-full p-3 bg-tab text-3xl rounded-2xl" />
-        {!isSaveError && <Button buttonText={"저장"} buttonColor={"bg-green"} onClick={saveShortCut} />}
-        {isSaveError && <Button buttonText={"재시도"} buttonColor={"bg-red"} onClick={saveShortCut} />}
+        {!isSaveError && (
+          <Button color={"green"} onClick={saveShortCut}>
+            저장
+          </Button>
+        )}
+        {isSaveError && (
+          <Button color={"bg-red"} onClick={saveShortCut}>
+            재시도
+          </Button>
+        )}
       </div>
     </>
   );
