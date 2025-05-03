@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 
-export default function useUrlInput(setBrowserTabList, browserTabList, tabFocusedIndex) {
+function useUrlInput(setBrowserTabList, browserTabList, tabFocusedIndex) {
   const [inputUrl, setInputUrl] = useState("");
   const [isUrlError, setIsUrlError] = useState(false);
   const [bookmarkUrlList, setBookmarkUrlList] = useState([]);
@@ -56,3 +56,5 @@ export default function useUrlInput(setBrowserTabList, browserTabList, tabFocuse
     handleInputChange,
   };
 }
+
+export default useUrlInput;
