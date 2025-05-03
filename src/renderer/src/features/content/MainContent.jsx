@@ -1,13 +1,11 @@
 import {useEffect} from "react";
-import {useNavigate} from "react-router";
 
-import {ALERT_ERROR_LOAD, ALERT_ERROR_SAVE, MENU_TITLE, NAV_MENU, ROUTER_ROUTE} from "../../constants/textConstants";
+import {ALERT_ERROR_LOAD, ALERT_ERROR_SAVE, MENU_TITLE, NAV_MENU} from "../../constants/textConstants";
+import useShortcutHandler from "../../hooks/useShortcutHandler";
 import Navigation from "../../layout/Navigation/Navigation";
 import useMacroStore from "../../stores/macro/useMacroStore";
 import useMenuStore from "../../stores/menu/useMenuStore";
-import useShortCutStore from "../../stores/menu/useShortCutStore";
 import useModalStore from "../../stores/modal/useModalStore";
-import useTabStore from "../../stores/tab/useTabStore";
 import BookmarkList from "../List/BookmarkList";
 import MacroList from "../List/MacroList";
 import MacroUpdateList from "../List/MacroUpdateList";
@@ -23,12 +21,9 @@ function MainContent() {
     updateTargetMacroName,
     setUpdateTargetMacroName,
   } = useMacroStore();
-  const {shortCutUnitList, setShortCutUnitList} = useShortCutStore();
   const {macroItemList, setMacroItemList} = useMacroStore();
   const {openAlertModal} = useModalStore();
-  const {setBrowserTabList} = useTabStore();
-
-  const navigate = useNavigate();
+  useShortcutHandler(macroItemList, menuMode, setMacroStageList, startMacroExecute);
 
   useEffect(() => {
     async function getMacroItemList() {
@@ -43,60 +38,6 @@ function MainContent() {
 
     getMacroItemList();
   }, [setMacroItemList, openAlertModal]);
-
-  useEffect(() => {
-    const handleShortCut = (event) => {
-      if (event.target.tagName === "INPUT" || menuMode === NAV_MENU.ADDMACRO) {
-        return;
-      }
-
-      setShortCutUnitList([...shortCutUnitList, event.key]);
-
-      if (shortCutUnitList.length === 1) {
-        const macroInfo = macroItemList.find((macroItem) => {
-          if (macroItem.shortCut) {
-            return (
-              macroItem.shortCut.firstKeyUnit === shortCutUnitList[0] && macroItem.shortCut.secondKeyUnit === event.key
-            );
-          }
-        });
-
-        if (!macroInfo) {
-          return;
-        }
-
-        setMacroStageList(macroInfo.stageList);
-        setBrowserTabList([{tabUrl: macroInfo.stageList[0].url}]);
-        startMacroExecute();
-        navigate(ROUTER_ROUTE.MACRO);
-      }
-    };
-
-    const handleKeyup = (event) => {
-      if (event.target.tagName === "INPUT" || menuMode === NAV_MENU.ADDMACRO) {
-        return;
-      }
-
-      setShortCutUnitList([]);
-    };
-
-    document.addEventListener("keydown", handleShortCut);
-    document.addEventListener("keyup", handleKeyup);
-
-    return () => {
-      document.removeEventListener("keydown", handleShortCut);
-      document.removeEventListener("keyup", handleKeyup);
-    };
-  }, [
-    macroItemList,
-    menuMode,
-    navigate,
-    setBrowserTabList,
-    setMacroStageList,
-    setShortCutUnitList,
-    shortCutUnitList,
-    startMacroExecute,
-  ]);
 
   const handleUpdateSelect = async (event) => {
     setUpdateTargetMacroName(event.target.value);

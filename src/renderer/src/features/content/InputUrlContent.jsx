@@ -1,24 +1,10 @@
 import {nanoid} from "nanoid";
-import {useEffect, useState} from "react";
 
+import useBookmarkUrl from "../../hooks/useBookmarkUrl";
 import UrlInput from "../../shared/Input/UrlInput";
-import useTabStore from "../../stores/tab/useTabStore";
 
 function InputUrlContent() {
-  const [bookmarkUrlList, setBookmarkUrlList] = useState([]);
-  const {setBrowserTabList} = useTabStore();
-
-  const handleBookmarkClick = (bookmarkUrl) => {
-    setBrowserTabList([{tabUrl: bookmarkUrl}]);
-  };
-
-  useEffect(() => {
-    const urlList = window.localStorage.getItem("bookmarkUrl") || [];
-
-    if (urlList.length > 0) {
-      setBookmarkUrlList(JSON.parse(urlList));
-    }
-  }, []);
+  const {bookmarkUrlList, handleBookmarkClick} = useBookmarkUrl();
 
   return (
     <article className="flex items-center flex-col col-span-7">
