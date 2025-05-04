@@ -1,38 +1,42 @@
 import pluginJs from "@eslint/js";
-import eslintPluginImport from "eslint-plugin-import";
-import eslintPluginPrettier from "eslint-plugin-prettier";
 import pluginReact from "eslint-plugin-react";
-import eslintPluginReactHooks from "eslint-plugin-react-hooks";
+import pluginReactHooks from "eslint-plugin-react-hooks";
+import eslintPluginPrettier from "eslint-plugin-prettier";
+import * as eslintPluginImport from "eslint-plugin-import";
+import tseslint from "typescript-eslint";
 import globals from "globals";
 
-/** @type {import('eslint').Linter.Config[]} */
+/** @type {import("eslint").Linter.FlatConfig[]} */
 export default [
+  tseslint.configs.recommended,
   pluginJs.configs.recommended,
   pluginReact.configs.flat.recommended,
   pluginReact.configs.flat["jsx-runtime"],
   {
-    ignores: ["dist/", "node_modules/", "build/"],
-    files: ["**/*.{js,mjs,jsx}"],
+    files: ["**/*.{ts,tsx,js,jsx,mts,mtsx}"],
     languageOptions: {
+      parser: tseslint.parser,
+      parserOptions: {
+        project: "./tsconfig.json",
+        tsconfigRootDir: process.cwd(),
+      },
       globals: {...globals.browser, ...globals.node},
     },
     settings: {
-      react: {
-        version: "detect",
-      },
+      react: {version: "detect"},
     },
     plugins: {
-      "react-hooks": eslintPluginReactHooks,
+      "react-hooks": pluginReactHooks,
       prettier: eslintPluginPrettier,
       import: eslintPluginImport,
     },
     rules: {
-      ...eslintPluginReactHooks.configs.recommended.rules,
+      ...pluginReactHooks.configs.recommended.rules,
       ...eslintPluginImport.configs.recommended.rules,
-      semi: "error",
+      "prettier/prettier": "error",
       "no-unused-vars": "warn",
       "import/no-unresolved": "off",
-      "prettier/prettier": "error",
+      semi: "error",
       "react/prop-types": "off",
       "react/no-unknown-property": "off",
     },
