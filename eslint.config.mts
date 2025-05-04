@@ -8,7 +8,7 @@ import globals from "globals";
 
 /** @type {import("eslint").Linter.FlatConfig[]} */
 export default [
-  tseslint.configs.recommended,
+  ...tseslint.configs.recommended,
   pluginJs.configs.recommended,
   pluginReact.configs.flat.recommended,
   pluginReact.configs.flat["jsx-runtime"],

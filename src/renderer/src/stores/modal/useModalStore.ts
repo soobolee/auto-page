@@ -1,9 +1,11 @@
+import {ModalContent} from "@renderer/types/contents";
+import {ModalStore} from "@renderer/types/stores";
 import {create} from "zustand";
 
-const useModalStore = create((set) => ({
+const useModalStore = create<ModalStore>((set) => ({
   isShowInputModal: false,
   isShowAlertModal: false,
-  modalContent: {},
+  modalContent: {} as ModalContent,
   buttonClick: null,
   openInputModal: () => set({isShowInputModal: true}),
   openAlertModal: (modalContent, buttonClick) =>
@@ -16,7 +18,7 @@ const useModalStore = create((set) => ({
     set({
       isShowInputModal: false,
       isShowAlertModal: false,
-      modalContent: {},
+      modalContent: {} as ModalContent,
       buttonClick: null,
     }),
 }));

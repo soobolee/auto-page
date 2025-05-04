@@ -28,6 +28,7 @@ export const NAV_MENU = {
   ADDMACRO: "ADDMACRO",
   SHORTCUT: "SHORTCUT",
 };
+export type MenuMode = (typeof NAV_MENU)[keyof typeof NAV_MENU];
 
 export const NAV_DESCRIPTION = {
   HOME: "홈",
@@ -47,6 +48,7 @@ export const RECORD_MODE = {
   STOP: "stop",
   START: "START",
 };
+export type RecordMode = (typeof RECORD_MODE)[keyof typeof RECORD_MODE];
 
 export const RECORD_AUTO_START = {
   TITLE: "매크로 자동 기록",

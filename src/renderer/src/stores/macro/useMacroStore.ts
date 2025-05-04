@@ -1,6 +1,7 @@
+import {MacroStore} from "@renderer/types/stores";
 import {create} from "zustand";
 
-const useMacroStore = create((set) => ({
+const useMacroStore = create<MacroStore>((set) => ({
   macroItemList: [],
   updateTargetMacroName: "",
   setMacroItemList: (newItemList) => set({macroItemList: newItemList}),

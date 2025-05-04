@@ -1,6 +1,7 @@
+import {TabStore} from "@renderer/types/stores";
 import {create} from "zustand";
 
-const useTabStore = create((set) => ({
+const useTabStore = create<TabStore>((set) => ({
   browserTabList: [],
   tabFocusedIndex: 0,
   setBrowserTabList: (newTabList) => set({browserTabList: newTabList}),
