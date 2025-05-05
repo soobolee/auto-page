@@ -1,11 +1,18 @@
-import {useEffect} from "react";
+import {CapturePage} from "@renderer/types/macro";
+import {MacroStore} from "@renderer/types/stores";
+import {WebviewTag} from "electron";
+import {RefObject, useEffect} from "react";
 
-const useWebviewLoadCapture = (webViewRef, isMacroRecording, capturePage) => {
+type IsMacroRecording = MacroStore["isMacroRecording"];
+
+const useWebviewLoadCapture = (
+  webViewRef: RefObject<WebviewTag>,
+  isMacroRecording: IsMacroRecording,
+  capturePage: CapturePage
+) => {
   useEffect(() => {
     const currentWebview = webViewRef.current;
     if (!currentWebview) return;
-
-    let timerObject = null;
 
     const rectInfo = currentWebview.getBoundingClientRect();
     const webviewSize = {
@@ -15,12 +22,14 @@ const useWebviewLoadCapture = (webViewRef, isMacroRecording, capturePage) => {
       height: rectInfo.height,
     };
 
+    let timerObject: ReturnType<typeof setTimeout> | number = 0;
+
     if (rectInfo.width && rectInfo.height) {
       window.sessionStorage.setItem("webviewSize", JSON.stringify(webviewSize));
     }
 
     const captureLoadedPage = () => {
-      const isEvent = window.sessionStorage.getItem("isEvent");
+      const isEvent: string = window.sessionStorage.getItem("isEvent") || "";
 
       if (!isMacroRecording || !JSON.parse(isEvent)) return;
 
@@ -29,7 +38,7 @@ const useWebviewLoadCapture = (webViewRef, isMacroRecording, capturePage) => {
       if (timerObject) clearTimeout(timerObject);
 
       timerObject = setTimeout(() => {
-        window.sessionStorage.setItem("isEvent", false);
+        window.sessionStorage.setItem("isEvent", JSON.stringify(false));
         capturePage();
       }, 500);
     };

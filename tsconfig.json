@@ -19,6 +19,6 @@
       "@renderer/*": ["src/renderer/src/*"],
     }
   },
-  "include": ["src"],
+  "include": ["src", "eslint.config.mjs"],
   "exclude": ["dist", "node_modules"]
 }

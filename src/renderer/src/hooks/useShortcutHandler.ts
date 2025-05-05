@@ -1,19 +1,34 @@
+import {MacroItem} from "@renderer/types/macro";
+import {MacroStore} from "@renderer/types/stores";
 import {useEffect} from "react";
 import {useNavigate} from "react-router";
 
-import {NAV_MENU, ROUTER_ROUTE} from "../constants/textConstants";
+import {MenuMode, NAV_MENU, ROUTER_ROUTE} from "../constants/textConstants";
 import useShortCutStore from "../stores/menu/useShortCutStore";
 import useTabStore from "../stores/tab/useTabStore";
 
-const useShortcutHandler = (macroItemList, menuMode, setMacroStageList, startMacroExecute) => {
+type SetMacroStageList = MacroStore["setMacroStageList"];
+type startMacroExecute = MacroStore["startMacroExecute"];
+
+const useShortcutHandler = (
+  macroItemList: MacroItem[],
+  menuMode: MenuMode,
+  setMacroStageList: SetMacroStageList,
+  startMacroExecute: startMacroExecute
+) => {
   const {shortCutUnitList, setShortCutUnitList} = useShortCutStore();
   const {setBrowserTabList} = useTabStore();
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    const handleShortCut = (event) => {
-      if (event.target.tagName === "INPUT" || menuMode === NAV_MENU.ADDMACRO) {
+    const handleShortCut = (event: KeyboardEvent): void => {
+      const target = event.target;
+
+      if (!target || !(target instanceof HTMLElement)) {
+        return;
+      }
+      if (target.tagName === "INPUT" || menuMode === NAV_MENU.ADDMACRO) {
         return;
       }
 
@@ -40,8 +55,13 @@ const useShortcutHandler = (macroItemList, menuMode, setMacroStageList, startMac
       }
     };
 
-    const handleKeyup = (event) => {
-      if (event.target.tagName === "INPUT" || menuMode === NAV_MENU.ADDMACRO) {
+    const handleKeyup = (event: KeyboardEvent): void => {
+      const target = event.target;
+
+      if (!target || !(target instanceof HTMLElement)) {
+        return;
+      }
+      if (target.tagName === "INPUT" || menuMode === NAV_MENU.ADDMACRO) {
         return;
       }
 

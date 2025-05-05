@@ -28,5 +28,11 @@ export interface MacroItem {
   image?: MacroImage[];
   birthTime: Date;
   accessTime: Date;
+  shortCut: {
+    firstKeyUnit: string;
+    secondKeyUnit: string;
+  };
   [key: string]: unknown;
 }
+
+export type CapturePage = () => Promise<void>;

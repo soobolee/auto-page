@@ -1,10 +1,12 @@
-import {useEffect} from "react";
+import {CapturePage} from "@renderer/types/macro";
+import {IpcMessageEvent, WebviewTag} from "electron";
+import {RefObject, useEffect} from "react";
 
 import useMacroStore from "../stores/macro/useMacroStore";
 import useModalStore from "../stores/modal/useModalStore";
 import useTabStore from "../stores/tab/useTabStore";
 
-const useWebviewMacroEvent = (webViewRef, capturePage) => {
+const useWebviewMacroEvent = (webViewRef: RefObject<WebviewTag>, capturePage: CapturePage) => {
   const {setBrowserTabList, setTabFocusedIndex, browserTabList} = useTabStore();
   const {macroStageList, macroImageList, isMacroRecording, stopMacroExecute, setMacroStageList, setMacroImageList} =
     useMacroStore();
@@ -32,7 +34,7 @@ const useWebviewMacroEvent = (webViewRef, capturePage) => {
       currentWebview.send("end-input");
     };
 
-    const handleWebviewEvent = (event) => {
+    const handleWebviewEvent = (event: IpcMessageEvent): void => {
       switch (event.channel) {
         case "macro-stop": {
           window.sessionStorage.setItem("resumeMacroList", JSON.stringify(event.args[0]));
@@ -69,7 +71,7 @@ const useWebviewMacroEvent = (webViewRef, capturePage) => {
           let isDuplicate = false;
 
           if (stageList.tagName === "A" || stageList.href) {
-            window.sessionStorage.setItem("isEvent", true);
+            window.sessionStorage.setItem("isEvent", JSON.stringify(true));
           }
 
           if (lastStage) {
@@ -87,7 +89,7 @@ const useWebviewMacroEvent = (webViewRef, capturePage) => {
             setMacroStageList([...macroStageList, stageList]);
 
             if (stageList.tagName !== "A" || stageList.href.includes("#")) {
-              window.sessionStorage.setItem("isEvent", false);
+              window.sessionStorage.setItem("isEvent", JSON.stringify(false));
               capturePage();
             }
           }

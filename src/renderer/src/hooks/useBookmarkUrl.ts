@@ -2,16 +2,16 @@ import {useEffect, useState} from "react";
 
 import useTabStore from "../stores/tab/useTabStore";
 
-function useBookmarkUrl() {
-  const [bookmarkUrlList, setBookmarkUrlList] = useState([]);
+const useBookmarkUrl = () => {
+  const [bookmarkUrlList, setBookmarkUrlList] = useState<string[]>([]);
   const {setBrowserTabList} = useTabStore();
 
-  const handleBookmarkClick = (bookmarkUrl) => {
+  const handleBookmarkClick = (bookmarkUrl: string) => {
     setBrowserTabList([{tabUrl: bookmarkUrl}]);
   };
 
   useEffect(() => {
-    const urlList = window.localStorage.getItem("bookmarkUrl") || [];
+    const urlList: string = window.localStorage.getItem("bookmarkUrl") || "";
 
     if (urlList.length > 0) {
       setBookmarkUrlList(JSON.parse(urlList));
@@ -19,6 +19,6 @@ function useBookmarkUrl() {
   }, []);
 
   return {bookmarkUrlList, handleBookmarkClick};
-}
+};
 
 export default useBookmarkUrl;
