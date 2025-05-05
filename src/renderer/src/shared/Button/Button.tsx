@@ -1,6 +1,26 @@
+import {IconDefinition} from "@fortawesome/fontawesome-common-types";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {JSX, MouseEventHandler, ReactNode} from "react";
 
-function Button({children, variant = "default", size = "medium", color = "sub", onClick, icon, isActive}) {
+interface ButtonProps {
+  children?: ReactNode;
+  variant?: "default" | "circle";
+  size?: "small" | "medium";
+  color?: "sub" | "green" | "red";
+  onClick?: MouseEventHandler<HTMLButtonElement>;
+  icon?: IconDefinition;
+  isActive?: boolean;
+}
+
+function Button({
+  children,
+  variant = "default",
+  size = "medium",
+  color = "sub",
+  onClick,
+  icon,
+  isActive,
+}: ButtonProps): JSX.Element {
   const baseStyles = "cursor-pointer";
   const variantStyles = {
     default: "rounded-2xl",

@@ -33,9 +33,9 @@ export interface ModalStore {
   isShowInputModal: boolean;
   isShowAlertModal: boolean;
   modalContent: ModalContent;
-  buttonClick: (() => void) | null;
+  buttonClick?: () => void;
   openInputModal: () => void;
-  openAlertModal: (content: ModalContent, callback: () => void) => void;
+  openAlertModal: (content: ModalContent, callback?: () => void) => void;
   closeModal: () => void;
 }
 

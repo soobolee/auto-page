@@ -1,5 +1,5 @@
 import {TabStore} from "@renderer/types/stores";
-import {KeyboardEvent, useEffect, useState} from "react";
+import {ChangeEvent, KeyboardEvent, useEffect, useState} from "react";
 
 type SetBrowserTabList = TabStore["setBrowserTabList"];
 type BrowserTabList = TabStore["browserTabList"];
@@ -41,7 +41,7 @@ const useUrlInput = (
     }
   };
 
-  const handleInputChange = (event: KeyboardEvent<HTMLInputElement>): void => {
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>): void => {
     const target = event.target;
     if (!target || !(target instanceof HTMLInputElement)) {
       return;

@@ -6,7 +6,7 @@ const useModalStore = create<ModalStore>((set) => ({
   isShowInputModal: false,
   isShowAlertModal: false,
   modalContent: {} as ModalContent,
-  buttonClick: null,
+  buttonClick: undefined,
   openInputModal: () => set({isShowInputModal: true}),
   openAlertModal: (modalContent, buttonClick) =>
     set({
@@ -19,7 +19,7 @@ const useModalStore = create<ModalStore>((set) => ({
       isShowInputModal: false,
       isShowAlertModal: false,
       modalContent: {} as ModalContent,
-      buttonClick: null,
+      buttonClick: undefined,
     }),
 }));
 

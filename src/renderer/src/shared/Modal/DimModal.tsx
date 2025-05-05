@@ -1,11 +1,13 @@
+import {JSX, MouseEvent} from "react";
+
 import useModalStore from "../../stores/modal/useModalStore";
 import AlertModal from "./AlertModal";
 import InputModal from "./InputModal";
 
-function DimModal() {
+function DimModal(): JSX.Element {
   const {isShowInputModal, isShowAlertModal} = useModalStore();
 
-  const handleEvent = (event) => {
+  const handleEvent = (event: MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
   };
 

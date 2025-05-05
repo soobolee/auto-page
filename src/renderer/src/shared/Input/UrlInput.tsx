@@ -1,7 +1,9 @@
+import {JSX} from "react";
+
 import useUrlInput from "../../hooks/useUrlInput";
 import useTabStore from "../../stores/tab/useTabStore";
 
-function UrlInput() {
+function UrlInput(): JSX.Element {
   const {setBrowserTabList, browserTabList, tabFocusedIndex} = useTabStore();
 
   const {inputUrl, isUrlError, handleInputEnter, handleInputChange} = useUrlInput(

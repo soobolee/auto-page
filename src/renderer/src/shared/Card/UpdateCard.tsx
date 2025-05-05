@@ -1,4 +1,5 @@
-import {useState} from "react";
+import {MacroClass, MacroStage} from "@renderer/types/macro";
+import {ChangeEvent, JSX, useState} from "react";
 
 import {
   ALERT_DELETE_STAGE,
@@ -11,8 +12,13 @@ import useMacroStore from "../../stores/macro/useMacroStore";
 import useMenuStore from "../../stores/menu/useMenuStore";
 import useModalStore from "../../stores/modal/useModalStore";
 
-function UpdateCard({stageItem, index}) {
-  const [formData, setFormData] = useState(stageItem || {class: [{}]});
+interface UpdateCardProps {
+  stageItem: MacroStage;
+  index: number;
+}
+
+function UpdateCard({stageItem, index}: UpdateCardProps): JSX.Element {
+  const [formData, setFormData] = useState<MacroStage>(stageItem || {class: [{}], url: ""});
   const {
     macroStageList,
     macroImageList,
@@ -24,17 +30,19 @@ function UpdateCard({stageItem, index}) {
   const {setMenuMode} = useMenuStore();
   const {openAlertModal, closeModal} = useModalStore();
 
-  const handleInputValue = (event) => {
+  const handleInputValue = (event: ChangeEvent<HTMLInputElement>): void => {
     const {name, value} = event.target;
 
     if (name.includes("class")) {
       const classIndex = name.split("-")[1];
-      const newClassArray = formData.class.map((classInfo, index) => {
-        if (index === parseInt(classIndex)) {
-          return {...classInfo, [name.split("-")[0]]: value};
-        }
-        return classInfo;
-      });
+      const newClassArray = formData.class
+        ? formData.class.map((classInfo: MacroClass, idx: number) => {
+            if (idx === parseInt(classIndex)) {
+              return {...classInfo, [name.split("-")[0]]: value};
+            }
+            return classInfo;
+          })
+        : [];
 
       setFormData({...formData, class: newClassArray});
     } else {
@@ -42,8 +50,8 @@ function UpdateCard({stageItem, index}) {
     }
   };
 
-  const handleDeleteButton = () => {
-    const clickDelete = async () => {
+  const handleDeleteButton = (): void => {
+    const clickDelete = async (): Promise<void> => {
       const newStageList = [...macroStageList];
       const newImageList = macroImageList ? [...macroImageList] : [];
 
@@ -51,17 +59,17 @@ function UpdateCard({stageItem, index}) {
       newImageList.splice(index, 1);
 
       if (newStageList.length === 0 && newImageList.length === 0) {
-        const deletedList = window.electronAPI.deleteMacroAndImage(updateTargetMacroName, true);
+        const deletedList = await window.electronAPI.saveMacro(updateTargetMacroName, [], "stageList");
 
         if (!deletedList) {
           openAlertModal(ALERT_ERROR_DELETE);
         }
 
-        setMacroItemList(deletedList);
+        setMacroItemList([]);
         setMenuMode(NAV_MENU.HOME);
       } else {
         const savedStageResult = await window.electronAPI.saveMacro(updateTargetMacroName, newStageList, "stageList");
-        const savedImageResult = await window.electronAPI.saveMacro(updateTargetMacroName, newImageList, "image");
+        const savedImageResult = await window.electronAPI.saveImage(updateTargetMacroName, newImageList);
 
         if (savedStageResult && savedImageResult) {
           setMacroStageList(newStageList);
@@ -77,8 +85,8 @@ function UpdateCard({stageItem, index}) {
     openAlertModal(ALERT_DELETE_STAGE, clickDelete);
   };
 
-  const handleSaveButton = () => {
-    const clickSave = async () => {
+  const handleSaveButton = (): void => {
+    const clickSave = async (): Promise<void> => {
       const newList = [...macroStageList];
       newList[index] = formData;
 
@@ -104,7 +112,7 @@ function UpdateCard({stageItem, index}) {
           <input
             type="text"
             name="tagName"
-            value={formData.tagName}
+            value={formData.tagName || ""}
             onChange={handleInputValue}
             className="w-[70%] my-2 h-8 p-2 inline-block border rounded-lg"
             placeholder="A, BUTTON, INPUT 이벤트 태그"
@@ -115,21 +123,21 @@ function UpdateCard({stageItem, index}) {
           <input
             type="text"
             name="id"
-            value={formData.id}
+            value={formData.id || ""}
             onChange={handleInputValue}
             className="w-[70%] my-2 h-8 p-2 inline-block border rounded-lg"
             placeholder="[class 교차선택, 대소문자] # 제외"
           />
         </li>
         {formData.class &&
-          formData.class.map((classInfo, index) => {
+          formData.class.map((classInfo: MacroClass, idx: number) => {
             return (
-              <li key={`classInfo${index}`}>
+              <li key={`classInfo${idx}`}>
                 <label className="w-25 inline-block">타겟 Class</label>
                 <input
                   type="text"
-                  name={`className-${index}`}
-                  value={classInfo.className}
+                  name={`className-${idx}`}
+                  value={classInfo.className || ""}
                   onChange={handleInputValue}
                   className="w-[29%] my-2 h-8 p-2 inline-block border mr-4 rounded-lg"
                   placeholder="[id 교차선택, 대소문자] . 제외"
@@ -137,8 +145,8 @@ function UpdateCard({stageItem, index}) {
                 <label className="w-20 inline-block">타겟 Index</label>
                 <input
                   type="text"
-                  name={`classIndex-${index}`}
-                  value={classInfo.classIndex}
+                  name={`classIndex-${idx}`}
+                  value={classInfo.classIndex || ""}
                   onChange={handleInputValue}
                   className="w-[29%] my-2 h-8 p-2 inline-block border rounded-lg"
                   placeholder="[선택 - 기본 : 0] 숫자만 입력"
@@ -162,7 +170,7 @@ function UpdateCard({stageItem, index}) {
           <input
             type="text"
             name="href"
-            value={formData.href}
+            value={formData.href || ""}
             onChange={handleInputValue}
             className="w-[70%] my-2 h-8 p-2 inline-block border rounded-lg"
             placeholder="[선택] https://www.example.com/login"
@@ -173,14 +181,14 @@ function UpdateCard({stageItem, index}) {
           <input
             type="text"
             name="value"
-            value={formData.value}
+            value={formData.value || ""}
             onChange={handleInputValue}
             className="w-[70%] my-2 h-8 p-2 inline-block border rounded-lg"
             placeholder="[선택] input태그에 입력하고 싶은 값"
           />
         </li>
         <li>
-          <input type="hidden" name="method" value={formData.value} />
+          <input type="hidden" name="method" value={formData.method || ""} />
         </li>
       </ul>
       <div className="relative w-[35%] h-full p-3">

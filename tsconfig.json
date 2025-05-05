@@ -5,6 +5,7 @@
     "moduleResolution": "Node",
     "lib": ["DOM", "ESNext"],
     "jsx": "react-jsx",
+    "types": ["react", "node"],
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,

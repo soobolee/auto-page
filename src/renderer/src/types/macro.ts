@@ -1,7 +1,6 @@
 export interface MacroClass {
   className: string;
   classIndex?: number;
-  [key: string]: unknown;
 }
 
 export interface MacroStage {
@@ -16,11 +15,7 @@ export interface MacroStage {
   [key: string]: unknown;
 }
 
-export interface MacroImage {
-  id: string;
-  data: string;
-  [key: string]: unknown;
-}
+export type MacroImage = string;
 
 export interface MacroItem {
   macroName: string;

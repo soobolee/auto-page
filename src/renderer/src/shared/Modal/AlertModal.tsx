@@ -1,9 +1,10 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {JSX} from "react";
 
 import useModalStore from "../../stores/modal/useModalStore";
 import Button from "../Button/Button";
 
-function AlertModal() {
+function AlertModal(): JSX.Element {
   const {modalContent, buttonClick, closeModal} = useModalStore();
 
   const clickModalClose = () => {

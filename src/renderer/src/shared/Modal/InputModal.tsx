@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {ChangeEvent, JSX, useState} from "react";
 import {useNavigate} from "react-router";
 
 import {ALERT_ERROR_SAVE, RECORD_MODE, ROUTER_ROUTE} from "../../constants/textConstants";
@@ -8,7 +8,7 @@ import useModalStore from "../../stores/modal/useModalStore";
 import useTabStore from "../../stores/tab/useTabStore";
 import Button from "../Button/Button";
 
-function NameModal() {
+function InputModal(): JSX.Element {
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState("");
   const {openAlertModal, closeModal} = useModalStore();
@@ -16,7 +16,7 @@ function NameModal() {
   const {macroStageList, macroImageList, resetStageList, stopMacroRecord} = useMacroStore();
   const {setRecordMode} = useMenuStore();
 
-  const clickModalSave = () => {
+  const clickModalSave = (): void => {
     const saveMacroResult = window.electronAPI.saveMacro(inputValue, macroStageList, "stageList");
     const saveImageResult = window.electronAPI.saveImage(inputValue, macroImageList);
     stopMacroRecord();
@@ -32,11 +32,11 @@ function NameModal() {
     navigate(ROUTER_ROUTE.MAIN);
   };
 
-  const inputMacroName = (event) => {
+  const inputMacroName = (event: ChangeEvent<HTMLInputElement>): void => {
     setInputValue(event.target.value);
   };
 
-  const clickModalClose = () => {
+  const clickModalClose = (): void => {
     closeModal();
   };
 
@@ -62,4 +62,4 @@ function NameModal() {
   );
 }
 
-export default NameModal;
+export default InputModal;
