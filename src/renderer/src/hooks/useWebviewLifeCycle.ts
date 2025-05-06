@@ -10,18 +10,24 @@ const useWebviewLifecycle = (webViewRef: RefObject<WebviewTag>, index: number) =
 
   useEffect(() => {
     const currentWebview = webViewRef.current;
-    if (!currentWebview) return;
+    if (!currentWebview) {
+      return;
+    }
 
     const handleDomReady = (): void => {
       if (isMacroExecuting) {
         const resumeMacroList: string = window.sessionStorage.getItem("resumeMacroList") || "";
-        window.sessionStorage.removeItem("resumeMacroList");
+        let parseResumeMacroList = null;
 
         if (resumeMacroList) {
-          const parsed = JSON.parse(resumeMacroList);
-          const listToSend = parsed && parsed.length > 0 ? parsed : macroStageList;
+          window.sessionStorage.removeItem("resumeMacroList");
+          parseResumeMacroList = JSON.parse(resumeMacroList);
+        }
 
-          currentWebview.send("auto-macro", listToSend);
+        if (parseResumeMacroList && parseResumeMacroList.length > 0) {
+          currentWebview.send("auto-macro", parseResumeMacroList);
+        } else {
+          currentWebview.send("auto-macro", macroStageList);
         }
       }
 

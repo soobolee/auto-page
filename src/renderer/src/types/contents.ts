@@ -6,3 +6,8 @@ export interface ModalContent {
   ICON: IconDefinition;
   BUTTON?: string;
 }
+
+export interface ShortCut {
+  firstKeyUnit: string;
+  secondKeyUnit: string;
+}

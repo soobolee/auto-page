@@ -27,6 +27,7 @@ export interface MacroItem {
     firstKeyUnit: string;
     secondKeyUnit: string;
   };
+  bookmark: boolean;
   [key: string]: unknown;
 }
 

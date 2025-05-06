@@ -1,4 +1,5 @@
-import {useState} from "react";
+import {MacroItem} from "@renderer/types/macro";
+import {JSX, useState} from "react";
 
 import {ALERT_DUPLICATED_URL, NAV_MENU} from "../../constants/textConstants";
 import useMacroStore from "../../stores/macro/useMacroStore";
@@ -6,7 +7,7 @@ import useMenuStore from "../../stores/menu/useMenuStore";
 import useModalStore from "../../stores/modal/useModalStore";
 import Button from "../Button/Button";
 
-function ShortCutCard({macroItem}) {
+function ShortCutCard({macroItem}: {macroItem: MacroItem}): JSX.Element {
   const macroName = macroItem.macroName;
   const shortCutItem = macroItem.shortCut || {};
 
@@ -75,7 +76,7 @@ function ShortCutCard({macroItem}) {
           </Button>
         )}
         {isSaveError && (
-          <Button color={"bg-red"} onClick={saveShortCut}>
+          <Button color={"red"} onClick={saveShortCut}>
             재시도
           </Button>
         )}

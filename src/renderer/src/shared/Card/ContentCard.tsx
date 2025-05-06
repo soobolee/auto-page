@@ -1,4 +1,5 @@
-import {useState} from "react";
+import {MacroItem} from "@renderer/types/macro";
+import {JSX, MouseEvent, useState} from "react";
 
 import {
   ALERT_DELETE_MACRO,
@@ -12,7 +13,7 @@ import useMenuStore from "../../stores/menu/useMenuStore";
 import useModalStore from "../../stores/modal/useModalStore";
 import IconMenuCard from "./IconMenuCard";
 
-function ContentCard({macroItem, onClick}) {
+function ContentCard({macroItem, onClick}: {macroItem: MacroItem; onClick: () => void}): JSX.Element {
   const [isBookmark, setIsBookmark] = useState(macroItem.bookmark);
   const {setMacroItemList} = useMacroStore();
   const {setMacroStageList, setMacroImageList, setUpdateTargetMacroName} = useMacroStore();
@@ -27,7 +28,7 @@ function ContentCard({macroItem, onClick}) {
   const birthTime = `${birthDateObject.getFullYear()}-${birthDateObject.getMonth() + 1}-${birthDateObject.getDate()}`;
   const accessTime = `${accessDateObject.getFullYear()}-${accessDateObject.getMonth() + 1}-${accessDateObject.getDate()}`;
 
-  const handleBookmark = async (event) => {
+  const handleBookmark = async (event: MouseEvent<HTMLSpanElement>) => {
     event.stopPropagation();
 
     if (macroItem.bookmark) {
@@ -52,7 +53,7 @@ function ContentCard({macroItem, onClick}) {
     }
   };
 
-  const handleUpdate = async (event) => {
+  const handleUpdate = async (event: MouseEvent<HTMLSpanElement>) => {
     event.stopPropagation();
     const imageList = await window.electronAPI.getMacroItem("image", macroName);
     const macroList = await window.electronAPI.getMacroItem("stageList", macroName);
@@ -62,12 +63,16 @@ function ContentCard({macroItem, onClick}) {
     }
 
     setUpdateTargetMacroName(macroName);
-    setMacroImageList(imageList.image);
-    setMacroStageList(macroList.stageList);
+    if ("image" in imageList) {
+      setMacroImageList(imageList.image);
+    }
+    if ("stageList" in macroList) {
+      setMacroStageList(macroList.stageList);
+    }
     setMenuMode(NAV_MENU.ADDMACRO);
   };
 
-  const handleDelete = (event) => {
+  const handleDelete = (event: MouseEvent<HTMLSpanElement>) => {
     event.stopPropagation();
 
     const macroDelete = async () => {
@@ -76,9 +81,10 @@ function ContentCard({macroItem, onClick}) {
       if (!deletedMacroList) {
         openAlertModal(ALERT_ERROR_DELETE);
       }
-
-      setMacroItemList(deletedMacroList);
-      closeModal();
+      if (Array.isArray(deletedMacroList)) {
+        setMacroItemList(deletedMacroList);
+        closeModal();
+      }
     };
 
     openAlertModal(ALERT_DELETE_MACRO, macroDelete);
