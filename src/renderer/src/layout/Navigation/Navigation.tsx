@@ -7,8 +7,8 @@ import NavItem from "./NavItem";
 
 function Navigation() {
   const {menuMode, setMenuMode} = useMenuStore();
-  const {resetStageList, isMacroRecording} = useMacroStore();
-  const navIconKeyList = Object.keys(NAV_ICON);
+  const {resetStageList} = useMacroStore();
+  const navIconKeyList = Object.keys(NAV_ICON) as (keyof typeof NAV_ICON)[];
 
   return (
     <nav className="w-[10%] h-[100%] bg-sub border overflow-y-auto">

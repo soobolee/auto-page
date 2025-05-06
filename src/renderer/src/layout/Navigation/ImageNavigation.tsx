@@ -1,9 +1,10 @@
 import {nanoid} from "nanoid";
+import {JSX} from "react";
 
 import StageCard from "../../shared/Card/StageCard";
 import useMacroStore from "../../stores/macro/useMacroStore";
 
-function ImageNavigation() {
+function ImageNavigation(): JSX.Element | boolean {
   const {macroImageList, isMacroRecording} = useMacroStore();
 
   return (

@@ -1,19 +1,20 @@
 import {nanoid} from "nanoid";
+import {JSX} from "react";
 
 import Button from "../../shared/Button/Button";
 import StageCard from "../../shared/Card/StageCard";
 import useMacroStore from "../../stores/macro/useMacroStore";
 import useModalStore from "../../stores/modal/useModalStore";
 
-function TextNavigation() {
+function TextNavigation(): JSX.Element {
   const {macroStageList, startMacroRecord, isMacroRecording} = useMacroStore();
   const {openInputModal} = useModalStore();
 
-  const startRecord = () => {
+  const startRecord = (): void => {
     startMacroRecord();
   };
 
-  const finishRecord = () => {
+  const finishRecord = (): void => {
     if (macroStageList.length > 1) {
       openInputModal();
     }
