@@ -6,7 +6,7 @@ import {RefObject, useEffect} from "react";
 type IsMacroRecording = MacroStore["isMacroRecording"];
 
 const useWebviewLoadCapture = (
-  webViewRef: RefObject<WebviewTag>,
+  webViewRef: RefObject<WebviewTag | null>,
   isMacroRecording: IsMacroRecording,
   capturePage: CapturePage
 ) => {

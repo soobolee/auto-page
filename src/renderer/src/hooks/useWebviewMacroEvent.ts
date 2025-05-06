@@ -6,7 +6,7 @@ import useMacroStore from "../stores/macro/useMacroStore";
 import useModalStore from "../stores/modal/useModalStore";
 import useTabStore from "../stores/tab/useTabStore";
 
-const useWebviewMacroEvent = (webViewRef: RefObject<WebviewTag>, capturePage: CapturePage) => {
+const useWebviewMacroEvent = (webViewRef: RefObject<WebviewTag | null>, capturePage: CapturePage) => {
   const {setBrowserTabList, setTabFocusedIndex, browserTabList} = useTabStore();
   const {macroStageList, macroImageList, isMacroRecording, stopMacroExecute, setMacroStageList, setMacroImageList} =
     useMacroStore();

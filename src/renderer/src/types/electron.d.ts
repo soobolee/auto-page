@@ -17,6 +17,7 @@ declare global {
         macroName: string
       ) => Promise<{image: MacroImage[]} | {stageList: MacroStage[]} | {shortCut: ShortCut}>;
       deleteMacroAndImage: (macroName: string, flag: boolean) => Promise<boolean | MacroItem[]>;
+      capturePage: (webviewSize: string) => string | null;
     };
   }
 }

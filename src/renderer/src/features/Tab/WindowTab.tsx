@@ -1,7 +1,15 @@
+import {JSX} from "react";
+
 import useMacroStore from "../../stores/macro/useMacroStore";
 import useTabStore from "../../stores/tab/useTabStore";
 
-function WindowTab({index, title, isHidden}) {
+interface WindowTabProps {
+  index: number;
+  title: string;
+  isHidden: boolean;
+}
+
+function WindowTab({index, title, isHidden}: WindowTabProps): JSX.Element {
   const {browserTabList, tabFocusedIndex, setBrowserTabList, setTabFocusedIndex} = useTabStore();
   const {resetStageList} = useMacroStore();
 

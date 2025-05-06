@@ -4,7 +4,7 @@ import {RefObject, useEffect} from "react";
 import useMacroStore from "../stores/macro/useMacroStore";
 import useTabStore from "../stores/tab/useTabStore";
 
-const useWebviewLifecycle = (webViewRef: RefObject<WebviewTag>, index: number) => {
+const useWebviewLifecycle = (webViewRef: RefObject<WebviewTag | null>, index: number) => {
   const {browserTabList, setBrowserTabList} = useTabStore();
   const {isMacroExecuting, macroStageList} = useMacroStore();
 

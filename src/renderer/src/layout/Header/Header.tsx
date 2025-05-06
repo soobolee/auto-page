@@ -1,5 +1,6 @@
 import {faArrowLeft, faArrowRight, faFan, faRotateRight} from "@fortawesome/free-solid-svg-icons";
 import {nanoid} from "nanoid";
+import {CSSProperties, JSX} from "react";
 import {useMatch, useNavigate} from "react-router";
 
 import {RECORD_MODE, ROUTER_ROUTE} from "../../constants/textConstants";
@@ -11,7 +12,7 @@ import useMacroStore from "../../stores/macro/useMacroStore";
 import useMenuStore from "../../stores/menu/useMenuStore";
 import useTabStore from "../../stores/tab/useTabStore";
 
-function Header() {
+function Header(): JSX.Element {
   const navigate = useNavigate();
 
   const {browserTabList, resetTabInfo, tabFocusedIndex} = useTabStore();
@@ -21,17 +22,18 @@ function Header() {
 
   const focusedTabInfo = browserTabList[tabFocusedIndex] || {};
 
-  const handleMainClick = () => {
+  const handleMainClick = (): void => {
     setRecordMode(RECORD_MODE.STOP);
     resetStageList();
     resetTabInfo();
     navigate(ROUTER_ROUTE.MAIN);
     window.sessionStorage.removeItem("resumeMacroList");
   };
+  console.log(browserTabList);
 
   return (
     <header className="h-[10%] flex flex-col justify-around border">
-      <div className="h-[15%] w-full" style={{WebkitAppRegion: "drag"}}></div>
+      <div className="h-[15%] w-full" style={{WebkitAppRegion: "drag"} as CSSProperties}></div>
       <div className="h-[35%] w-full flex justify-center">
         <div className="w-[70%] text-right px-10">
           {browserTabList[tabFocusedIndex] ? (
@@ -79,7 +81,7 @@ function Header() {
           </>
         )}
         {browserTabList.length > 0 &&
-          browserTabList.map((tab, index) => (
+          browserTabList.map((tab, index: number) => (
             <WindowTab key={nanoid()} title={tab.title} index={index} isHidden={tabFocusedIndex === index} />
           ))}
       </div>

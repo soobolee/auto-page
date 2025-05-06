@@ -1,5 +1,5 @@
 import {MenuMode, RecordMode} from "../constants/textConstants";
-import {ModalContent} from "./contents";
+import {ModalContent, TabItem} from "./contents";
 import {MacroImage, MacroItem, MacroStage} from "./macro";
 
 export interface MenuStore {
@@ -40,7 +40,7 @@ export interface ModalStore {
 }
 
 export interface TabStore {
-  browserTabList: Record<string, unknown>[];
+  browserTabList: TabItem[];
   tabFocusedIndex: number;
   setBrowserTabList: (list: Record<string, unknown>[]) => void;
   setTabFocusedIndex: (index: number) => void;
