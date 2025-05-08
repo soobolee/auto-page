@@ -1,3 +1,5 @@
+import {TabItem} from "@renderer/types/contents";
+
 import {RECORD_MODE} from "../../constants/textConstants";
 import ImageNavigation from "../../layout/Navigation/ImageNavigation";
 import TextNavigation from "../../layout/Navigation/TextNavigation";
@@ -19,7 +21,7 @@ function MacroContent() {
       >
         {browserTabList.length <= 0 && <InputUrlContent />}
         {browserTabList.length > 0 &&
-          browserTabList.map((tab, index) => {
+          browserTabList.map((tab: TabItem, index: number) => {
             return (
               <WebView
                 key={`${tab.tabUrl}-${index}`}

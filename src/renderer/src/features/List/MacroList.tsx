@@ -1,3 +1,4 @@
+import {MacroItem} from "@renderer/types/macro";
 import {nanoid} from "nanoid";
 import {useNavigate} from "react-router";
 
@@ -7,7 +8,7 @@ import EmptyCard from "../../shared/Card/EmptyCard";
 import useMacroStore from "../../stores/macro/useMacroStore";
 import useTabStore from "../../stores/tab/useTabStore";
 
-function MacroList({macroItemList}) {
+function MacroList({macroItemList}: {macroItemList: MacroItem[]}) {
   const {setMacroStageList, startMacroExecute} = useMacroStore();
   const {setBrowserTabList} = useTabStore();
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ function MacroList({macroItemList}) {
   return (
     <div className="w-full h-full p-16 flex justify-center flex-row flex-wrap overflow-auto">
       {macroItemList.length > 0 &&
-        macroItemList.map((item) => (
+        macroItemList.map((item: MacroItem) => (
           <ContentCard
             key={nanoid()}
             macroItem={item}

@@ -14,7 +14,7 @@ function InputUrlContent() {
       </div>
       <div className="flex justify-center w-[70%] overflow-x-auto">
         {bookmarkUrlList.length > 0 &&
-          bookmarkUrlList.map((bookmarkUrl) => (
+          bookmarkUrlList.map((bookmarkUrl: string) => (
             <button
               key={nanoid()}
               className="h-10 mx-1 p-2 bg-white text-nowrap rounded-xl"

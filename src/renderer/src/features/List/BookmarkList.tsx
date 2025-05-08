@@ -1,3 +1,4 @@
+import {MacroItem} from "@renderer/types/macro";
 import {nanoid} from "nanoid";
 import {useNavigate} from "react-router";
 
@@ -6,7 +7,7 @@ import ContentCard from "../../shared/Card/ContentCard";
 import useMacroStore from "../../stores/macro/useMacroStore";
 import useTabStore from "../../stores/tab/useTabStore";
 
-function BookmarkList({macroItemList}) {
+function BookmarkList({macroItemList}: {macroItemList: MacroItem[]}) {
   const {setMacroStageList, startMacroExecute} = useMacroStore();
   const {setBrowserTabList} = useTabStore();
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ function BookmarkList({macroItemList}) {
   return (
     <div className="w-full h-full p-16 flex flex-row flex-wrap">
       {macroItemList.length > 0 ? (
-        macroItemList.map((item) => {
+        macroItemList.map((item: MacroItem) => {
           return (
             item.bookmark && (
               <ContentCard

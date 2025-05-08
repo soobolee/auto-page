@@ -1,8 +1,17 @@
+import {MacroItem, MacroStage} from "@renderer/types/macro";
 import {nanoid} from "nanoid";
+import {ChangeEvent} from "react";
 
 import UpdateCard from "../../shared/Card/UpdateCard";
 
-function UpdateList({macroStageList, updateTargetMacroName, handleUpdateSelect, macroItemList}) {
+interface UpdateListProps {
+  macroStageList: MacroStage[];
+  updateTargetMacroName: string;
+  handleUpdateSelect: (event: ChangeEvent<HTMLSelectElement>) => void;
+  macroItemList: MacroItem[];
+}
+
+function UpdateList({macroStageList, updateTargetMacroName, handleUpdateSelect, macroItemList}: UpdateListProps) {
   return (
     <div className="w-full h-full p-16 flex flex-col items-center gap-10 overflow-auto">
       <div>

@@ -1,4 +1,4 @@
-import {useEffect} from "react";
+import {ChangeEvent, useEffect} from "react";
 
 import {ALERT_ERROR_LOAD, ALERT_ERROR_SAVE, MENU_TITLE, NAV_MENU} from "../../constants/textConstants";
 import useShortcutHandler from "../../hooks/useShortcutHandler";
@@ -39,7 +39,7 @@ function MainContent() {
     getMacroItemList();
   }, [setMacroItemList, openAlertModal]);
 
-  const handleUpdateSelect = async (event) => {
+  const handleUpdateSelect = async (event: ChangeEvent<HTMLSelectElement>) => {
     setUpdateTargetMacroName(event.target.value);
     const savedImageList = await window.electronAPI.getMacroItem("image", event.target.value);
     const savedMacroList = await window.electronAPI.getMacroItem("stageList", event.target.value);
@@ -47,9 +47,13 @@ function MainContent() {
     if (!savedImageList || !savedMacroList) {
       openAlertModal(ALERT_ERROR_SAVE);
     }
+    if ("image" in savedImageList) {
+      setMacroImageList(savedImageList.image);
+    }
 
-    setMacroImageList(savedImageList.image);
-    setMacroStageList(savedMacroList.stageList);
+    if ("stageList" in savedMacroList) {
+      setMacroStageList(savedMacroList.stageList);
+    }
   };
 
   return (
