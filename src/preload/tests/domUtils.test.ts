@@ -18,7 +18,7 @@ describe("createTargetAlertCircle", () => {
 });
 
 describe("getClassInfo", () => {
-  let target = null;
+  let target: HTMLDivElement | null = null;
 
   beforeEach(() => {
     target = document.createElement("div");
@@ -28,13 +28,21 @@ describe("getClassInfo", () => {
   });
 
   test("target요소에 대해 클래스 정보[className, classIndex]를 반환해야 합니다. ", () => {
-    const classList = Array.from(target.classList);
-    const classInfo = getClassInfo(classList, target);
-    expect(classInfo).toEqual([{className: "test-class", classIndex: 0}]);
+    if (target) {
+      const classList = Array.from(target.classList);
+      const classInfo = getClassInfo(classList, target);
+      expect(classInfo).toEqual([{className: "test-class", classIndex: 0}]);
+    } else {
+      expect.fail("target을 찾지 못했습니다.");
+    }
   });
 
   test("target요소에 대한 클래스 정보가 없다면 falsy값을 반환해야 합니다.", () => {
-    const classInfo = getClassInfo([], target);
-    expect(classInfo).toBeFalsy();
+    if (target) {
+      const classInfo = getClassInfo([], target);
+      expect(classInfo).toBeFalsy();
+    } else {
+      expect.fail("target을 찾지 못했습니다.");
+    }
   });
 });

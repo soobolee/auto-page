@@ -1,25 +1,27 @@
 import {contextBridge, ipcRenderer} from "electron";
 
 import {sleep} from "../main/utils/commonUtils";
+import {EventTargetInfo, MacroStage, WebviewSize} from "./types/preload";
 import {createTargetAlertCircle, getClassInfo} from "./utils/domUtils";
 
 try {
   contextBridge.exposeInMainWorld("electronAPI", {
     getMacroItemList: () => ipcRenderer.invoke("get-macro-item-list"),
-    getMacroItem: (contentType, fileName) => ipcRenderer.invoke("get-macro-item", contentType, fileName),
-    capturePage: (webviewSize) => ipcRenderer.invoke("capture-page", webviewSize),
-    saveMacro: (fileName, fileContent, contentType) =>
+    getMacroItem: (contentType: string, fileName: string) =>
+      ipcRenderer.invoke("get-macro-item", contentType, fileName),
+    capturePage: (webviewSize: WebviewSize) => ipcRenderer.invoke("capture-page", webviewSize),
+    saveMacro: (fileName: string, fileContent: string, contentType: string) =>
       ipcRenderer.invoke("save-macro", fileName, fileContent, contentType),
-    saveImage: (fileName, fileContent) => ipcRenderer.invoke("save-image", fileName, fileContent),
-    deleteMacroAndImage: (fileName, imageDeleteOption) =>
+    saveImage: (fileName: string, fileContent: string) => ipcRenderer.invoke("save-image", fileName, fileContent),
+    deleteMacroAndImage: (fileName: string, imageDeleteOption: boolean) =>
       ipcRenderer.invoke("delete-macro-and-image", fileName, imageDeleteOption),
-    changeSession: (isMacroExecuting) => ipcRenderer.send("did-execute-macro", isMacroExecuting),
+    changeSession: (isMacroExecuting: boolean) => ipcRenderer.send("did-execute-macro", isMacroExecuting),
   });
 
-  const sendTargetElementInfo = (eventTarget, method) => {
+  const sendTargetElementInfo = (eventTarget: HTMLElement, method: string) => {
     const eventTargetUrl = location.href;
     const eventTagIndex = Array.from(document.querySelectorAll(eventTarget.tagName)).indexOf(eventTarget);
-    const eventTargetClassList = Array.from(eventTarget.classList);
+    const eventTargetClassList = Array.from(eventTarget.classList) as string[];
     const eventTargetClassInfo = getClassInfo(eventTargetClassList, eventTarget);
 
     ipcRenderer.send("event-occurred", {
@@ -28,15 +30,15 @@ try {
       tagIndex: eventTagIndex,
       class: eventTargetClassInfo,
       url: eventTargetUrl,
-      href: eventTarget.href,
+      href: (eventTarget as HTMLAnchorElement).href,
       method: method,
-      value: eventTarget.value,
-    });
+      value: (eventTarget as HTMLInputElement).value,
+    } as EventTargetInfo);
   };
 
   let endOfInput = false;
 
-  const waitEndOfIpc = async (eventChannel) => {
+  const waitEndOfIpc = async (eventChannel: string) => {
     ipcRenderer.sendToHost(eventChannel);
 
     while (!endOfInput) {
@@ -50,27 +52,32 @@ try {
     endOfInput = true;
   });
 
-  ipcRenderer.on("client-event", (_, macroStageList) => {
+  ipcRenderer.on("client-event", (_, macroStageList: MacroStage[]) => {
     if (macroStageList) {
       ipcRenderer.sendToHost("client-event", macroStageList);
     }
   });
 
-  ipcRenderer.on("auto-macro", async (_, macroStageList) => {
+  ipcRenderer.on("auto-macro", async (_, macroStageList: MacroStage[]) => {
     executeMacro(macroStageList);
   });
 
-  const waitForGetElement = async (selector, index = 0, stageInfo, restStageList) => {
+  const waitForGetElement = async (
+    selector: string,
+    index: number = 0,
+    stageInfo: MacroStage,
+    restStageList: MacroStage[]
+  ) => {
     try {
-      let targetElement = null;
+      let targetElement: Element | null = null;
 
-      if (location.href !== stageInfo.url && stageInfo.tageName !== "A") {
+      if (location.href !== stageInfo.url && stageInfo.tagName !== "A") {
         if (restStageList.length === 0) {
           ipcRenderer.sendToHost("macro-end");
         }
 
         ipcRenderer.sendToHost("macro-stop", restStageList);
-        location.href = stageInfo.url;
+        location.href = stageInfo.url || "";
         return;
       }
 
@@ -113,9 +120,9 @@ try {
     }
   };
 
-  const executeMacro = async (macroStageList) => {
+  const executeMacro = async (macroStageList: MacroStage[]) => {
     const restStageList = [...macroStageList];
-    let beforeTarget = null;
+    let beforeTarget: MacroStage | null = null;
     let macroBreak = false;
 
     const unloadEvent = () => {
@@ -131,10 +138,10 @@ try {
       let currentTargetIndex = 0;
 
       if (!macroBreak) {
-        const targetElementList = [];
+        const targetElementList: Element[] = [];
 
         if (stageInfo.id) {
-          const targetElement = await waitForGetElement(`#${stageInfo.id}`, null, stageInfo, restStageList);
+          const targetElement = await waitForGetElement(`#${stageInfo.id}`, 0, stageInfo, restStageList);
           if (targetElement) {
             targetElementList.push(targetElement);
           }
@@ -159,7 +166,7 @@ try {
         if (stageInfo.tagName) {
           const targetElement = await waitForGetElement(
             stageInfo.tagName,
-            stageInfo.tagIndex,
+            stageInfo.tagIndex || 0,
             stageInfo,
             restStageList
           );
@@ -169,12 +176,13 @@ try {
         }
 
         if (!targetElementList.length) {
-          if (beforeTarget.method === "KEYDOWN") {
+          const shifted = restStageList.shift();
+          if (shifted && shifted.method === "KEYDOWN") {
             break;
           }
 
           if (stageInfo.href && location.href !== stageInfo.href && stageInfo.tagName === "A") {
-            beforeTarget = restStageList.shift();
+            beforeTarget = restStageList.shift() || null;
 
             if (restStageList.length === 0) {
               ipcRenderer.sendToHost("macro-end");
@@ -192,20 +200,20 @@ try {
         }
 
         const executeEvent = async () => {
-          beforeTarget = restStageList.shift();
+          beforeTarget = restStageList.shift() || null;
 
           if (stageInfo.method === "CLICK") {
-            targetElementList[currentTargetIndex].focus();
-            targetElementList[currentTargetIndex].click();
+            (targetElementList[currentTargetIndex] as HTMLElement).focus();
+            (targetElementList[currentTargetIndex] as HTMLElement).click();
           }
 
           if (stageInfo.method === "CHANGE" || stageInfo.method === "KEYDOWN") {
-            targetElementList[currentTargetIndex].focus();
-            targetElementList[currentTargetIndex].value = stageInfo.value;
+            (targetElementList[currentTargetIndex] as HTMLElement).focus();
+            (targetElementList[currentTargetIndex] as HTMLInputElement).value = stageInfo.value || "";
             await waitEndOfIpc("input-paste");
 
             if (stageInfo.method === "KEYDOWN") {
-              targetElementList[currentTargetIndex].focus();
+              (targetElementList[currentTargetIndex] as HTMLElement).focus();
               await waitEndOfIpc("input-enter");
             }
           }
@@ -215,7 +223,9 @@ try {
           await executeEvent();
         } catch {
           currentTargetIndex += 1;
-          restStageList.unshift(beforeTarget);
+          if (beforeTarget) {
+            restStageList.unshift(beforeTarget);
+          }
 
           if (currentTargetIndex >= targetElementList.length) {
             ipcRenderer.sendToHost("macro-end");
@@ -255,11 +265,12 @@ try {
 
     window.addEventListener(
       "click",
-      (event) => {
+      (event: MouseEvent) => {
         if (event.isTrusted) {
-          const aTag = event.target.closest("a");
-          const buttonTag = event.target.closest("button");
-          const iButtonTag = event.target.closest("input[type='button']");
+          const target = event.target as HTMLElement;
+          const aTag = target.closest("a");
+          const buttonTag = target.closest("button");
+          const iButtonTag = target.closest("input[type='button']");
 
           const eventTarget = aTag || buttonTag || iButtonTag;
 
@@ -280,7 +291,7 @@ try {
             }
           }
 
-          sendTargetElementInfo(eventTarget, "CLICK");
+          sendTargetElementInfo(eventTarget as HTMLElement, "CLICK");
         }
       },
       {capture: true}
@@ -288,7 +299,7 @@ try {
 
     document.addEventListener(
       "keydown",
-      (event) => {
+      (event: KeyboardEvent) => {
         if (event.key !== "Enter") {
           return;
         }
@@ -299,34 +310,40 @@ try {
         }
 
         lastEventTimestamp = currentTimestamp;
-        sendTargetElementInfo(event.target, "KEYDOWN");
+        sendTargetElementInfo(event.target as HTMLElement, "KEYDOWN");
       },
       {capture: true}
     );
 
     document.addEventListener(
       "change",
-      (event) => {
-        sendTargetElementInfo(event.target, "CHANGE");
+      (event: Event) => {
+        sendTargetElementInfo(event.target as HTMLElement, "CHANGE");
       },
       {capture: true}
     );
 
     const targetAlertCircle = createTargetAlertCircle();
-    document.querySelector("body").appendChild(targetAlertCircle);
+    const body = document.querySelector("body");
+    if (body) {
+      body.appendChild(targetAlertCircle);
+    }
 
     document.addEventListener(
       "mousemove",
-      (event) => {
-        const targetAlertCircle = document.querySelector("#targetAlertCircle");
+      (event: MouseEvent) => {
+        const targetAlertCircle = document.querySelector("#targetAlertCircle") as HTMLElement;
+        if (!targetAlertCircle) return;
+
         targetAlertCircle.style.display = "block";
         targetAlertCircle.style.top = `${event.clientY + window.scrollY}px`;
         targetAlertCircle.style.left = `${event.clientX + 20}px`;
 
-        const aTag = event.target.closest("a");
-        const buttonTag = event.target.closest("button");
-        const iButtonTag = event.target.closest("input");
-        const textTag = event.target.closest("textarea");
+        const target = event.target as HTMLElement;
+        const aTag = target.closest("a");
+        const buttonTag = target.closest("button");
+        const iButtonTag = target.closest("input");
+        const textTag = target.closest("textarea");
 
         const eventTarget = aTag || buttonTag || iButtonTag || textTag;
 

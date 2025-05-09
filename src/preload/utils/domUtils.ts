@@ -11,7 +11,7 @@ export const createTargetAlertCircle = () => {
   return targetAlertCircle;
 };
 
-export const getClassInfo = (eventTargetClassList, eventTarget) => {
+export const getClassInfo = (eventTargetClassList: string[], eventTarget: HTMLElement) => {
   if (eventTargetClassList.length) {
     return eventTargetClassList.map((className) => {
       const duplicatedClassList = Array.from(document.getElementsByClassName(className));
