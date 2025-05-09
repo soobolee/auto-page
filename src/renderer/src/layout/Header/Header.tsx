@@ -29,7 +29,6 @@ function Header(): JSX.Element {
     navigate(ROUTER_ROUTE.MAIN);
     window.sessionStorage.removeItem("resumeMacroList");
   };
-  console.log(browserTabList);
 
   return (
     <header className="h-[10%] flex flex-col justify-around border">

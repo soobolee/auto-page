@@ -6,6 +6,7 @@ import {
   ALERT_ERROR_DELETE,
   ALERT_ERROR_SAVE,
   ALERT_SAVE_STAGE,
+  MenuMode,
   NAV_MENU,
 } from "../../constants/textConstants";
 import useMacroStore from "../../stores/macro/useMacroStore";
@@ -66,7 +67,7 @@ function UpdateCard({stageItem, index}: UpdateCardProps): JSX.Element {
         }
 
         setMacroItemList([]);
-        setMenuMode(NAV_MENU.HOME);
+        setMenuMode(NAV_MENU.HOME as MenuMode);
       } else {
         const savedStageResult = await window.electronAPI.saveMacro(updateTargetMacroName, newStageList, "stageList");
         const savedImageResult = await window.electronAPI.saveImage(updateTargetMacroName, newImageList);

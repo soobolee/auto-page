@@ -2,7 +2,11 @@ import crypto from "crypto";
 
 const algorithm = "aes-256-cbc";
 
-export function inputValueEncrypt(text, key, iv) {
+export function inputValueEncrypt(
+  text: string,
+  key: Buffer<ArrayBufferLike> | string,
+  iv: Buffer<ArrayBufferLike> | string
+): string {
   try {
     const cipher = crypto.createCipheriv(algorithm, key, iv);
     let encrypted = cipher.update(text, "utf8", "hex");
@@ -11,10 +15,15 @@ export function inputValueEncrypt(text, key, iv) {
     return encrypted;
   } catch (error) {
     console.error(error);
+    throw error;
   }
 }
 
-export function inputValueDecrypt(encryptText, key, iv) {
+export function inputValueDecrypt(
+  encryptText: string,
+  key: Buffer<ArrayBufferLike> | string,
+  iv: Buffer<ArrayBufferLike> | string
+): string {
   try {
     const decipher = crypto.createDecipheriv(algorithm, key, iv);
     let decrypted = decipher.update(encryptText, "hex", "utf8");
@@ -23,5 +32,6 @@ export function inputValueDecrypt(encryptText, key, iv) {
     return decrypted;
   } catch (error) {
     console.error(error);
+    throw error;
   }
 }

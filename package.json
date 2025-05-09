@@ -2,7 +2,7 @@
   "name": "autopage",
   "version": "1.0.0",
   "description": "copycat web surfing",
-  "main": "./out/main/main.js",
+  "main": "./out/main/index.js",
   "author": "leesoobo",
   "homepage": "https://github.com/soobolee/auto-page",
   "build": {

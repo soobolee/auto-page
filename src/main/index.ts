@@ -1,18 +1,18 @@
 import {electronApp, is, optimizer} from "@electron-toolkit/utils";
 import crypto from "crypto";
-import {BrowserWindow, app, ipcMain} from "electron";
+import {BrowserWindow, IpcMainInvokeEvent, app, ipcMain} from "electron";
 import fs from "fs";
 import {join} from "path";
 
 import icon from "../../resources/icon.png?asset";
+import {MacroContentType, MacroStage} from "./types/main";
 import {sleep} from "./utils/commonUtils";
 import {deleteFile, getMacroItem, getMacroItemList, writeMacroInfoFile} from "./utils/fileUtils";
 
-let mainWindow = null;
-let didMacroExecute = false;
-let webviewSession = `persist:${crypto.randomBytes(16)}`;
+let mainWindow: BrowserWindow | null = null;
+let webviewSession = `persist:${crypto.randomBytes(16).toString("hex")}`;
 
-const createWindow = () => {
+const createWindow = (): void => {
   mainWindow = new BrowserWindow({
     width: 900,
     height: 670,
@@ -20,16 +20,16 @@ const createWindow = () => {
     autoHideMenuBar: true,
     titleBarStyle: "hiddenInset",
     ...(process.platform === "linux" ? {icon} : {}),
-    icon: icon,
+    icon,
     webPreferences: {
-      preload: join(__dirname, "../preload/preload.js"),
+      preload: join(__dirname, "../preload/index.js"),
       webviewTag: true,
     },
   });
 
   mainWindow.on("ready-to-show", () => {
-    mainWindow.maximize();
-    mainWindow.show();
+    mainWindow?.maximize();
+    mainWindow?.show();
   });
 
   if (is.dev && process.env["ELECTRON_RENDERER_URL"]) {
@@ -40,20 +40,20 @@ const createWindow = () => {
 
   mainWindow.webContents.on("will-attach-webview", (_, webPreferences) => {
     webPreferences.partition = webviewSession;
-    webPreferences.preload = join(__dirname, "../preload/preload.js");
+    webPreferences.preload = join(__dirname, "../preload/index.js");
   });
 };
 
-const createCryptKey = () => {
+const createCryptKey = (): void => {
   const keyPath = join(app.getPath("userData"), "CRYPT_KEY");
   const ivPath = join(app.getPath("userData"), "CRYPT_IV");
 
-  const savedKey = fs.existsSync(keyPath);
-  const savedIv = fs.existsSync(ivPath);
+  if (!fs.existsSync(keyPath)) {
+    fs.writeFileSync(keyPath, crypto.randomBytes(32), "utf8");
+  }
 
-  if (!savedKey || !savedIv) {
-    fs.writeFileSync(keyPath, crypto.randomBytes(32));
-    fs.writeFileSync(ivPath, crypto.randomBytes(16));
+  if (!fs.existsSync(ivPath)) {
+    fs.writeFileSync(ivPath, crypto.randomBytes(16), "utf8");
   }
 };
 
@@ -67,7 +67,7 @@ app.whenReady().then(() => {
   createWindow();
   createCryptKey();
 
-  app.on("activate", function () {
+  app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
     }
@@ -80,11 +80,9 @@ app.on("window-all-closed", () => {
   }
 });
 
-ipcMain.on("did-execute-macro", (_, isMacroExecuting) => {
-  didMacroExecute = isMacroExecuting;
-
-  if (didMacroExecute) {
-    webviewSession = `persist:${crypto.randomBytes(16)}`;
+ipcMain.on("did-execute-macro", (_, isMacroExecuting: boolean) => {
+  if (isMacroExecuting) {
+    webviewSession = `persist:${crypto.randomBytes(16).toString("hex")}`;
   }
 });
 
@@ -92,43 +90,43 @@ ipcMain.on("event-occurred", (event, payload) => {
   event.reply("client-event", payload);
 });
 
-ipcMain.handle("capture-page", async (_, webviewSize) => {
+ipcMain.handle("capture-page", async (_: IpcMainInvokeEvent, webviewSize: string) => {
   try {
     await sleep(400);
-    const captureImage = await mainWindow.webContents.capturePage(JSON.parse(webviewSize));
-    const resizeImage = await captureImage.resize({
-      quality: "good",
-    });
-    const imageUrl = await resizeImage.toDataURL();
+    if (!mainWindow) {
+      throw new Error("mainWindow is not initialized");
+    }
 
-    return imageUrl || null;
+    const captureImage = await mainWindow.webContents.capturePage(JSON.parse(webviewSize));
+    const resized = await captureImage.resize({quality: "good"});
+
+    return resized.toDataURL();
   } catch (error) {
-    console.error(error);
+    console.error("capture-page error:", error);
+    return null;
   }
 });
 
-ipcMain.handle("save-macro", (_, fileName, fileContent, contentType) => {
-  return writeMacroInfoFile(fileName, fileContent, contentType);
-});
+ipcMain.handle(
+  "save-macro",
+  (_: IpcMainInvokeEvent, fileName: string, fileContent: MacroStage[], contentType: MacroContentType) => {
+    return writeMacroInfoFile(fileName, fileContent, contentType);
+  }
+);
 
-ipcMain.handle("save-image", (_, fileName, fileContent) => {
+ipcMain.handle("save-image", (_: IpcMainInvokeEvent, fileName: string, fileContent: MacroStage[]) => {
   return writeMacroInfoFile(fileName, fileContent, "image");
 });
 
-ipcMain.handle("delete-macro-and-image", (_, fileName, imageDeleteOption) => {
-  const deletedResult = deleteFile(fileName, imageDeleteOption);
-
-  if (!deletedResult) {
-    return;
-  }
-
-  return getMacroItemList();
+ipcMain.handle("delete-macro-and-image", (_: IpcMainInvokeEvent, fileName: string, imageDeleteOption: boolean) => {
+  const deleted = deleteFile(fileName, imageDeleteOption);
+  return deleted ? getMacroItemList("stageList") : null;
 });
 
 ipcMain.handle("get-macro-item-list", () => {
-  return getMacroItemList();
+  return getMacroItemList("stageList");
 });
 
-ipcMain.handle("get-macro-item", (_, contentType, fileName) => {
+ipcMain.handle("get-macro-item", (_: IpcMainInvokeEvent, contentType: MacroContentType, fileName: string) => {
   return getMacroItem(contentType, fileName);
 });

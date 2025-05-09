@@ -1,8 +1,8 @@
-export const sleep = (delay) => {
+export const sleep = (delay: number) => {
   return new Promise((resolve) => setTimeout(resolve, delay));
 };
 
-export const getCurrentTime = () => {
+export const getCurrentTime = (): string => {
   const date = new Date();
   const year = addFrontZero(date.getFullYear());
   const month = addFrontZero(date.getMonth() + 1);
@@ -14,10 +14,10 @@ export const getCurrentTime = () => {
   return `${year}${month}${day}${hour}${minute}${second}`;
 };
 
-export const addFrontZero = (number) => {
+export const addFrontZero = (number: number): string => {
   if (number < 10) {
     return `0${number}`;
   }
 
-  return number;
+  return String(number);
 };
