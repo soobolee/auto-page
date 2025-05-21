@@ -1,6 +1,6 @@
 import {faBookBookmark, faCircleXmark, faGear} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {JSX, MouseEvent} from "react";
+import {JSX, MouseEvent, memo} from "react";
 
 interface IconMenuCardProps {
   isBookmark: boolean;
@@ -9,7 +9,12 @@ interface IconMenuCardProps {
   handleDelete: (event: MouseEvent<HTMLSpanElement>) => void;
 }
 
-function IconMenuCard({isBookmark, handleBookmark, handleUpdate, handleDelete}: IconMenuCardProps): JSX.Element {
+const IconMenuCard = memo(function IconMenuCard({
+  isBookmark,
+  handleBookmark,
+  handleUpdate,
+  handleDelete,
+}: IconMenuCardProps): JSX.Element {
   return (
     <div className="h-[25%] w-30 ml-53 flex items-center hover-big">
       <span
@@ -26,6 +31,6 @@ function IconMenuCard({isBookmark, handleBookmark, handleUpdate, handleDelete}: 
       </span>
     </div>
   );
-}
+});
 
 export default IconMenuCard;

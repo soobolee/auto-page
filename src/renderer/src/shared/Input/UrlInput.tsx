@@ -1,9 +1,9 @@
-import {JSX} from "react";
+import {JSX, memo} from "react";
 
 import useUrlInput from "../../hooks/useUrlInput";
 import useTabStore from "../../stores/tab/useTabStore";
 
-function UrlInput(): JSX.Element {
+const UrlInput = memo(function UrlInput(): JSX.Element {
   const {setBrowserTabList, browserTabList, tabFocusedIndex} = useTabStore();
 
   const {inputUrl, isUrlError, handleInputEnter, handleInputChange} = useUrlInput(
@@ -22,6 +22,6 @@ function UrlInput(): JSX.Element {
       placeholder={isUrlError ? "잘못된 URL을 입력했습니다." : "매크로 기록 URL 입력"}
     />
   );
-}
+});
 
 export default UrlInput;

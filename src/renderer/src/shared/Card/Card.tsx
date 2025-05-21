@@ -1,20 +1,19 @@
-import {JSX, ReactNode} from "react";
+import {JSX, ReactNode, memo} from "react";
 
-interface CardPorps {
+interface CardProps {
   children: ReactNode;
-  variant?: string;
+  variant?: "default" | "stage";
   className?: string;
 }
 
-function Card({children, variant = "default", className = ""}: CardPorps): JSX.Element {
-  const baseStyles: string = "text-white";
-  const variantStyles: {[key: string]: string} = {
-    default: "w-full p-2 m-1 overflow-ellipsis overflow-hidden font-bold whitespace-nowrap bg-sub rounded-4xl",
-    stage: "shrink-0 border",
-    content: "w-95 h-48 rounded-2xl m-5",
+const Card = memo(function Card({children, variant = "default", className = ""}: CardProps): JSX.Element {
+  const baseStyles = "bg-white rounded-2xl border-2";
+  const variantStyles = {
+    default: "p-4",
+    stage: "p-2",
   };
 
   return <div className={`${baseStyles} ${variantStyles[variant]} ${className}`}>{children}</div>;
-}
+});
 
 export default Card;

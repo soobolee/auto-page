@@ -1,4 +1,4 @@
-import {ChangeEvent, JSX, useState} from "react";
+import {ChangeEvent, JSX, memo, useCallback, useState} from "react";
 import {useNavigate} from "react-router";
 
 import {ALERT_ERROR_SAVE, RECORD_MODE, ROUTER_ROUTE} from "../../constants/textConstants";
@@ -8,7 +8,7 @@ import useModalStore from "../../stores/modal/useModalStore";
 import useTabStore from "../../stores/tab/useTabStore";
 import Button from "../Button/Button";
 
-function InputModal(): JSX.Element {
+const InputModal = memo(function InputModal(): JSX.Element {
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState("");
   const {openAlertModal, closeModal} = useModalStore();
@@ -16,7 +16,7 @@ function InputModal(): JSX.Element {
   const {macroStageList, macroImageList, resetStageList, stopMacroRecord} = useMacroStore();
   const {setRecordMode} = useMenuStore();
 
-  const clickModalSave = (): void => {
+  const clickModalSave = useCallback((): void => {
     const saveMacroResult = window.electronAPI.saveMacro(inputValue, macroStageList, "stageList");
     const saveImageResult = window.electronAPI.saveImage(inputValue, macroImageList);
     stopMacroRecord();
@@ -30,36 +30,46 @@ function InputModal(): JSX.Element {
     resetStageList();
     resetTabInfo();
     navigate(ROUTER_ROUTE.MAIN);
-  };
+  }, [
+    inputValue,
+    macroStageList,
+    macroImageList,
+    stopMacroRecord,
+    closeModal,
+    openAlertModal,
+    setRecordMode,
+    resetStageList,
+    resetTabInfo,
+    navigate,
+  ]);
 
-  const inputMacroName = (event: ChangeEvent<HTMLInputElement>): void => {
+  const inputMacroName = useCallback((event: ChangeEvent<HTMLInputElement>): void => {
     setInputValue(event.target.value);
-  };
+  }, []);
 
-  const clickModalClose = (): void => {
+  const clickModalClose = useCallback((): void => {
     closeModal();
-  };
+  }, [closeModal]);
 
   return (
-    <div className="w-[90%] h-[80%] bg-white rounded-3xl border-2 flex justify-center items-center flex-col">
-      <p className="text-3xl">기록한 매크로의 이름을 적어주세요.</p>
+    <div className="w-[60%] h-[50%] bg-white rounded-3xl border-2 flex justify-center items-center flex-col gap-6">
+      <p className="text-3xl">매크로 이름을 입력해주세요</p>
       <input
         type="text"
+        className="w-[80%] h-14 text-2xl border-2 rounded-xl p-2"
         value={inputValue}
         onChange={inputMacroName}
-        className="w-[40%] h-16 p-2 m-20 border-3 rounded-3xl"
-        placeholder="기억하기 쉬운 이름을 적어 주면 좋아요"
       />
       <div>
         <Button color="green" onClick={clickModalSave}>
           저장
         </Button>
         <Button color="red" onClick={clickModalClose}>
-          취소
+          닫기
         </Button>
       </div>
     </div>
   );
-}
+});
 
 export default InputModal;

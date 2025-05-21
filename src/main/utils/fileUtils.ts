@@ -27,8 +27,8 @@ export function writeMacroInfoFile(
     const filePath = getMacroFilePath(contentType, `${macroName}.json`);
 
     if (contentType === "stageList") {
-      const key = fs.readFileSync(join(app.getPath("userData"), "CRYPT_KEY"), "utf8");
-      const iv = fs.readFileSync(join(app.getPath("userData"), "CRYPT_IV"), "utf8");
+      const key = fs.readFileSync(join(app.getPath("userData"), "CRYPT_KEY"));
+      const iv = fs.readFileSync(join(app.getPath("userData"), "CRYPT_IV"));
 
       fileContent = fileContent.map((content) => ({
         ...content,

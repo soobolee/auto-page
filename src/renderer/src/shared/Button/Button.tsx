@@ -1,6 +1,6 @@
 import {IconDefinition} from "@fortawesome/fontawesome-common-types";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {JSX, MouseEventHandler, ReactNode} from "react";
+import {JSX, MouseEventHandler, ReactNode, memo} from "react";
 
 interface ButtonProps {
   children?: ReactNode;
@@ -12,7 +12,22 @@ interface ButtonProps {
   isActive?: boolean;
 }
 
-function Button({
+const baseStyles = "cursor-pointer";
+const variantStyles = {
+  default: "rounded-2xl",
+  circle: "rounded-4xl",
+};
+const sizeStyles = {
+  small: "w-8 h-8 my-1 mx-1.5",
+  medium: "w-28 h-14 mx-2",
+};
+const colorStyles = {
+  sub: "bg-sub",
+  green: "bg-green",
+  red: "bg-red",
+};
+
+const Button = memo(function Button({
   children,
   variant = "default",
   size = "medium",
@@ -21,21 +36,6 @@ function Button({
   icon,
   isActive,
 }: ButtonProps): JSX.Element {
-  const baseStyles = "cursor-pointer";
-  const variantStyles = {
-    default: "rounded-2xl",
-    circle: "rounded-4xl",
-  };
-  const sizeStyles = {
-    small: "w-8 h-8 my-1 mx-1.5",
-    medium: "w-28 h-14 mx-2",
-  };
-  const colorStyles = {
-    sub: "bg-sub",
-    green: "bg-green",
-    red: "bg-red",
-  };
-
   return (
     <button
       type="button"
@@ -45,6 +45,6 @@ function Button({
       {icon ? <FontAwesomeIcon className={isActive ? "text-white" : "text-black"} icon={icon} /> : children}
     </button>
   );
-}
+});
 
 export default Button;

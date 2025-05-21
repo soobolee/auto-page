@@ -1,15 +1,15 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {JSX} from "react";
+import {JSX, memo, useCallback} from "react";
 
 import useModalStore from "../../stores/modal/useModalStore";
 import Button from "../Button/Button";
 
-function AlertModal(): JSX.Element {
+const AlertModal = memo(function AlertModal(): JSX.Element {
   const {modalContent, buttonClick, closeModal} = useModalStore();
 
-  const clickModalClose = () => {
+  const clickModalClose = useCallback(() => {
     closeModal();
-  };
+  }, [closeModal]);
 
   return (
     <div className="w-[60%] h-[50%] bg-white rounded-3xl border-2 flex justify-center items-center flex-col gap-6">
@@ -30,6 +30,6 @@ function AlertModal(): JSX.Element {
       </div>
     </div>
   );
-}
+});
 
 export default AlertModal;

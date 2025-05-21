@@ -1,6 +1,6 @@
 import {IconDefinition} from "@fortawesome/fontawesome-common-types";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {JSX} from "react";
+import {JSX, memo} from "react";
 
 interface LoadingCardProps {
   shape: string;
@@ -8,7 +8,7 @@ interface LoadingCardProps {
   text: string;
 }
 
-function LoadingCard({shape, icon, text}: LoadingCardProps): JSX.Element {
+const LoadingCard = memo(function LoadingCard({shape, icon, text}: LoadingCardProps): JSX.Element {
   return (
     <div className="flex justify-center leading-15 items-center">
       {shape === "ping" && <div className="w-5 h-5 mr-5 animate-ping rounded-full bg-red opacity-100"></div>}
@@ -18,6 +18,6 @@ function LoadingCard({shape, icon, text}: LoadingCardProps): JSX.Element {
       <p className="text-left">{text}</p>
     </div>
   );
-}
+});
 
 export default LoadingCard;

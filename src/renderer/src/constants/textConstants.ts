@@ -28,7 +28,7 @@ export const NAV_MENU = {
   ADDMACRO: "ADDMACRO",
   SHORTCUT: "SHORTCUT",
 };
-export type MenuMode = keyof typeof NAV_MENU;
+export type MenuMode = (typeof NAV_MENU)[keyof typeof NAV_MENU];
 
 export const NAV_DESCRIPTION = {
   HOME: "홈",
